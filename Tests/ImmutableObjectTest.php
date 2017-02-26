@@ -52,10 +52,10 @@ class ImmutableObjectTest extends \PHPUnit_Framework_TestCase
         $this->SUT->exchangeArray([]);
     }
 
-    public function testShouldTransformImmutableToArgumentObject()
+    /*public function testShouldTransformImmutableToArgumentObject()
     {
         $this->assertInstanceOf(Argument::class, $this->SUT->toArgument());
-    }
+    }*/
 
     public function testGet()
     {
