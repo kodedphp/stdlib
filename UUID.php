@@ -97,7 +97,7 @@ final class UUID
                     );
                 }
 
-                $node = $matches[1][0];
+                $node = $matches[1][0] ?? null;
 
                 // cannot identify host, fallback as in http://tools.ietf.org/html/rfc4122#section-4.5
                 if (empty($node)) {
