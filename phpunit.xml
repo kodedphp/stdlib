@@ -24,4 +24,8 @@
     <php>
         <ini name="date.timezone" value="UTC"/>
     </php>
+
+    <logging>
+        <log type="coverage-clover" target="build/logs/clover.xml"/>
+    </logging>
 </phpunit>
