@@ -12,7 +12,7 @@
 
 namespace Koded\Stdlib;
 
-use Koded\Stdlib\Interfaces\{ Arguments, Data };
+use Koded\Stdlib\Interfaces\{ Argument, Data };
 
 /**
  * Creates a new Immutable instance with optional arbitrary number of arguments.

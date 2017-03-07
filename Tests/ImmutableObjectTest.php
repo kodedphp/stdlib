@@ -2,7 +2,7 @@
 
 namespace Koded\Stdlib;
 
-use LogicException;
+use Koded\Exceptions\ReadOnlyException;
 
 class ImmutableObjectTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,46 +19,47 @@ class ImmutableObjectTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldDisallowCloning()
     {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Cloning the Koded\Stdlib\Immutable is not allowed');
+        $this->expectException(ReadOnlyException::class);
+        $this->expectExceptionMessage('Cloning the Koded\Stdlib\Immutable instance is not allowed');
         clone $this->SUT;
     }
 
     public function testShouldDisallowAppendingValues()
     {
-        $this->expectException(LogicException::class);
+        $this->expectException(ReadOnlyException::class);
         $this->expectExceptionMessage('Koded\Stdlib\Immutable instance is read-only');
         $this->SUT->append('test');
     }
 
     public function testShouldDisallowSettingValues()
     {
-        $this->expectException(LogicException::class);
+        $this->expectException(ReadOnlyException::class);
         $this->expectExceptionMessage('Koded\Stdlib\Immutable instance is read-only');
         $this->SUT->offsetSet('test', 'test');
     }
 
     public function testShouldDisallowUnsettingValues()
     {
-        $this->expectException(LogicException::class);
+        $this->expectException(ReadOnlyException::class);
         $this->expectExceptionMessage('Koded\Stdlib\Immutable instance is read-only');
         $this->SUT->offsetUnset('foo');
     }
 
     public function testShouldDisallowReplacingTheInternalStore()
     {
-        $this->expectException(LogicException::class);
+        $this->expectException(ReadOnlyException::class);
         $this->expectExceptionMessage('Koded\Stdlib\Immutable instance is read-only');
         $this->SUT->exchangeArray([]);
     }
 
-    /*public function testShouldTransformImmutableToArgumentObject()
+    public function testShouldTransformImmutableToArgumentObject()
     {
-        $this->assertInstanceOf(Argument::class, $this->SUT->toArgument());
-    }*/
+        $this->assertInstanceOf(Arguments::class, $this->SUT->toArgument());
+    }
 
     public function testGet()
     {
+        $this->assertNull($this->SUT->get('fubar'));
         $this->assertTrue($this->SUT->get(true));
         $this->assertTrue(array_key_exists(null, $this->SUT));
         $this->assertSame('bar', $this->SUT->foo);

@@ -13,20 +13,16 @@
 namespace Koded\Stdlib;
 
 use ArrayObject;
-use Koded\Stdlib\Interfaces\{ Arguments, Data };
-use LogicException;
+use Koded\Exceptions\ReadOnlyException;
+use Koded\Stdlib\Interfaces\{ Argument, Data };
 
 /**
- * Class ValueObject is an IMMUTABLE object that can hold things.
- * Useful as a DTO.
+ * An IMMUTABLE object that can hold things. Useful as a DTO.
  */
 final class Immutable extends ArrayObject implements Data
 {
 
     use GetterTrait;
-
-    const E_CLONING_DISALLOWED = 'Cloning the :class is not allowed';
-    const E_READONLY_INSTANCE = ':class instance is read-only';
 
     /**
      * Sets the object store with values.
@@ -43,7 +39,7 @@ final class Immutable extends ArrayObject implements Data
      */
     final public function __clone()
     {
-        throw new LogicException(strtr(self::E_CLONING_DISALLOWED, [':class' => get_class($this)]));
+        throw new ReadOnlyException(Data::E_CLONING_DISALLOWED, [':class' => get_class($this)]);
     }
 
     /**
@@ -51,12 +47,15 @@ final class Immutable extends ArrayObject implements Data
      */
     final public function append($value)
     {
-        throw new LogicException(strtr(self::E_READONLY_INSTANCE, [':class' => get_class($this)]));
+        throw new ReadOnlyException(Data::E_READONLY_INSTANCE, [':class' => get_class($this)]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     final public function offsetSet($index, $value)
     {
-        throw new LogicException(strtr(self::E_READONLY_INSTANCE, [':class' => get_class($this)]));
+        throw new ReadOnlyException(Data::E_READONLY_INSTANCE, [':class' => get_class($this)]);
     }
 
     /**
@@ -64,7 +63,7 @@ final class Immutable extends ArrayObject implements Data
      */
     final public function offsetUnset($index)
     {
-        throw new LogicException(strtr(self::E_READONLY_INSTANCE, [':class' => get_class($this)]));
+        throw new ReadOnlyException(Data::E_READONLY_INSTANCE, [':class' => get_class($this)]);
     }
 
     /**
@@ -72,16 +71,16 @@ final class Immutable extends ArrayObject implements Data
      */
     final public function exchangeArray($input)
     {
-        throw new LogicException(strtr(self::E_READONLY_INSTANCE, [':class' => get_class($this)]));
+        throw new ReadOnlyException(Data::E_READONLY_INSTANCE, [':class' => get_class($this)]);
     }
 
     /**
      * @experimental
      *
-     * @return Arguments
+     * @return Argument
      */
-    public function toArgument(): Arguments
+    public function toArgument(): Argument
     {
-        return new Argument($this->toArray());
+        return new Arguments($this->toArray());
     }
 }
