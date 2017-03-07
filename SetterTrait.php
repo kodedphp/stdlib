@@ -13,6 +13,7 @@
 namespace Koded\Stdlib;
 
 use Koded\Stdlib\Interfaces\Argument;
+use Throwable;
 
 /**
  * SetterTrait
@@ -61,7 +62,11 @@ trait SetterTrait
 
     public function delete(string $offset): Argument
     {
-        $this->offsetUnset($offset);
+        try {
+            $this->offsetUnset($offset);
+        } catch (Throwable $e) {
+            // NOOP
+        }
 
         return $this;
     }
