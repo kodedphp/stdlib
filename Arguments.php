@@ -16,10 +16,9 @@ use ArrayObject;
 use Koded\Stdlib\Interfaces\{ Argument, Data };
 
 /**
- * Arguments is a MUTABLE object that can hold things.
- * It is useful for passing it around as an object that encapsulates data.
+ * Arguments is a MUTABLE (multi purpose) class that encapsulates data.
  *
- * TIP: Do not create child classes with properties from this one.
+ * TIP: Avoid creating a child classes with properties from this one.
  * It will mess up your Zen.
  */
 class Arguments extends ArrayObject implements Argument

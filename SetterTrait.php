@@ -13,7 +13,6 @@
 namespace Koded\Stdlib;
 
 use Koded\Stdlib\Interfaces\Argument;
-use Throwable;
 
 /**
  * SetterTrait
@@ -50,22 +49,29 @@ trait SetterTrait
         return $this;
     }
 
-    public function &pull(string $offset, $default = null)
+    public function pull(string $offset, $default = null)
     {
-        if (isset($this->$offset)) {
-            $default = $this->$offset;
-            $this->offsetUnset($offset);
-        }
+        $value = $this->get($offset, $default);
+        unset($this[$offset]);
 
-        return $default;
+        return $value;
     }
 
     public function delete(string $offset): Argument
     {
-        try {
-            $this->offsetUnset($offset);
-        } catch (Throwable $e) {
-            // NOOP
+        return $this->offsetUnset($offset);
+    }
+
+    /**
+     * @internal
+     * {@inheritdoc}
+     * @return $this
+     */
+
+    public function offsetUnset($offset)
+    {
+        if ($this->offsetExists($offset)) {
+            parent::offsetUnset($offset);
         }
 
         return $this;

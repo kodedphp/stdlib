@@ -13,15 +13,12 @@
 namespace Koded\Stdlib;
 
 use Koded\Stdlib\Interfaces\Data;
-use Throwable;
 
 /**
  * All private fields are kept intact, but if same property names are
  * set through the c-tor, they are set in the local storage, therefore
  * the values are taken from the storage.
  * This creates a big confusion if you don't know how this works.
- *
- * TIP: Do not create child classes with properties.
  */
 trait GetterTrait
 {
@@ -37,26 +34,11 @@ trait GetterTrait
      */
     public function get(string $offset, $default = null)
     {
-        return $this->offsetGet($offset, $default);
-    }
-
-    /**
-     * This overwritten method will return NULL if the $offset is not set in the storage.
-     * Once bitten, twice shy.
-     *
-     * @param string $offset The key name
-     * @param null $default [optional] A value if the key does not exist
-     *
-     * @return mixed
-     * @internal
-     */
-    public function offsetGet($offset, $default = null)
-    {
-        try {
-            return parent::offsetGet($offset) ?? $default;
-        } catch (Throwable $e) {
-            return $default;
+        if (isset($this[$offset])) {
+            return $this[$offset];
         }
+
+        return $default;
     }
 
     /**
@@ -115,7 +97,7 @@ trait GetterTrait
      *
      * @return Data returns a new Data object with filtered pairs
      */
-    public function filter(array $keys): Data
+    public function extract(array $keys): Data
     {
         $array = [];
         foreach ($keys as $offset) {
@@ -125,5 +107,24 @@ trait GetterTrait
         }
 
         return new static($array);
+    }
+
+
+    /**
+     * @internal
+     * This overwritten method will return NULL if the $offset is not set in the storage.
+     * Once bitten, twice shy.
+     *
+     * @param string $offset The key name
+     *
+     * @return mixed|null
+     */
+    public function offsetGet($offset)
+    {
+        if ($this->offsetExists($offset) or array_key_exists($offset, $this)) {
+            return parent::offsetGet($offset);
+        }
+
+        return null;
     }
 }
