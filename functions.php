@@ -15,6 +15,18 @@ namespace Koded\Stdlib;
 use Koded\Stdlib\Interfaces\{ Argument, Data };
 
 /**
+ * Creates a new Argument instance with optional arbitrary number of arguments.
+ *
+ * @param array ...$values
+ *
+ * @return Argument
+ */
+function arguments(...$values): Argument
+{
+    return new Arguments(...$values);
+}
+
+/**
  * Creates a new Immutable instance with optional arbitrary number of arguments.
  *
  * @param array ...$values
