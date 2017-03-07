@@ -50,9 +50,9 @@ class ArgumentObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(Arguments::class, $result);
     }
 
-    public function test_upsert()
+    public function testUpsert()
     {
-        // not added because it already exist
+        // not added because 'foo' already exist
         $result = $this->SUT->upsert('foo', 42);
 
         $this->assertEquals([

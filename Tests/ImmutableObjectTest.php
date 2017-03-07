@@ -52,12 +52,19 @@ class ImmutableObjectTest extends \PHPUnit_Framework_TestCase
         $this->SUT->exchangeArray([]);
     }
 
+    public function testShouldDisallowMagicallySettingValues()
+    {
+        $this->expectException(ReadOnlyException::class);
+        $this->expectExceptionMessage('Koded\Stdlib\Immutable instance is read-only');
+        $this->SUT->fubar = 'no';
+    }
+
     public function testShouldTransformImmutableToArgumentObject()
     {
         $this->assertInstanceOf(Arguments::class, $this->SUT->toArgument());
     }
 
-    public function testGet()
+    public function testShouldGetThings()
     {
         $this->assertNull($this->SUT->get('fubar'));
         $this->assertTrue($this->SUT->get(true));
@@ -73,7 +80,13 @@ class ImmutableObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('null', $this->SUT->get(false));
     }
 
-    public function testFind()
+    public function testShouldReturnNullOnNonExistingKey()
+    {
+        $this->assertNull($this->SUT->yabbadabbadoo);
+        $this->assertNull($this->SUT->get('yabbadabbadoo'));
+    }
+
+    public function testShouldFindThings()
     {
         $this->assertEquals('not found', $this->SUT->find('key3', 'not found'));
         $this->assertSame('found me', $this->SUT->find('array.key3.key3-1.key3-1-1'));
@@ -85,7 +98,7 @@ class ImmutableObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('four', $this->SUT->find('one.two.three'));
     }
 
-    public function testFilter()
+    public function testShouldFilterOutTheData()
     {
         $expected = new Immutable([
             '0' => 0,
@@ -95,7 +108,12 @@ class ImmutableObjectTest extends \PHPUnit_Framework_TestCase
 
         ]);
 
-        $this->assertEquals($expected, $this->SUT->filter([true, 'one.two.three', '0', 'null']));
+        $this->assertEquals($expected, $this->SUT->extract([
+            true,
+            'one.two.three',
+            '0',
+            'null'
+        ]));
     }
 
     protected function setUp()
