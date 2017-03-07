@@ -17,7 +17,8 @@ use Koded\Exceptions\ReadOnlyException;
 use Koded\Stdlib\Interfaces\{ Argument, Data };
 
 /**
- * An IMMUTABLE object that can hold things. Useful as a DTO.
+ * An IMMUTABLE multi purpose class that encapsulates a read-only data.
+ * It is useful for passing it around as a DTO.
  */
 final class Immutable extends ArrayObject implements Data
 {
@@ -35,6 +36,7 @@ final class Immutable extends ArrayObject implements Data
     }
 
     /**
+     * @internal
      * {@inheritdoc}
      */
     final public function __clone()
@@ -43,6 +45,7 @@ final class Immutable extends ArrayObject implements Data
     }
 
     /**
+     * @internal
      * {@inheritdoc}
      */
     final public function append($value)
@@ -51,6 +54,7 @@ final class Immutable extends ArrayObject implements Data
     }
 
     /**
+     * @internal
      * {@inheritdoc}
      */
     final public function offsetSet($index, $value)
@@ -59,6 +63,7 @@ final class Immutable extends ArrayObject implements Data
     }
 
     /**
+     * @internal
      * {@inheritdoc}
      */
     final public function offsetUnset($index)
@@ -67,6 +72,7 @@ final class Immutable extends ArrayObject implements Data
     }
 
     /**
+     * @internal
      * {@inheritdoc}
      */
     final public function exchangeArray($input)
