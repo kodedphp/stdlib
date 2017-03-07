@@ -1,13 +1,13 @@
 language: php
 sudo: false
-php:
-  - 7.0
-  - 7.1
-
+matrix:
+  include:
+    - php: 7.0
+    - php: 7.1
+  fast_finish: true
 before_script:
-  - composer install -o --dev --no-interaction
+  - composer update --prefer-dist
 script:
-  - mkdir -p build/logs
   - phpunit
 after_success:
   - travis_retry php vendor/bin/coveralls
