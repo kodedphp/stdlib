@@ -1,4 +1,14 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
+
+/*
+ * This file is part of the Koded package.
+ *
+ * (c) Mihail Binev <mihail@kodeart.com>
+ *
+ * Please view the LICENSE distributed with this source code
+ * for the full copyright and license information.
+ *
+ */
 
 namespace Koded\Stdlib;
 
@@ -6,8 +16,6 @@ use InvalidArgumentException;
 
 /**
  * Class UUID generates Universally Unique Identifiers following the RFC 4122.
- *
- * @author  Mihail Binev <mihail@kodeart.com>
  *
  * @link    http://tools.ietf.org/html/rfc4122
  * @link    https://docs.python.org/2/library/uuid.html
@@ -28,8 +36,8 @@ final class UUID
     /* @link http://tools.ietf.org/html/rfc4122#appendix-C */
 
     /**
-     * When this namespace is specified, the name string is a fully-qualified
-     * domain name.
+     * When this namespace is specified, the name string
+     * is a fully-qualified domain name.
      */
     const NAMESPACE_DNS = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
 
@@ -65,7 +73,6 @@ final class UUID
      *                            It can be an integer or hexadecimal string
      *
      * @return string UUID v1
-     * @link Based on https://github.com/ramsey/uuid/blob/master/src/Uuid.php#L932
      */
     static public function v1($address = null): string
     {
@@ -85,9 +92,11 @@ final class UUID
             if (null === $node) {
                 if (empty($matches[1][0])) {
                     $node = null;
+                    // @codeCoverageIgnoreStart
                     $info = ('WIN' === strtoupper(substr(PHP_OS, 0, 3)))
                         ? `ipconfig /all 2>&1`
                         : `ifconfig 2>&1`;
+                    // @codeCoverageIgnoreEnd
 
                     // cache the info in $matches
                     preg_match_all('~[^:]([a-f0-9]{2}([:-])[a-f0-9]{2}(\2[a-f0-9]{2}){4})[^:]~i',
@@ -173,6 +182,50 @@ final class UUID
     }
 
     /**
+     * Version 4, pseudo-random (xxxxxxxx-xxxx-4xxx-[8|9|a|b]xxx-xxxxxxxxxxxx)
+     *
+     * @return string 128bit of pseudo-random UUID
+     * @see http://en.wikipedia.org/wiki/UUID#Version_4_.28random.29
+     */
+    static public function v4(): string
+    {
+        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0x0fff) | 0x4000,
+            mt_rand(0, 0x3fff) | 0x8000, // [8,9,a,b]
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+        );
+    }
+
+    /**
+     * UUID v5 (name based, SHA1).
+     *
+     * @param string $namespace UUID namespace identifier
+     * @param string $name A name
+     *
+     * @return string UUID v5
+     */
+    static public function v5($namespace, string $name): string
+    {
+        return UUID::fromName($namespace, $name, 5);
+    }
+
+    /**
+     * Checks if a given UUID has valid format.
+     *
+     * @param string $uuid
+     *
+     * @return bool
+     */
+    static public function isValid(string $uuid): bool
+    {
+        $uuid = str_replace(['{', '}'], '', $uuid);
+
+        return (bool)preg_match(UUID::PATTERN, $uuid);
+    }
+
+    /**
      * Creates the v3 and/or v5 UUID.
      *
      * @param string $namespace UUID namespace identifier (see UUID constants)
@@ -204,49 +257,5 @@ final class UUID
             (hexdec(substr($hash, 16, 4)) & 0x3fff) | 0x8000,
             substr($hash, 20, 12)
         );
-    }
-
-    /**
-     * Checks if a given UUID has valid format.
-     *
-     * @param string $uuid
-     *
-     * @return bool
-     */
-    static public function isValid(string $uuid): bool
-    {
-        $uuid = str_replace(['{', '}'], '', $uuid);
-
-        return (bool)preg_match(UUID::PATTERN, $uuid);
-    }
-
-    /**
-     * Version 4, pseudo-random (xxxxxxxx-xxxx-4xxx-[8|9|a|b]xxx-xxxxxxxxxxxx)
-     *
-     * @return string 128bit of pseudo-random UUID
-     * @see http://en.wikipedia.org/wiki/UUID#Version_4_.28random.29
-     */
-    static public function v4(): string
-    {
-        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0x0fff) | 0x4000,
-            mt_rand(0, 0x3fff) | 0x8000, // [8,9,a,b]
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
-        );
-    }
-
-    /**
-     * UUID v5 (name based, SHA1).
-     *
-     * @param string $namespace UUID namespace identifier
-     * @param string $name A name
-     *
-     * @return string UUID v5
-     */
-    static public function v5($namespace, string $name): string
-    {
-        return UUID::fromName($namespace, $name, 5);
     }
 }
