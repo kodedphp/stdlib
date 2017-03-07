@@ -39,16 +39,16 @@ interface Data
     public function find(string $key, $default = null);
 
     /**
-     * Filter out only keys that are in the argument array.
+     * Extract only the required keys from the data.
      *
      * @param array $keys The list of keys that are wanted
      *
      * @return Data
      */
-    public function filter(array $keys): Data;
+    public function extract(array $keys): Data;
 
     /**
-     * Returns the object as array. Supports additional filtering.
+     * Returns the object state as array.
      *
      * @throws \Exception
      * @return array
@@ -113,7 +113,7 @@ interface Argument extends Data
      *
      * @return mixed
      */
-    public function &pull(string $key, $default = null);
+    public function pull(string $key, $default = null);
 
     /**
      * Remove a property from the storage array.
