@@ -6,7 +6,7 @@ matrix:
     - php: 7.1
   fast_finish: true
 before_script:
-  - composer update --prefer-dist
+  - composer update -o --prefer-dist
 script:
   - phpunit
 after_success:
