@@ -13,6 +13,7 @@
 namespace Koded\Stdlib;
 
 use Koded\Stdlib\Interfaces\Data;
+use Throwable;
 
 /**
  * All private fields are kept intact, but if same property names are
@@ -51,7 +52,11 @@ trait GetterTrait
      */
     public function offsetGet($offset, $default = null)
     {
-        return parent::offsetGet($offset) ?? $default;
+        try {
+            return parent::offsetGet($offset) ?? $default;
+        } catch (Throwable $e) {
+            return $default;
+        }
     }
 
     /**
@@ -119,6 +124,6 @@ trait GetterTrait
             }
         }
 
-        return new self($array);
+        return new static($array);
     }
 }
