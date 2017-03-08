@@ -17,6 +17,7 @@
             <exclude>
                 <directory>vendor</directory>
                 <directory>Tests</directory>
+                <file>functions-dev.php</file>
             </exclude>
         </whitelist>
     </filter>
