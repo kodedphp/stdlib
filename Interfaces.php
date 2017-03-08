@@ -21,41 +21,58 @@ interface Data
     /**
      * Value accessor, gets a value by name.
      *
-     * @param string $key The name of the key
+     * @param string $index The name of the key
      * @param mixed $default [optional] Default value if property does not exist
      *
      * @return mixed
      */
-    public function get(string $key, $default = null);
+    public function get(string $index, $default = null);
 
     /**
      * Search in the storage array for an array item with a dot-composite name.
      *
-     * @param string $key The name of the property (dot-notation)
+     * Example: $dataObject has this data
+     *  [
+     *      'foo' => 1,
+     *      'bar' => [
+     *          'baz' => 'gir'
+     *      ]
+     *  ];
+     *
+     *  $dataObject->find('foo'); // yields 1
+     *  $dataObject->find('bar.baz'); // yields 'gir'
+     *
+     * @return array
+     * @param string $index The name of the property (dot-notation)
      * @param mixed $default [optional] Default value if item is not found
      *
      * @return mixed
      */
-    public function find(string $key, $default = null);
+    public function find(string $index, $default = null);
 
     /**
-     * Extract only the required keys from the data.
+     * Extract only the required indexes from the data.
+     * The indexes that do not exists will have a NULL value.
      *
-     * @param array $keys The list of keys that are wanted
+     * @param array $keys List of keys to return
      *
-     * @return Data
+     * @return Data A new Data object with filtered values
      */
     public function extract(array $keys): Data;
 
     /**
+     * Checks if the key exist.
+     *
+     * @param mixed $index The index name
+     *
+     * @return bool
+     */
+    public function has($index): bool;
+
+    /**
      * Returns the object state as array.
      *
-     * @throws \Exception
      * @return array
-     *
-     * WARNING: Pay attention to
-     * @link http://us3.php.net/get_object_vars#84260
-     * @link http://us3.php.net/manual/en/function.get-object-vars.php#116092
      */
     public function toArray(): array;
 }
@@ -68,12 +85,12 @@ interface Argument extends Data
      * Value mutator.
      * Sets a value for a property.
      *
-     * @param string $key The name of the property
+     * @param string $index The name of the property
      * @param mixed $value The value
      *
      * @return Argument
      */
-    public function set(string $key, $value): Argument;
+    public function set(string $index, $value): Argument;
 
     /**
      * Imports multiple values. The existing are overridden.
@@ -88,39 +105,39 @@ interface Argument extends Data
      * "Set once". Add the value(s) for the key if that key does not exists,
      * otherwise it does not set the value.
      *
-     * @param string $key The name of the property
+     * @param string $index The name of the property
      * @param mixed $value The property value
      *
      * @return Argument
      */
-    public function upsert(string $key, $value): Argument;
+    public function upsert(string $index, $value): Argument;
 
     /**
      * Sets a variable value by reference.
      *
-     * @param string $key The key name
+     * @param string $index The key name
      * @param mixed $variable The variable that should be bound
      *
      * @return Argument
      */
-    public function bind(string $key, &$variable): Argument;
+    public function bind(string $index, &$variable): Argument;
 
     /**
      * Gets a value by name and unset it from the storage.
      *
-     * @param string $key
+     * @param string $index
      * @param mixed $default [optional]
      *
      * @return mixed
      */
-    public function pull(string $key, $default = null);
+    public function pull(string $index, $default = null);
 
     /**
      * Remove a property from the storage array.
      *
-     * @param string $key The property name
+     * @param string $index The index name
      *
      * @return Argument
      */
-    public function delete(string $key): Argument;
+    public function delete(string $index): Argument;
 }

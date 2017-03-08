@@ -12,18 +12,23 @@
 
 namespace Koded\Stdlib;
 
-use ArrayObject;
+use Countable;
+use IteratorAggregate;
 use Koded\Exceptions\ReadOnlyException;
 use Koded\Stdlib\Interfaces\{ Argument, Data };
+use Traversable;
 
 /**
  * An IMMUTABLE multi purpose class that encapsulates a read-only data.
  * It is useful for passing it around as a DTO.
  */
-final class Immutable extends ArrayObject implements Data
+class Immutable implements IteratorAggregate, Countable, Data
 {
 
-    use GetterTrait;
+    /**
+     * @var array The internal data storage
+     */
+    protected $storage = [];
 
     /**
      * Sets the object store with values.
@@ -32,52 +37,74 @@ final class Immutable extends ArrayObject implements Data
      */
     public function __construct(array $values)
     {
-        parent::__construct($values, ArrayObject::ARRAY_AS_PROPS);
+        $this->storage = $values;
     }
 
-    /**
-     * @internal
-     * {@inheritdoc}
-     */
     final public function __clone()
     {
         throw new ReadOnlyException(Data::E_CLONING_DISALLOWED, [':class' => get_class($this)]);
     }
 
-    /**
-     * @internal
-     * {@inheritdoc}
-     */
-    final public function append($value)
+    public function __get($index)
+    {
+        return $this->get($index);
+    }
+
+    public function __set($index, $value)
     {
         throw new ReadOnlyException(Data::E_READONLY_INSTANCE, [':class' => get_class($this)]);
     }
 
-    /**
-     * @internal
-     * {@inheritdoc}
-     */
-    final public function offsetSet($index, $value)
+    public function get(string $index, $default = null)
     {
-        throw new ReadOnlyException(Data::E_READONLY_INSTANCE, [':class' => get_class($this)]);
+        return $this->storage[$index] ?? $default;
     }
 
-    /**
-     * @internal
-     * {@inheritdoc}
-     */
-    final public function offsetUnset($index)
+    public function find(string $index, $default = null)
     {
-        throw new ReadOnlyException(Data::E_READONLY_INSTANCE, [':class' => get_class($this)]);
+        $array = $this->toArray();
+
+        if (isset($array[$index])) {
+            return $array[$index];
+        }
+
+        foreach (explode('.', $index) as $token) {
+            if (!is_array($array) or !array_key_exists($token, $array)) {
+                return $default;
+            }
+
+            $array = $array[$token];
+        }
+
+        return $array;
     }
 
-    /**
-     * @internal
-     * {@inheritdoc}
-     */
-    final public function exchangeArray($input)
+    public function toArray(): array
     {
-        throw new ReadOnlyException(Data::E_READONLY_INSTANCE, [':class' => get_class($this)]);
+        return $this->storage;
+    }
+
+    public function has($index): bool
+    {
+        return array_key_exists($index, $this->storage);
+    }
+
+    public function extract(array $keys): Data
+    {
+        $array = [];
+
+        foreach ($keys as $index) {
+            if (isset($this->storage[$index]) or array_key_exists($index, $this->storage)) {
+                $array[$index] = $this->storage[$index];
+            }
+        }
+
+        return new static($array);
+    }
+
+    public function count()
+    {
+        return count($this->storage);
     }
 
     /**
@@ -88,5 +115,16 @@ final class Immutable extends ArrayObject implements Data
     public function toArgument(): Argument
     {
         return new Arguments($this->toArray());
+    }
+
+    /**
+     * @internal
+     * {@inheritdoc}
+     */
+    public function getIterator(): Traversable
+    {
+        foreach ($this->storage as $k => $v) {
+            yield $k => $v;
+        }
     }
 }

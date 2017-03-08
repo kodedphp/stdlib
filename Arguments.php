@@ -12,7 +12,6 @@
 
 namespace Koded\Stdlib;
 
-use ArrayObject;
 use Koded\Stdlib\Interfaces\{ Argument, Data };
 
 /**
@@ -21,19 +20,55 @@ use Koded\Stdlib\Interfaces\{ Argument, Data };
  * TIP: Avoid creating a child classes with properties from this one.
  * It will mess up your Zen.
  */
-class Arguments extends ArrayObject implements Argument
+class Arguments extends Immutable implements Argument
 {
 
-    use GetterTrait, SetterTrait;
-
-    /**
-     * DataObject constructor.
-     *
-     * @param array $values [optional] Initial data
-     */
-    public function __construct(array $values = [])
+    public function __set($index, $value): Argument
     {
-        parent::__construct($values, ArrayObject::ARRAY_AS_PROPS);
+        return $this->set($index, $value);
+    }
+
+    public function set(string $index, $value): Argument
+    {
+        $this->storage[$index] = $value;
+
+        return $this;
+    }
+
+    public function upsert(string $index, $value): Argument
+    {
+        return $this->has($index) ? $this : $this->set($index, $value);
+    }
+
+    public function bind(string $index, &$variable): Argument
+    {
+        $this->storage[$index] = &$variable;
+
+        return $this;
+    }
+
+    public function pull(string $index, $default = null)
+    {
+        $value = $this->get($index, $default);
+        unset($this->storage[$index]);
+
+        return $value;
+    }
+
+    public function import(array $array): Argument
+    {
+        foreach ($array as $index => $value) {
+            $this->storage[$index] = $value;
+        }
+
+        return $this;
+    }
+
+    public function delete(string $index): Argument
+    {
+        unset($this->storage[$index]);
+
+        return $this;
     }
 
     /**

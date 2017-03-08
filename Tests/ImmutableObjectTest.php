@@ -24,34 +24,6 @@ class ImmutableObjectTest extends \PHPUnit_Framework_TestCase
         clone $this->SUT;
     }
 
-    public function testShouldDisallowAppendingValues()
-    {
-        $this->expectException(ReadOnlyException::class);
-        $this->expectExceptionMessage('Koded\Stdlib\Immutable instance is read-only');
-        $this->SUT->append('test');
-    }
-
-    public function testShouldDisallowSettingValues()
-    {
-        $this->expectException(ReadOnlyException::class);
-        $this->expectExceptionMessage('Koded\Stdlib\Immutable instance is read-only');
-        $this->SUT->offsetSet('test', 'test');
-    }
-
-    public function testShouldDisallowUnsettingValues()
-    {
-        $this->expectException(ReadOnlyException::class);
-        $this->expectExceptionMessage('Koded\Stdlib\Immutable instance is read-only');
-        $this->SUT->offsetUnset('foo');
-    }
-
-    public function testShouldDisallowReplacingTheInternalStore()
-    {
-        $this->expectException(ReadOnlyException::class);
-        $this->expectExceptionMessage('Koded\Stdlib\Immutable instance is read-only');
-        $this->SUT->exchangeArray([]);
-    }
-
     public function testShouldDisallowMagicallySettingValues()
     {
         $this->expectException(ReadOnlyException::class);
@@ -68,7 +40,7 @@ class ImmutableObjectTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertNull($this->SUT->get('fubar'));
         $this->assertTrue($this->SUT->get(true));
-        $this->assertTrue(array_key_exists(null, $this->SUT));
+        $this->assertTrue($this->SUT->has(null));
         $this->assertSame('bar', $this->SUT->foo);
         $this->assertSame(0, $this->SUT->get('0'));
         $this->assertSame(0, $this->SUT->{0});
@@ -112,7 +84,8 @@ class ImmutableObjectTest extends \PHPUnit_Framework_TestCase
             true,
             'one.two.three',
             '0',
-            'null'
+            'null',
+            'non-existing'
         ]));
     }
 

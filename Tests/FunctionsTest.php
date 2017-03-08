@@ -9,7 +9,6 @@ class FunctionsTest extends \PHPUnit_Framework_TestCase
     {
         $value = value([1, 2, 3]);
         $this->assertInstanceOf(Immutable::class, $value);
-        $this->assertSame([1, 2, 3], (array)$value);
         $this->assertSame([1, 2, 3], $value->toArray());
     }
 
@@ -17,11 +16,10 @@ class FunctionsTest extends \PHPUnit_Framework_TestCase
     {
         $value = arguments([1, 2, 3]);
         $this->assertInstanceOf(Arguments::class, $value);
-        $this->assertSame([1, 2, 3], (array)$value);
         $this->assertSame([1, 2, 3], $value->toArray());
 
         $value->foo = 'bar';
-        $this->assertSame([1, 2, 3, 'foo' => 'bar'], (array)$value);
+        $this->assertSame([1, 2, 3, 'foo' => 'bar'], $value->toArray());
     }
 
     public function testClean()

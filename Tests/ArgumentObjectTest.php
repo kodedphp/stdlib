@@ -2,8 +2,7 @@
 
 namespace Koded\Stdlib;
 
-use Koded\Stdlib\Interfaces\Argument;
-use Koded\Stdlib\Interfaces\Data;
+use Koded\Stdlib\Interfaces\{ Argument, Data };
 
 class ArgumentObjectTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,7 +19,7 @@ class ArgumentObjectTest extends \PHPUnit_Framework_TestCase
             'bar' => 2,
             'baz' => 3,
             'qux' => 'zim'
-        ], (array)$this->SUT);
+        ], $this->SUT->toArray());
 
         $result = $this->SUT->set('foo', 'gir');
 
@@ -29,7 +28,7 @@ class ArgumentObjectTest extends \PHPUnit_Framework_TestCase
             'bar' => 2,
             'baz' => 3,
             'qux' => 'zim'
-        ], (array)$this->SUT);
+        ], $this->SUT->toArray());
 
         $this->assertInstanceOf(Arguments::class, $result);
     }
@@ -46,7 +45,7 @@ class ArgumentObjectTest extends \PHPUnit_Framework_TestCase
             'bar' => 2,
             'baz' => 3,
             'qux' => 2
-        ], (array)$this->SUT);
+        ], $this->SUT->toArray());
         $this->assertInstanceOf(Arguments::class, $result);
     }
 
@@ -60,7 +59,7 @@ class ArgumentObjectTest extends \PHPUnit_Framework_TestCase
             'bar' => 2,
             'baz' => 3,
             'qux' => 'zim'
-        ], (array)$this->SUT);
+        ], $this->SUT->toArray());
 
         // added because it does not exist
         $this->SUT->upsert('poo', 42);
@@ -71,7 +70,7 @@ class ArgumentObjectTest extends \PHPUnit_Framework_TestCase
             'baz' => 3,
             'qux' => 'zim',
             'poo' => 42
-        ], (array)$this->SUT);
+        ], $this->SUT->toArray());
 
         $this->assertInstanceOf(Arguments::class, $result);
     }
@@ -85,7 +84,7 @@ class ArgumentObjectTest extends \PHPUnit_Framework_TestCase
             'bar' => 2,
             'baz' => 3,
             'qux' => 'zim',
-        ], (array)$this->SUT);
+        ], $this->SUT->toArray());
 
         $var = 0;
         $this->assertEquals([
@@ -93,7 +92,7 @@ class ArgumentObjectTest extends \PHPUnit_Framework_TestCase
             'bar' => 2,
             'baz' => 3,
             'qux' => 'zim',
-        ], (array)$this->SUT);
+        ], $this->SUT->toArray());
 
         $this->assertInstanceOf(Arguments::class, $result);
     }
@@ -105,7 +104,7 @@ class ArgumentObjectTest extends \PHPUnit_Framework_TestCase
             'bar' => 2,
             'baz' => 3,
             'qux' => 'zim',
-        ], (array)$this->SUT);
+        ], $this->SUT->toArray());
 
         $this->assertSame(1, $value);
     }
@@ -118,7 +117,7 @@ class ArgumentObjectTest extends \PHPUnit_Framework_TestCase
             'bar' => 2,
             'baz' => 3,
             'qux' => 'zim',
-        ], (array)$this->SUT);
+        ], $this->SUT->toArray());
 
         // non-existing key is ignored
         $this->SUT->delete('non-existing');
@@ -127,7 +126,7 @@ class ArgumentObjectTest extends \PHPUnit_Framework_TestCase
             'bar' => 2,
             'baz' => 3,
             'qux' => 'zim',
-        ], (array)$this->SUT);
+        ], $this->SUT->toArray());
         $this->assertInstanceOf(Arguments::class, $result);
     }
 
@@ -135,6 +134,14 @@ class ArgumentObjectTest extends \PHPUnit_Framework_TestCase
     {
         $SUT = new Arguments([]);
         $this->assertInstanceOf(Data::class, $SUT->toImmutable());
+    }
+
+    public function testMagicSetter()
+    {
+        $SUT = new Arguments(['foo' => 'bar']);
+        $SUT->foo = 'qux';
+
+        $this->assertSame('qux', $SUT->foo);
     }
 
     protected function setUp()
