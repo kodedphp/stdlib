@@ -15,7 +15,9 @@ namespace Koded\Stdlib;
 use Countable;
 use IteratorAggregate;
 use Koded\Exceptions\ReadOnlyException;
-use Koded\Stdlib\Interfaces\{ Argument, Data };
+use Koded\Stdlib\Interfaces\{
+    Argument, Data
+};
 use Traversable;
 
 /**
@@ -40,7 +42,7 @@ class Immutable implements IteratorAggregate, Countable, Data
         $this->storage = $values;
     }
 
-    final public function __clone()
+    public function __clone()
     {
         throw new ReadOnlyException(Data::E_CLONING_DISALLOWED, [':class' => get_class($this)]);
     }

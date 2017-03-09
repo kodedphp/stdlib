@@ -28,6 +28,10 @@ class Arguments extends Immutable implements Argument
         return $this->set($index, $value);
     }
 
+    public function __clone()
+    {
+    }
+
     public function set(string $index, $value): Argument
     {
         $this->storage[$index] = $value;

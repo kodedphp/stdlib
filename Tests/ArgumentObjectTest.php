@@ -151,6 +151,13 @@ class ArgumentObjectTest extends TestCase
         $this->assertSame([1, 2, 3], iterator_to_array($SUT));
     }
 
+    public function testCloning()
+    {
+        $clone = clone $this->SUT;
+        $this->assertEquals($this->SUT, $clone);
+        $this->assertNotSame($this->SUT, $clone);
+    }
+
     protected function setUp()
     {
         $this->SUT = new Arguments([
