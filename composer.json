@@ -1,10 +1,10 @@
 {
   "name": "koded/stdlib",
-  "version": "1.1.0-dev",
+  "version": "1.1.1",
   "type": "library",
   "license": "BSD-3-Clause",
   "description": "A standard library for shareable classes and functions",
-  "keywords": ["mime", "mime-types", "uuid", "uuid-generator", "php7"],
+  "keywords": ["mime", "mime-types", "uuid", "uuid-generator", "immutable", "utility", "exceptions", "dto", "php7"],
   "authors": [
     {
       "name": "Mihail Binev",
