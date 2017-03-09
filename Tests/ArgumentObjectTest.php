@@ -3,8 +3,9 @@
 namespace Koded\Stdlib;
 
 use Koded\Stdlib\Interfaces\{ Argument, Data };
+use PHPUnit\Framework\TestCase;
 
-class ArgumentObjectTest extends \PHPUnit_Framework_TestCase
+class ArgumentObjectTest extends TestCase
 {
 
     /**

@@ -3,8 +3,9 @@
 namespace Koded\Stdlib;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
 
-class UUIDTest extends \PHPUnit_Framework_TestCase {
+class UUIDTest extends TestCase {
 
     const NS1 = '4d436f52-5707-4cc3-b69d-ec060ccdbcba';
     const NS2 = 'b7890c8d-f62d-4048-ab4e-9cff3ab590d2';

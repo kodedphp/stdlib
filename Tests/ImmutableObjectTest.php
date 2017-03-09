@@ -3,8 +3,9 @@
 namespace Koded\Stdlib;
 
 use Koded\Exceptions\ReadOnlyException;
+use PHPUnit\Framework\TestCase;
 
-class ImmutableObjectTest extends \PHPUnit_Framework_TestCase
+class ImmutableObjectTest extends TestCase
 {
 
     /**

@@ -4,8 +4,9 @@ namespace Koded\Stdlib;
 
 use Koded\Exceptions\ReadOnlyException;
 use Koded\Stdlib\Interfaces\Data;
+use PHPUnit\Framework\TestCase;
 
-class ReadOnlyExceptionTest extends \PHPUnit_Framework_TestCase
+class ReadOnlyExceptionTest extends TestCase
 {
 
     public function testMessageAndCode()
