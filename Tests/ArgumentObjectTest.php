@@ -144,6 +144,12 @@ class ArgumentObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('qux', $SUT->foo);
     }
 
+    public function testIterator()
+    {
+        $SUT = new Arguments([1, 2, 3]);
+        $this->assertSame([1, 2, 3], iterator_to_array($SUT));
+    }
+
     protected function setUp()
     {
         $this->SUT = new Arguments([
