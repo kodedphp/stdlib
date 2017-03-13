@@ -236,7 +236,7 @@ final class Mime
             'xlm'        => ['application/excel', 'application/vnd.ms-excel'],
             'xls'        => ['application/excel', 'application/vnd.ms-excel'],
             'xlt'        => ['application/excel', 'application/vnd.ms-excel'],
-            'xml'        => ['text/xml'],
+            'xml'        => ['text/xml', 'application/xml'],
             'xof'        => ['x-world/x-vrml'],
             'xpm'        => ['image/x-xpixmap'],
             'xsl'        => ['text/xml'],
