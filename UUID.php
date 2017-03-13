@@ -218,11 +218,23 @@ final class UUID
      *
      * @return bool
      */
-    static public function isValid(string $uuid): bool
+    static public function valid(string $uuid): bool
     {
-        $uuid = str_replace(['{', '}'], '', $uuid);
-
         return (bool)preg_match(UUID::PATTERN, $uuid);
+    }
+
+    /**
+     * Checks if a given UUID has valid format and matches against the version.
+     *
+     * @param string $uuid
+     * @param int $version Check against the version 1, 3, 4 or 5
+     *
+     * @return bool
+     */
+    static public function matches(string $uuid, int $version = 4): bool
+    {
+        assert(in_array($version, [1, 3, 4, 5]), 'Expected UUID version is 1, 3, 4 or 5');
+        return UUID::valid($uuid) and (int)$uuid[14] === $version;
     }
 
     /**
@@ -237,8 +249,8 @@ final class UUID
      */
     static private function fromName(string $namespace, string $name, int $version): string
     {
-        if (!UUID::isValid($namespace)) {
-            throw new InvalidArgumentException('Invalid UUID namespace: ' . $namespace);
+        if (false === UUID::matches($namespace, $version)) {
+            throw new InvalidArgumentException('Invalid UUID namespace ' . $namespace);
         }
 
         $hex = str_replace('-', '', $namespace);
