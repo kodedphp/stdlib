@@ -201,6 +201,16 @@ interface ConfigurationFactory
     public function fromEnvFile(string $file, string $namespace = ''): ConfigurationFactory;
 
     /**
+     * Loads the configuration options from environment variable that holds
+     * the path to the configuration file.
+     *
+     * @param string $variable Environment variable with path to the configuration file
+     *
+     * @return ConfigurationFactory
+     */
+    public function fromEnvVariable(string $variable): ConfigurationFactory;
+
+    /**
      * Loads the configuration options from INI file.
      * The sections are processed and some value types are preserved when possible (null, int and bool)
      *

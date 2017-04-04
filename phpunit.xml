@@ -24,6 +24,11 @@
 
     <php>
         <ini name="date.timezone" value="UTC"/>
+
+        <env name="KEY_1" value="42"/>
+        <env name="KEY_3" value="value3"/>
+        <env name="KEY_4" value="true"/>
+        <env name="KEY_5" value="null"/>
     </php>
 
     <logging>
