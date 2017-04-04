@@ -7,17 +7,17 @@ use PHPUnit\Framework\TestCase;
 class MimeTest extends TestCase
 {
 
-    public function testWhenMimeIsNotFoundItShouldReturnDefaultValue()
+    public function test_when_mime_is_not_found_it_should_return_default_value()
     {
         $this->assertSame('text/html', Mime::type('fubar-type'));
     }
 
-    public function testReturnFirstKnownMimeType()
+    public function test_return_first_known_mime_type()
     {
         $this->assertSame('application/x-httpd-php', Mime::type('php'));
     }
 
-    public function testReturnKnownMimeTypeByIndex()
+    public function test_return_known_mime_type_by_index()
     {
         $this->assertSame('text/csv', Mime::type('csv', 3));
     }

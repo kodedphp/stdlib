@@ -13,7 +13,7 @@ class ArgumentObjectTest extends TestCase
      */
     private $SUT;
 
-    public function testSet()
+    public function test_set()
     {
         $this->assertEquals([
             'foo' => 1,
@@ -37,7 +37,7 @@ class ArgumentObjectTest extends TestCase
     /**
      * @depends testSet
      */
-    public function testImport()
+    public function test_import()
     {
         $result = $this->SUT->import(['foo' => 42, 'qux' => 2]);
 
@@ -50,7 +50,7 @@ class ArgumentObjectTest extends TestCase
         $this->assertInstanceOf(Arguments::class, $result);
     }
 
-    public function testUpsert()
+    public function test_upsert()
     {
         // not added because 'foo' already exist
         $result = $this->SUT->upsert('foo', 42);
@@ -76,7 +76,7 @@ class ArgumentObjectTest extends TestCase
         $this->assertInstanceOf(Arguments::class, $result);
     }
 
-    public function testBind()
+    public function test_bind()
     {
         $var = 42;
         $result = $this->SUT->bind('foo', $var);
@@ -98,7 +98,7 @@ class ArgumentObjectTest extends TestCase
         $this->assertInstanceOf(Arguments::class, $result);
     }
 
-    public function testPull()
+    public function test_pull()
     {
         $value = $this->SUT->pull('foo');
         $this->assertEquals([
@@ -110,7 +110,7 @@ class ArgumentObjectTest extends TestCase
         $this->assertSame(1, $value);
     }
 
-    public function testDelete()
+    public function test_delete()
     {
         $result = $this->SUT->delete('foo');
 
@@ -131,13 +131,13 @@ class ArgumentObjectTest extends TestCase
         $this->assertInstanceOf(Arguments::class, $result);
     }
 
-    public function testItShouldTransformImmutableToArgumentObject()
+    public function test_it_should_transform_immutable_to_argument_object()
     {
         $SUT = new Arguments([]);
         $this->assertInstanceOf(Data::class, $SUT->toImmutable());
     }
 
-    public function testMagicSetter()
+    public function test_magic_setter()
     {
         $SUT = new Arguments(['foo' => 'bar']);
         $SUT->foo = 'qux';
@@ -145,13 +145,13 @@ class ArgumentObjectTest extends TestCase
         $this->assertSame('qux', $SUT->foo);
     }
 
-    public function testIterator()
+    public function test_iterator()
     {
         $SUT = new Arguments([1, 2, 3]);
         $this->assertSame([1, 2, 3], iterator_to_array($SUT));
     }
 
-    public function testCloning()
+    public function test_cloning()
     {
         $clone = clone $this->SUT;
         $this->assertEquals($this->SUT, $clone);

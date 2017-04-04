@@ -18,7 +18,7 @@ class UUIDTest extends TestCase
     /**
      * @test
      */
-    public function validatesTheUuidFormat()
+    public function validates_the_uuid_format()
     {
         $this->assertTrue(UUID::valid(UUID::v4()));
     }
@@ -26,7 +26,7 @@ class UUIDTest extends TestCase
     /**
      * @test
      */
-    public function v1WithNode()
+    public function v1_with_node()
     {
         $uuid = UUID::v1('08:60:6e:11:c0:8e');
         $this->assertTrue(UUID::matches($uuid, 1));
@@ -36,7 +36,7 @@ class UUIDTest extends TestCase
     /**
      * @test
      */
-    public function v1WithIntegerNode()
+    public function v1_with_integer_node()
     {
         $uuid = UUID::v1(0x7fffffff);
         $this->assertTrue(UUID::matches($uuid, 1));
@@ -45,7 +45,7 @@ class UUIDTest extends TestCase
     /**
      * @test
      */
-    public function v1WithInvalidNode()
+    public function v1_with_invalid_node()
     {
         $this->expectException(InvalidArgumentException::class);
         UUID::v1('127.0.0.1');
@@ -54,7 +54,7 @@ class UUIDTest extends TestCase
     /**
      * @test
      */
-    public function v1WithInvalidIntegerNode()
+    public function v1_with_invalid_integer_node()
     {
         $this->expectException(InvalidArgumentException::class);
         UUID::v1(2987918954764484727721);
@@ -63,7 +63,7 @@ class UUIDTest extends TestCase
     /**
      * @test
      */
-    public function v1WithInvalidHexadecimalNode()
+    public function v1_with_invalid_hexadecimal_node()
     {
         $this->expectException(InvalidArgumentException::class);
         UUID::v1('z7ba3e221');
@@ -72,7 +72,7 @@ class UUIDTest extends TestCase
     /**
      * @test
      */
-    public function v1CreatedWithoutNode()
+    public function v1_created_without_node()
     {
         $uuid = UUID::v1();
         $this->assertTrue(UUID::matches($uuid, 1));
@@ -81,7 +81,7 @@ class UUIDTest extends TestCase
     /**
      * @test
      */
-    public function v3UuidsFromSameNamespaceAndSameNameAreEqual()
+    public function v3_uuids_from_same_namespace_and_same_name_are_equal()
     {
         $uuid1 = UUID::v3(self::NS3_1, 'foo/bar');
         $uuid2 = UUID::v3(self::NS3_1, 'foo/bar');
@@ -92,7 +92,7 @@ class UUIDTest extends TestCase
     /**
      * @test
      */
-    public function v3UuidsFromSameNamespaceAndDifferentNamesAreDifferent()
+    public function v3_uuids_from_same_namespace_and_different_names_are_different()
     {
         $uuid1 = UUID::v3(self::NS3_1, '123');
         $uuid2 = UUID::v3(self::NS3_1, '456');
@@ -104,7 +104,7 @@ class UUIDTest extends TestCase
     /**
      * @test
      */
-    public function v3UuidsFromDifferentNamespaceAndSameNameAreDifferent()
+    public function v3_uuids_from_different_namespace_and_same_name_are_different()
     {
         $uuid1 = UUID::v3(self::NS3_1, 'foo');
         $uuid2 = UUID::v3(self::NS3_2, 'foo');
@@ -116,7 +116,7 @@ class UUIDTest extends TestCase
     /**
      * @test
      */
-    public function v3ThrowsExceptionOnInvalidNamespace()
+    public function v3_throws_exception_on_invalid_namespace()
     {
         $this->expectException(InvalidArgumentException::class);
         UUID::v3('foo', 'foo');
@@ -125,7 +125,7 @@ class UUIDTest extends TestCase
     /**
      * @test
      */
-    public function checkTheV4Format()
+    public function check_the_v4_format()
     {
         $v4 = UUID::v4();
         $this->assertTrue(UUID::valid($v4));
@@ -138,7 +138,7 @@ class UUIDTest extends TestCase
     /**
      * @test
      */
-    public function v5UuidsFromSameNamespaceAndSameNameAreEqual()
+    public function v5_uuids_from_same_namespace_and_same_name_are_equal()
     {
         $uuid1 = UUID::v5(self::NS5_1, 'foo/bar/baz');
         $uuid2 = UUID::v5(self::NS5_1, 'foo/bar/baz');
@@ -149,7 +149,7 @@ class UUIDTest extends TestCase
     /**
      * @test
      */
-    public function v5UuidsFromSameNamespaceAndDifferentNamesAreDifferent()
+    public function v5_uuids_from_same_namespace_and_different_names_are_different()
     {
         $uuid1 = UUID::v5(self::NS5_1, '123');
         $uuid2 = UUID::v5(self::NS5_1, '456');
@@ -161,7 +161,7 @@ class UUIDTest extends TestCase
     /**
      * @test
      */
-    public function v5UuidsFromDifferentNamespaceAndSameNameAreDifferent()
+    public function v5_uuids_from_different_namespace_and_same_name_are_different()
     {
         $uuid1 = UUID::v5(self::NS5_1, 'foo');
         $uuid2 = UUID::v5(self::NS5_2, 'foo');
@@ -173,7 +173,7 @@ class UUIDTest extends TestCase
     /**
      * @test
      */
-    public function v5ThrowsExceptionOnInvalidNamespace()
+    public function v5_throws_exception_on_invalid_namespace()
     {
         $this->expectException(InvalidArgumentException::class);
         UUID::v5('foo', 'foo');
@@ -182,7 +182,7 @@ class UUIDTest extends TestCase
     /**
      * @test
      */
-    public function methodMatchesFailsOnUnsupportedUuidVersion()
+    public function method_matches_fails_on_unsupported_uuid_version()
     {
         $this->expectException(Warning::class);
         $this->expectExceptionMessage('assert(): Expected UUID version is 1, 3, 4 or 5 failed');

@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 class ReadOnlyExceptionTest extends TestCase
 {
 
-    public function testMessageAndCode()
+    public function test_message_and_code()
     {
         $ex1 = new ReadOnlyException(Data::E_CLONING_DISALLOWED, [':class' => 'Foo']);
         $ex2 = new ReadOnlyException(Data::E_READONLY_INSTANCE, [':class' => 'Bar']);

@@ -13,31 +13,31 @@ class ImmutableObjectTest extends TestCase
      */
     private $SUT;
 
-    public function testShouldLoadTheArray()
+    public function test_should_load_the_array()
     {
         $this->assertCount(8, $this->SUT);
     }
 
-    public function testShouldDisallowCloning()
+    public function test_should_disallow_cloning()
     {
         $this->expectException(ReadOnlyException::class);
         $this->expectExceptionMessage('Cloning the Koded\Stdlib\Immutable instance is not allowed');
         clone $this->SUT;
     }
 
-    public function testShouldDisallowMagicallySettingValues()
+    public function test_should_disallow_magically_setting_values()
     {
         $this->expectException(ReadOnlyException::class);
         $this->expectExceptionMessage('Koded\Stdlib\Immutable instance is read-only');
         $this->SUT->fubar = 'no';
     }
 
-    public function testShouldTransformImmutableToArgumentObject()
+    public function test_should_transform_immutable_to_argument_object()
     {
         $this->assertInstanceOf(Arguments::class, $this->SUT->toArgument());
     }
 
-    public function testShouldGetThings()
+    public function test_should_get_things()
     {
         $this->assertNull($this->SUT->get('fubar'));
         $this->assertTrue($this->SUT->get(true));
@@ -53,13 +53,13 @@ class ImmutableObjectTest extends TestCase
         $this->assertSame('null', $this->SUT->get(false));
     }
 
-    public function testShouldReturnNullOnNonExistingKey()
+    public function test_should_return_null_on_non_existing_key()
     {
         $this->assertNull($this->SUT->yabbadabbadoo);
         $this->assertNull($this->SUT->get('yabbadabbadoo'));
     }
 
-    public function testShouldFindThings()
+    public function test_should_find_things()
     {
         $this->assertEquals('not found', $this->SUT->find('key3', 'not found'));
         $this->assertSame('found me', $this->SUT->find('array.key3.key3-1.key3-1-1'));
@@ -71,7 +71,7 @@ class ImmutableObjectTest extends TestCase
         $this->assertSame('four', $this->SUT->find('one.two.three'));
     }
 
-    public function testShouldFilterOutTheData()
+    public function test_should_filter_out_the_data()
     {
         $expected = new Immutable([
             '0' => 0,
