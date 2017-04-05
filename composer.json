@@ -1,5 +1,5 @@
 {
-  "name": "kodedphp/stdlib",
+  "name": "koded/stdlib",
   "type": "library",
   "license": "BSD-3-Clause",
   "description": "A standard library for shareable classes and functions",

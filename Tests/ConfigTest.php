@@ -35,7 +35,7 @@ class ConfigTest extends TestCase
         $config = new Config;
         $config->fromJsonFile('composer.json');
 
-        $this->assertSame('kodedphp/stdlib', $config->name);
+        $this->assertSame('koded/stdlib', $config->name);
     }
 
     public function test_should_load_json_file_from_absolute_path()
@@ -43,7 +43,7 @@ class ConfigTest extends TestCase
         $config = new Config;
         $config->fromJsonFile(__DIR__ . '/../composer.json');
 
-        $this->assertSame('kodedphp/stdlib', $config->name);
+        $this->assertSame('koded/stdlib', $config->name);
     }
 
     public function test_should_load_options_from_object_instance()
@@ -138,7 +138,6 @@ class ConfigTest extends TestCase
 
     public function test_should_trim_names_from_environment_variables()
     {
-        // don't ask
         putenv('KEY_4=true');
         $config = new Config;
         $config->fromEnvironment(['KEY_1', 'KEY_3', 'KEY_4', 'KEY_5'], 'KEY_');
@@ -148,7 +147,6 @@ class ConfigTest extends TestCase
 
     public function test_should_not_alter_the_keys_from_environment_variables()
     {
-        // don't ask
         putenv('KEY_4=true');
         $config = new Config;
         $config->fromEnvironment(['KEY_1', 'KEY_3', 'KEY_4', 'KEY_5'], '', false);
@@ -158,7 +156,6 @@ class ConfigTest extends TestCase
 
     public function test_should_create_arguments_object_using_a_namespace()
     {
-        // don't ask
         putenv('KEY_4=true');
         $config = new Config;
         $config->fromEnvironment(['KEY_1', 'KEY_3', 'KEY_4', 'KEY_5']);

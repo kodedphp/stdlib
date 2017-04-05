@@ -6,8 +6,9 @@ matrix:
     - php: 7.1
   fast_finish: true
 before_script:
+  - composer selfupdate
   - composer update -o --prefer-dist
 script:
-  - phpunit
+  - vendor/bin/phpunit
 after_success:
   - travis_retry php vendor/bin/coveralls

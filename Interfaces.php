@@ -141,6 +141,13 @@ interface Argument extends Data
      * @return Argument
      */
     public function delete(string $index): Argument;
+
+    /**
+     * Clears the internal storage.
+     *
+     * @return Argument
+     */
+    public function clear(): Argument;
 }
 
 

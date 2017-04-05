@@ -13,9 +13,7 @@
 namespace Koded\Stdlib;
 
 use Exception;
-use Koded\Stdlib\Interfaces\{
-    Configuration, ConfigurationFactory, Data
-};
+use Koded\Stdlib\Interfaces\{ Configuration, ConfigurationFactory, Data };
 use Throwable;
 
 /**

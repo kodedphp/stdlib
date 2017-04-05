@@ -158,6 +158,15 @@ class ArgumentObjectTest extends TestCase
         $this->assertNotSame($this->SUT, $clone);
     }
 
+    public function test_should_clear_the_storage()
+    {
+        $SUT = new Arguments(['foo' => 'bar']);
+        $this->assertCount(1, $SUT);
+
+        $SUT->clear();
+        $this->assertCount(0, $SUT);
+    }
+
     protected function setUp()
     {
         $this->SUT = new Arguments([

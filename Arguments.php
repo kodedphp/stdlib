@@ -75,6 +75,13 @@ class Arguments extends Immutable implements Argument
         return $this;
     }
 
+    public function clear(): Argument
+    {
+        $this->storage = [];
+
+        return $this;
+    }
+
     /**
      * @experimental
      *

@@ -15,9 +15,7 @@ namespace Koded\Stdlib;
 use Countable;
 use IteratorAggregate;
 use Koded\Exceptions\ReadOnlyException;
-use Koded\Stdlib\Interfaces\{
-    Argument, Data
-};
+use Koded\Stdlib\Interfaces\{ Argument, Data };
 use Traversable;
 
 /**
@@ -120,8 +118,9 @@ class Immutable implements IteratorAggregate, Countable, Data
     }
 
     /**
-     * @internal
      * {@inheritdoc}
+     *
+     * @internal
      */
     public function getIterator(): Traversable
     {
