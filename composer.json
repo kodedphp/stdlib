@@ -16,7 +16,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Koded\\": ""
+      "Koded\\Stdlib\\": ""
     },
     "files": [
       "functions.php"
@@ -33,5 +33,10 @@
     "files": [
       "functions-dev.php"
     ]
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.5.x-dev"
+    }
   }
 }

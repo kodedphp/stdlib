@@ -169,8 +169,8 @@ class Config extends Arguments implements ConfigurationFactory
     {
         $filtered = [];
         foreach ($data as $k => $v) {
-            if ('' !== $namespace and 0 === strpos($k, $namespace, 0)) {
-                $trim and $k = str_replace($namespace, '', $k);
+            if ($trim and '' !== $namespace and 0 === strpos($k, $namespace, 0)) {
+                $k = str_replace($namespace, '', $k);
             }
             $filtered[$lowercase ? strtolower($k) : $k] = $v;
         }
