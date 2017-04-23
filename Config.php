@@ -61,7 +61,7 @@ class Config extends Arguments implements ConfigurationFactory
      * @param string $rootPath Path to which files are read relative from.
      *                         When the config object is created by an application/library
      *                         this is the application's root path
-     * @param Data   $defaults [optional] An Optional config object with default values
+     * @param Interfaces\Data   $defaults [optional] An Optional config object with default values
      */
     public function __construct(string $rootPath = '', Data $defaults = null)
     {

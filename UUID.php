@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 /*
  * This file is part of the Koded package.
@@ -86,7 +86,7 @@ final class UUID
          * @return null|string
          * @throws InvalidArgumentException
          */
-        $node = function ($node = null) use (&$matches) {
+        $node = function($node = null) use (&$matches) {
 
             // get MAC address
             if (null === $node) {
@@ -129,12 +129,12 @@ final class UUID
             return $node;
         }; // end $node
 
-        $clockSeq = function () {
+        $clockSeq = function() {
             // random 14-bit sequence number, http://tools.ietf.org/html/rfc4122#section-4.2.1.1
             return mt_rand(0, 1 << 14);
         };
 
-        $uuidTime = function () {
+        $uuidTime = function() {
             $time = gettimeofday();
             $time = ($time['sec'] * 10000000) + ($time['usec'] * 10) + 0x01b21dd213814000;
 
