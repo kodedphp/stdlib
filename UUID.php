@@ -74,7 +74,7 @@ final class UUID
      *
      * @return string UUID v1
      */
-    static public function v1($address = null): string
+    public static function v1($address = null): string
     {
         static $matches = [[null], [null]];
 
@@ -176,7 +176,7 @@ final class UUID
      *
      * @return string UUID v3
      */
-    static public function v3($namespace, $name): string
+    public static function v3($namespace, $name): string
     {
         return UUID::fromName($namespace, $name, 3);
     }
@@ -187,7 +187,7 @@ final class UUID
      * @return string 128bit of pseudo-random UUID
      * @see http://en.wikipedia.org/wiki/UUID#Version_4_.28random.29
      */
-    static public function v4(): string
+    public static function v4(): string
     {
         return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             mt_rand(0, 0xffff), mt_rand(0, 0xffff),
@@ -206,7 +206,7 @@ final class UUID
      *
      * @return string UUID v5
      */
-    static public function v5($namespace, string $name): string
+    public static function v5($namespace, string $name): string
     {
         return UUID::fromName($namespace, $name, 5);
     }
@@ -218,7 +218,7 @@ final class UUID
      *
      * @return bool
      */
-    static public function valid(string $uuid): bool
+    public static function valid(string $uuid): bool
     {
         return (bool)preg_match(UUID::PATTERN, $uuid);
     }
@@ -231,7 +231,7 @@ final class UUID
      *
      * @return bool
      */
-    static public function matches(string $uuid, int $version = 4): bool
+    public static function matches(string $uuid, int $version = 4): bool
     {
         assert(in_array($version, [1, 3, 4, 5]), 'Expected UUID version 1, 3, 4 or 5');
         return UUID::valid($uuid) and (int)$uuid[14] === $version;
@@ -247,7 +247,7 @@ final class UUID
      * @throws InvalidArgumentException
      * @return string UUID 3 or 5
      */
-    static private function fromName(string $namespace, string $name, int $version): string
+    private static function fromName(string $namespace, string $name, int $version): string
     {
         if (false === UUID::matches($namespace, $version)) {
             throw new InvalidArgumentException('Invalid UUID namespace ' . $namespace);
