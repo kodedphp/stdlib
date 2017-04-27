@@ -91,7 +91,6 @@ final class UUID
             // get MAC address
             if (null === $node) {
                 if (empty($matches[1][0])) {
-                    $node = null;
                     // @codeCoverageIgnoreStart
                     $info = ('WIN' === strtoupper(substr(PHP_OS, 0, 3)))
                         ? `ipconfig /all 2>&1`
