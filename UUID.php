@@ -119,7 +119,7 @@ final class UUID
                 $node = sprintf('%012x', $node);
             }
 
-            if (ctype_xdigit($node) and strlen($node) <= 12) {
+            if (ctype_xdigit($node) && strlen($node) <= 12) {
                 $node = strtolower(sprintf('%012s', $node));
             } else {
                 throw new InvalidArgumentException('UUID invalid node value');
@@ -233,7 +233,7 @@ final class UUID
     public static function matches(string $uuid, int $version = 4): bool
     {
         assert(in_array($version, [1, 3, 4, 5]), 'Expected UUID version 1, 3, 4 or 5');
-        return UUID::valid($uuid) and (int)$uuid[14] === $version;
+        return UUID::valid($uuid) && (int)$uuid[14] === $version;
     }
 
     /**
