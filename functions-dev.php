@@ -26,9 +26,9 @@ function dump($var, $label = null, bool $traceback = false, bool $die = true)
     $MESSAGE_HTM = '<span style="clear:both; color:black; font-size:11px;">[<b>%s</b>] %s (%s) %s</span>';
 
     list($position, $backtrace) = (function(array $backtrace) {
-        if (isset($backtrace[1]) and '__invoke' === $backtrace[1]['function']) {
+        if (isset($backtrace[1]) && '__invoke' === $backtrace[1]['function']) {
             $p = $backtrace[1]['class'] . $backtrace[1]['type'] . $backtrace[1]['function'] . ':' . $backtrace[0]['line'];
-        } else if ('dump' === $backtrace[0]['function'] and count($backtrace) > 1) {
+        } else if ('dump' === $backtrace[0]['function'] && count($backtrace) > 1) {
             $p = $backtrace[1]['class'] ?? $backtrace[0]['file'] ?? __FILE__;
             $p .= $backtrace[1]['type'] ?? ' *';
             $p .= $backtrace[1]['function'] . ':' . $backtrace[0]['line'] ?? $backtrace[1]['line'];

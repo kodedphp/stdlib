@@ -69,7 +69,7 @@ class Immutable implements IteratorAggregate, Countable, Data
         }
 
         foreach (explode('.', $index) as $token) {
-            if (!is_array($array) or !array_key_exists($token, $array)) {
+            if (!is_array($array) || !array_key_exists($token, $array)) {
                 return $default;
             }
 
@@ -94,7 +94,7 @@ class Immutable implements IteratorAggregate, Countable, Data
         $array = [];
 
         foreach ($keys as $index) {
-            if (isset($this->storage[$index]) or array_key_exists($index, $this->storage)) {
+            if (isset($this->storage[$index]) || array_key_exists($index, $this->storage)) {
                 $array[$index] = $this->storage[$index];
             }
         }
