@@ -73,13 +73,14 @@ class ImmutableObjectTest extends TestCase
 
     public function test_should_filter_out_the_data()
     {
-        $expected = new Immutable([
+        $expected = [
             '0' => 0,
             'null' => null,
             'one.two.three' => 'four',
             true => true,
+            'non-existing' => null
 
-        ]);
+        ];
 
         $this->assertEquals($expected, $this->SUT->extract([
             true,

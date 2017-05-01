@@ -89,17 +89,14 @@ class Immutable implements IteratorAggregate, Countable, Data
         return array_key_exists($index, $this->storage);
     }
 
-    public function extract(array $keys): Data
+    public function extract(array $keys): array
     {
-        $array = [];
-
+        $found = [];
         foreach ($keys as $index) {
-            if (isset($this->storage[$index]) || array_key_exists($index, $this->storage)) {
-                $array[$index] = $this->storage[$index];
-            }
+            $found[$index] = $this->storage[$index] ?? null;
         }
 
-        return new static($array);
+        return $found;
     }
 
     public function filter(

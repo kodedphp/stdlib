@@ -57,9 +57,9 @@ interface Data extends ArrayDataFilter
      *
      * @param array $keys List of keys to return
      *
-     * @return static A new Data object with filtered values
+     * @return array An array with filtered values
      */
-    public function extract(array $keys);
+    public function extract(array $keys): array;
 
     /**
      * Checks if the key exist.
