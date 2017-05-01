@@ -23,7 +23,7 @@ use Koded\Stdlib\Interfaces\{ Argument, Data };
 class Arguments extends Immutable implements Argument
 {
 
-    public function __set($index, $value): Argument
+    public function __set($index, $value)
     {
         return $this->set($index, $value);
     }
@@ -32,19 +32,19 @@ class Arguments extends Immutable implements Argument
     {
     }
 
-    public function set(string $index, $value): Argument
+    public function set(string $index, $value)
     {
         $this->storage[$index] = $value;
 
         return $this;
     }
 
-    public function upsert(string $index, $value): Argument
+    public function upsert(string $index, $value)
     {
         return $this->has($index) ? $this : $this->set($index, $value);
     }
 
-    public function bind(string $index, &$variable): Argument
+    public function bind(string $index, &$variable)
     {
         $this->storage[$index] = &$variable;
 
@@ -59,7 +59,7 @@ class Arguments extends Immutable implements Argument
         return $value;
     }
 
-    public function import(array $array): Argument
+    public function import(array $array)
     {
         foreach ($array as $index => $value) {
             $this->storage[$index] = $value;
@@ -68,14 +68,19 @@ class Arguments extends Immutable implements Argument
         return $this;
     }
 
-    public function delete(string $index): Argument
+    public function namespace(string $prefix, bool $lowercase = true, bool $trim = true)
+    {
+        return new static($this->filter($this->toArray(), $prefix, $lowercase, $trim));
+    }
+
+    public function delete(string $index)
     {
         unset($this->storage[$index]);
 
         return $this;
     }
 
-    public function clear(): Argument
+    public function clear()
     {
         $this->storage = [];
 

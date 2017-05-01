@@ -58,10 +58,10 @@ class Config extends Arguments implements ConfigurationFactory
     /**
      * Config constructor.
      *
-     * @param string $rootPath Path to which files are read relative from.
-     *                         When the config object is created by an application/library
-     *                         this is the application's root path
-     * @param Interfaces\Data   $defaults [optional] An Optional config object with default values
+     * @param string          $rootPath Path to which files are read relative from.
+     *                                  When the config object is created by an application/library
+     *                                  this is the application's root path
+     * @param Interfaces\Data $defaults [optional] An Optional config object with default values
      */
     public function __construct(string $rootPath = '', Data $defaults = null)
     {
@@ -114,7 +114,7 @@ class Config extends Arguments implements ConfigurationFactory
                 return $data;
             }
 
-            return $this->filterNamespace($data, $namespace);
+            return $this->filter($data, $namespace);
 
         }, $filename);
     }
@@ -155,26 +155,9 @@ class Config extends Arguments implements ConfigurationFactory
         }
 
         $data = parse_ini_string(join(PHP_EOL, $data), false, INI_SCANNER_TYPED) ?: [];
-        $this->import($this->filterNamespace($data, $namespace, $lowercase, $trim));
+        $this->import($this->filter($data, $namespace, $lowercase, $trim));
 
         return $this;
-    }
-
-    public function getNamespace(string $namespace, bool $lowercase = true, bool $trim = true): Data
-    {
-        return new Arguments($this->filterNamespace($this->toArray(), $namespace, $lowercase, $trim));
-    }
-
-    public function filterNamespace(array $data, string $namespace, bool $lowercase = true, bool $trim = true): array
-    {
-        $filtered = [];
-        foreach ($data as $k => $v) {
-            if ($trim && '' !== $namespace && 0 === strpos($k, $namespace, 0)) {
-                $k = str_replace($namespace, '', $k);
-            }
-            $filtered[$lowercase ? strtolower($k) : $k] = $v;
-        }
-        return $filtered;
     }
 
     public function silent(bool $silent): ConfigurationFactory
@@ -182,6 +165,11 @@ class Config extends Arguments implements ConfigurationFactory
         $this->silent = $silent;
 
         return $this;
+    }
+
+    public function namespace(string $prefix, bool $lowercase = true, bool $trim = true)
+    {
+        return (new static($this->rootPath))->import($this->filter($this->toArray(), $prefix, $lowercase, $trim));
     }
 
     protected function loadData(callable $callable, string $filename): ConfigurationFactory

@@ -12,7 +12,7 @@
 
 namespace Koded\Stdlib\Interfaces;
 
-interface Data
+interface Data extends ArrayDataFilter
 {
 
     const E_CLONING_DISALLOWED = 1000;
@@ -57,9 +57,9 @@ interface Data
      *
      * @param array $keys List of keys to return
      *
-     * @return Data A new Data object with filtered values
+     * @return static A new Data object with filtered values
      */
-    public function extract(array $keys): Data;
+    public function extract(array $keys);
 
     /**
      * Checks if the key exist.
@@ -79,7 +79,7 @@ interface Data
 }
 
 
-interface Argument extends Data
+interface Argument extends Data, NamespaceDataFilter
 {
 
     /**
@@ -89,18 +89,18 @@ interface Argument extends Data
      * @param string $index The name of the property
      * @param mixed  $value The value
      *
-     * @return Argument
+     * @return static
      */
-    public function set(string $index, $value): Argument;
+    public function set(string $index, $value);
 
     /**
      * Imports multiple values. The existing are overridden.
      *
      * @param array $values
      *
-     * @return Argument
+     * @return static
      */
-    public function import(array $values): Argument;
+    public function import(array $values);
 
     /**
      * "Set once". Add the value(s) for the key if that key does not exists,
@@ -109,9 +109,9 @@ interface Argument extends Data
      * @param string $index The name of the property
      * @param mixed  $value The property value
      *
-     * @return Argument
+     * @return static
      */
-    public function upsert(string $index, $value): Argument;
+    public function upsert(string $index, $value);
 
     /**
      * Sets a variable value by reference.
@@ -119,9 +119,9 @@ interface Argument extends Data
      * @param string $index    The key name
      * @param mixed  $variable The variable that should be bound
      *
-     * @return Argument
+     * @return static
      */
-    public function bind(string $index, &$variable): Argument;
+    public function bind(string $index, &$variable);
 
     /**
      * Gets a value by name and unset it from the storage.
@@ -129,7 +129,7 @@ interface Argument extends Data
      * @param string $index
      * @param mixed  $default [optional]
      *
-     * @return mixed
+     * @return static
      */
     public function pull(string $index, $default = null);
 
@@ -138,16 +138,16 @@ interface Argument extends Data
      *
      * @param string $index The index name
      *
-     * @return Argument
+     * @return static
      */
-    public function delete(string $index): Argument;
+    public function delete(string $index);
 
     /**
      * Clears the internal storage.
      *
-     * @return Argument
+     * @return static
      */
-    public function clear(): Argument;
+    public function clear();
 }
 
 
@@ -155,7 +155,7 @@ interface Configuration extends Data
 {
 }
 
-interface ConfigurationFactory
+interface ConfigurationFactory extends ArrayDataFilter, NamespaceDataFilter
 {
 
     /**
@@ -200,7 +200,7 @@ interface ConfigurationFactory
      * The syntax should be the same as the INI file, without sections.
      * Some value types are preserved when possible (null, int and bool)
      *
-     * @param string $file The path to the configuration file
+     * @param string $file      The path to the configuration file
      * @param string $namespace [optional]
      *
      * @return ConfigurationFactory
@@ -237,18 +237,6 @@ interface ConfigurationFactory
     public function fromObject($object): ConfigurationFactory;
 
     /**
-     * Strips the portions of the variable names defined by the namespace value.
-     * It can also lowercase the names. Useful to transform the data from ENV variables.
-     *
-     * @param string $namespace
-     * @param bool   $lowercase [optional]
-     * @param bool   $trim [optional]
-     *
-     * @return Data
-     */
-    public function getNamespace(string $namespace, bool $lowercase = true, bool $trim = true): Data;
-
-    /**
      * Yell if something bad has happened, or pass quietly.
      *
      * @param bool $silent
@@ -265,4 +253,44 @@ interface ConfigurationFactory
      * @return Configuration
      */
     public function build(string $context): Configuration;
+}
+
+interface NamespaceDataFilter
+{
+
+    /**
+     * Strips the portions of the variable names defined by the prefix value.
+     * It can also lowercase the names. Useful to transform the data from ENV variables.
+     *
+     * Returns a new instance from the original object populated with the filtered data.
+     *
+     * @param string $prefix    The namespace prefix
+     * @param bool   $lowercase [optional] Returned indexes should be lowercase
+     * @param bool   $trim      [optional] To remove the namespace from the indexes
+     *
+     * @return static A new instance of the original object
+     */
+    public function namespace(string $prefix, bool $lowercase = true, bool $trim = true);
+}
+
+interface ArrayDataFilter
+{
+
+    /**
+     * Strips the portions of the variable names defined by the namespace value.
+     * Returns a filtered array.
+     *
+     * @param array  $data      The data should be filtered
+     * @param string $prefix    The namespace prefix for the indexes
+     * @param bool   $lowercase [optional] Returned indexes should be in lowercase
+     * @param bool   $trim      [optional] To remove the namespace from the index
+     *
+     * @return array A filtered array
+     */
+    public function filter(
+        array $data,
+        string $prefix,
+        bool $lowercase = true,
+        bool $trim = true
+    ): array;
 }

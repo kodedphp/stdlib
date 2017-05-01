@@ -2,7 +2,6 @@
 
 namespace Koded\Stdlib;
 
-use Koded\Stdlib\Interfaces\Data;
 use PHPUnit\Framework\TestCase;
 
 class ConfigTest extends TestCase
@@ -10,7 +9,7 @@ class ConfigTest extends TestCase
 
     public function test_should_load_defaults()
     {
-        $config = new Config('', new OtherConfigInstance);
+        $config = new Config('', new MockOtherConfigInstance);
         $this->assertSame([1, 2, 3], $config->list);
     }
 
@@ -51,7 +50,7 @@ class ConfigTest extends TestCase
         $config = new Config;
         $this->assertNull($config->foo);
 
-        $config->fromObject(new OtherConfigInstance);
+        $config->fromObject(new MockOtherConfigInstance);
         $this->assertSame('bar', $config->foo);
     }
 
@@ -60,7 +59,7 @@ class ConfigTest extends TestCase
         $config = new Config;
         $this->assertNull($config->foo);
 
-        $config->fromObject(OtherConfigInstance::class);
+        $config->fromObject(MockOtherConfigInstance::class);
         $this->assertSame('bar', $config->foo);
     }
 
@@ -160,16 +159,14 @@ class ConfigTest extends TestCase
         $config = new Config;
         $config->fromEnvironment(['KEY_1', 'KEY_3', 'KEY_4', 'KEY_5']);
 
-        $arguments = $config->getNamespace('KEY_');
+        $arguments = $config->namespace('KEY_');
 
-        $this->assertInstanceOf(Data::class, $arguments);
+        $this->assertInstanceOf(Config::class, $arguments);
         $this->assertSame(include __DIR__ . '/fixtures/expected-data-lowercase.php', $arguments->toArray());
     }
-
-
 }
 
-class OtherConfigInstance extends Config
+class MockOtherConfigInstance extends Config
 {
 
     public function __construct()

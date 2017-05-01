@@ -102,6 +102,25 @@ class Immutable implements IteratorAggregate, Countable, Data
         return new static($array);
     }
 
+    public function filter(
+        array $data,
+        string $prefix,
+        bool $lowercase = true,
+        bool $trim = true
+    ): array
+    {
+        $filtered = [];
+
+        foreach ($data as $k => $v) {
+            if ($trim && '' !== $prefix && 0 === strpos($k, $prefix, 0)) {
+                $k = str_replace($prefix, '', $k);
+            }
+            $filtered[$lowercase ? strtolower($k) : $k] = $v;
+        }
+
+        return $filtered;
+    }
+
     public function count()
     {
         return count($this->storage);

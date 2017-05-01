@@ -167,6 +167,37 @@ class ArgumentObjectTest extends TestCase
         $this->assertCount(0, $SUT);
     }
 
+    public function test_should_filter_the_data()
+    {
+        $SUT = new Arguments([
+            'FOO.FOO' => 'foo',
+            'FOO.BAR' => 'bar',
+            'gir' => 'qux',
+        ]);
+
+        $this->assertEquals(new Arguments([
+            'FOO' => 'foo',
+            'BAR' => 'bar',
+            'gir' => 'qux'
+        ]), $SUT->namespace('FOO.', false));
+    }
+
+    public function test_should_filter_prefixed_indexes()
+    {
+        $SUT = new Arguments([
+            'foo' => 'foo',
+            'foo.bar' => 'bar',
+            'foo.FOO' => 'DANG!', // this one overrides the non-prefixed
+            'gir' => 'qux',
+        ]);
+
+        $this->assertEquals(new Arguments([
+            'foo' => 'DANG!',
+            'bar' => 'bar',
+            'gir' => 'qux'
+        ]), $SUT->namespace('foo.'));
+    }
+
     protected function setUp()
     {
         $this->SUT = new Arguments([
