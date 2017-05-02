@@ -14,8 +14,9 @@ namespace Koded\Exceptions;
 
 use Exception;
 use Koded\Stdlib\Interfaces\Data;
+use RuntimeException;
 
-class KodedException extends Exception
+class KodedException extends RuntimeException
 {
 
     /**
@@ -27,10 +28,10 @@ class KodedException extends Exception
      * KodedException constructor.
      *
      * @param int $code As defined in the child classes
-     * @param array $arguments
+     * @param array $arguments [optional]
      * @param Exception $previous [optional]
      */
-    public function __construct(int $code, array $arguments, Exception $previous = null)
+    public function __construct(int $code, array $arguments = [], Exception $previous = null)
     {
         $message = strtr($this->messages[$code] ?? $this->message, $arguments);
         parent::__construct($message, $code, $previous);
