@@ -2,12 +2,13 @@
 
 namespace Koded\Stdlib;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 
 class ConfigTest extends TestCase
 {
 
-    public function test_should_load_defaults()
+    public function test_should_load_defaults_from_other_instance()
     {
         $config = new Config('', new MockOtherConfigInstance);
         $this->assertSame([1, 2, 3], $config->list);
@@ -15,7 +16,7 @@ class ConfigTest extends TestCase
 
     public function test_that_build_method_should_throw_exception()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('Configuration factory should implement the method ');
         (new Config)->build('');
     }
@@ -97,9 +98,35 @@ class ConfigTest extends TestCase
         $this->assertSame('found me', $config->find('array.key3.key3-1.key3-1-1'));
     }
 
+    public function test_should_load_ini_file_from_env_variable()
+    {
+        putenv('CONFIG_FILE=Tests/fixtures/config-test.ini');
+        $config = new Config;
+        $config->fromEnvVariable('CONFIG_FILE');
+
+        $this->assertSame(42, $config->find('section1.key1'));
+    }
+
+    public function test_should_throw_exception_on_bad_method_call()
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Unable to load the configuration file');
+
+        (new Config)->nonExistentMethod();
+    }
+
+    public function test_should_be_silent_on_bad_method_call()
+    {
+        $config = (new Config)
+            ->silent(true)
+            ->nonExistentMethod();
+
+        $this->assertInstanceOf(Config::class, $config);
+    }
+
     public function test_should_fail_loading_from_env_non_existing_file()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('Unable to load the configuration file');
 
         putenv('CONFIG_FILE=non-existent.conf');
@@ -109,7 +136,7 @@ class ConfigTest extends TestCase
 
     public function test_should_throw_exception_from_empty_env_variable_value()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('The environment variable "CONFIG_FILE" is not set');
 
         putenv('CONFIG_FILE=');
@@ -171,7 +198,7 @@ class MockOtherConfigInstance extends Config
 
     public function __construct()
     {
-        parent::__construct('');
+        parent::__construct();
         $this->fromPhpFile(__DIR__ . '/fixtures/nested_array.php');
     }
 }

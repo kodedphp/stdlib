@@ -14,16 +14,18 @@ namespace Koded\Stdlib;
 
 use Exception;
 use Koded\Stdlib\Interfaces\{ Configuration, ConfigurationFactory, Data };
-use Throwable;
 
 /**
  * Class Config works as a parameter bag that provides ways to fill it
  * from files or other Config instances. There are 2 common patterns
  * to populate the config,
  *
- * either you can fill the Config instance from a config file:
+ * either you can fill the Config instance from a config files:
  *
- *     $app->config()->fromFile('myconfig.php');
+ *     $app->config()->fromPhpFile('myconfig.php');
+ *     $app->config()->fromJsonFile('myconfig.json');
+ *     $app->config()->fromEnvFile('.env');
+ *     $app->config()->fromIniFile('myconfig.ini');
  *
  * or alternatively you can define the configuration options in the instance
  * that calls `fromObject`,
@@ -34,16 +36,16 @@ use Throwable;
  * Other interesting way to load configuration is from an environment variable
  * that points to a file
  *
- *     $app->config()->fromEnv('MY_APP_SETTINGS');
+ *     $app->config()->fromEnvVariable('MY_APP_SETTINGS');
  *
  * In this case, before launching the application you have to set the env variable
  * to the file you want to use. On Linux and OSX use the export statement
  *
- *     export MY_APP_SETTINGS='/path/to/config/file'
+ *     export MY_APP_SETTINGS='/path/to/config/file.php'
  *
  * or somewhere in your app bootstrap phase before constructing the Api instance
  *
- *     putenv('MY_APP_SETTINGS=/path/to/config/file');
+ *     putenv('MY_APP_SETTINGS=/path/to/config/file.php');
  *
  */
 class Config extends Arguments implements ConfigurationFactory
@@ -67,6 +69,27 @@ class Config extends Arguments implements ConfigurationFactory
     {
         parent::__construct($defaults ? $defaults->toArray() : []);
         $this->rootPath = $rootPath ?: getcwd();
+    }
+
+    /**
+     * Bad method calls can be suppressed and allow the app
+     * to continue execution by setting the silent(true).
+     *
+     * The calling app should handle their configuration appropriately.
+     *
+     * @param string $name Method name
+     * @param array $arguments [optional]
+     *
+     * @return ConfigurationFactory
+     * @throws Exception
+     */
+    public function __call($name, $arguments): ConfigurationFactory
+    {
+        if (false === $this->silent) {
+            throw new Exception('Unable to load the configuration file ' . current($arguments));
+        }
+
+        return $this;
     }
 
     public function build(string $context): Configuration
@@ -122,7 +145,8 @@ class Config extends Arguments implements ConfigurationFactory
     public function fromEnvVariable(string $variable): ConfigurationFactory
     {
         if (!empty($filename = getenv($variable))) {
-            return $this->fromPhpFile($filename);
+            $extension = ucfirst(pathinfo($filename, PATHINFO_EXTENSION));
+            return call_user_func([$this, "from{$extension}File"], $filename);
         }
 
         if (false === $this->silent) {
@@ -175,14 +199,7 @@ class Config extends Arguments implements ConfigurationFactory
     protected function loadData(callable $callable, string $filename): ConfigurationFactory
     {
         $file = ('/' === $filename[0]) ? $filename : $this->rootPath . '/' . ltrim($filename, '/');
-
-        try {
-            $this->import($callable($file));
-        } catch (Throwable $e) {
-            if (false === $this->silent) {
-                throw new Exception('Unable to load the configuration file ' . $file);
-            }
-        }
+        $this->import($callable($file));
 
         return $this;
     }
