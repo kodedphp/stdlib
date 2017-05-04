@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the Koded package.
@@ -171,7 +171,7 @@ final class UUID
      * UUID v3 (name based, MD5).
      *
      * @param string $namespace UUID namespace identifier
-     * @param string $name A name
+     * @param string $name      A name
      *
      * @return string UUID v3
      */
@@ -188,20 +188,18 @@ final class UUID
      */
     public static function v4(): string
     {
-        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0x0fff) | 0x4000,
-            mt_rand(0, 0x3fff) | 0x8000, // 8,9,a,b
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
-        );
+        $bytes = unpack('n*', random_bytes(16));
+        $bytes[4] = $bytes[4] & 0x0fff | 0x4000;
+        $bytes[5] = $bytes[5] & 0x3fff | 0x8000;
+
+        return vsprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x', $bytes);
     }
 
     /**
      * UUID v5 (name based, SHA1).
      *
      * @param string $namespace UUID namespace identifier
-     * @param string $name A name
+     * @param string $name      A name
      *
      * @return string UUID v5
      */
@@ -226,7 +224,7 @@ final class UUID
      * Checks if a given UUID has valid format and matches against the version.
      *
      * @param string $uuid
-     * @param int $version Check against the version 1, 3, 4 or 5
+     * @param int    $version Check against the version 1, 3, 4 or 5
      *
      * @return bool
      */
@@ -240,8 +238,8 @@ final class UUID
      * Creates the v3 and/or v5 UUID.
      *
      * @param string $namespace UUID namespace identifier (see UUID constants)
-     * @param string $name A name
-     * @param int $version 3 or 5
+     * @param string $name      A name
+     * @param int    $version   3 or 5
      *
      * @throws InvalidArgumentException
      * @return string UUID 3 or 5
