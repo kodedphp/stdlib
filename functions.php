@@ -50,3 +50,25 @@ function clean(string $input, string $encoding = 'UTF-8'): string
 {
     return htmlentities($input, ENT_QUOTES | ENT_HTML5, $encoding);
 }
+
+/**
+ * Creates a random generated string with optional prefix and/or suffix.
+ *
+ * NOTE: DO NOT use it for passwords or any data that requires cryptographic secureness!
+ *
+ * @param int    $length [optional]
+ * @param string $prefix [optional]
+ * @param string $suffix [optional]
+ *
+ * @return string
+ * @since 1.10.0
+ */
+function random_alpha_numeric(int $length = 16, string $prefix = '', string $suffix = ''): string
+{
+    $buffer = '';
+    for ($x = 0; $x < $length; ++$x) {
+        $buffer .= '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'[random_int(0, 61)];
+    }
+
+    return $prefix . $buffer . $suffix;
+}

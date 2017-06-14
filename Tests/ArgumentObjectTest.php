@@ -35,7 +35,7 @@ class ArgumentObjectTest extends TestCase
     }
 
     /**
-     * @depends testSet
+     * @depends test_set
      */
     public function test_import()
     {
@@ -52,7 +52,7 @@ class ArgumentObjectTest extends TestCase
 
     public function test_upsert()
     {
-        // not added because 'foo' already exist
+        // Not added because 'foo' already exist
         $result = $this->SUT->upsert('foo', 42);
 
         $this->assertEquals([
@@ -62,7 +62,7 @@ class ArgumentObjectTest extends TestCase
             'qux' => 'zim'
         ], $this->SUT->toArray());
 
-        // added because it does not exist
+        // Added because it does not exist
         $this->SUT->upsert('poo', 42);
 
         $this->assertEquals([
