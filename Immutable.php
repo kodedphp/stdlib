@@ -12,18 +12,17 @@
 
 namespace Koded\Stdlib;
 
-use Countable;
-use IteratorAggregate;
-use Koded\Exceptions\ReadOnlyException;
-use Koded\Stdlib\Interfaces\{ Argument, Data };
-use Traversable;
+use IteratorAggregate, Countable;
+use Koded\Stdlib\Interfaces\{ ArrayDataFilter, Data, TransformsToArguments };
 
 /**
  * An IMMUTABLE multi purpose class that encapsulates a read-only data.
  * It is useful for passing it around as a DTO.
  */
-class Immutable implements IteratorAggregate, Countable, Data
+class Immutable implements Data, ArrayDataFilter, TransformsToArguments, IteratorAggregate, Countable
 {
+
+    use AccessorTrait, ArrayDataFilterTrait;
 
     /**
      * @var array The internal data storage
@@ -40,108 +39,8 @@ class Immutable implements IteratorAggregate, Countable, Data
         $this->storage = $values;
     }
 
-    public function __clone()
+    public function toArgument(): Arguments
     {
-        throw new ReadOnlyException(Data::E_CLONING_DISALLOWED, [':class' => get_class($this)]);
-    }
-
-    public function __get($index)
-    {
-        return $this->get($index);
-    }
-
-    public function __set($index, $value)
-    {
-        throw new ReadOnlyException(Data::E_READONLY_INSTANCE, [':class' => get_class($this)]);
-    }
-
-    public function get(string $index, $default = null)
-    {
-        return $this->storage[$index] ?? $default;
-    }
-
-    public function find(string $index, $default = null)
-    {
-        $array = $this->toArray();
-
-        if (isset($array[$index])) {
-            return $array[$index];
-        }
-
-        foreach (explode('.', $index) as $token) {
-            if (!is_array($array) || !array_key_exists($token, $array)) {
-                return $default;
-            }
-
-            $array = $array[$token];
-        }
-
-        return $array;
-    }
-
-    public function toArray(): array
-    {
-        return $this->storage;
-    }
-
-    public function has($index): bool
-    {
-        return array_key_exists($index, $this->storage);
-    }
-
-    public function extract(array $keys): array
-    {
-        $found = [];
-        foreach ($keys as $index) {
-            $found[$index] = $this->storage[$index] ?? null;
-        }
-
-        return $found;
-    }
-
-    public function filter(
-        array $data,
-        string $prefix,
-        bool $lowercase = true,
-        bool $trim = true
-    ): array
-    {
-        $filtered = [];
-
-        foreach ($data as $k => $v) {
-            if ($trim && '' !== $prefix && 0 === strpos($k, $prefix, 0)) {
-                $k = str_replace($prefix, '', $k);
-            }
-            $filtered[$lowercase ? strtolower($k) : $k] = $v;
-        }
-
-        return $filtered;
-    }
-
-    public function count()
-    {
-        return count($this->storage);
-    }
-
-    /**
-     * @experimental
-     *
-     * @return Argument
-     */
-    public function toArgument(): Argument
-    {
-        return new Arguments($this->toArray());
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @internal
-     */
-    public function getIterator(): Traversable
-    {
-        foreach ($this->storage as $k => $v) {
-            yield $k => $v;
-        }
+        return new Arguments($this->storage);
     }
 }
