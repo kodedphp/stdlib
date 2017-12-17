@@ -24,16 +24,8 @@ class Immutable implements Data, ArrayDataFilter, TransformsToArguments, Iterato
 
     use AccessorTrait, ArrayDataFilterTrait;
 
-    /**
-     * @var array The internal data storage
-     */
     protected $storage = [];
 
-    /**
-     * Sets the object store with values.
-     *
-     * @param array $values
-     */
     public function __construct(array $values)
     {
         $this->storage = $values;
