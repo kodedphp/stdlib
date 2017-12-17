@@ -16,7 +16,8 @@ use IteratorAggregate, Countable;
 use Koded\Stdlib\Interfaces\{ Argument, NamespaceDataFilter, TransformsToImmutable };
 
 /**
- * Arguments is a MUTABLE (multi purpose) class that encapsulates data.
+ * Arguments is a MUTABLE, multi purpose class that encapsulates data.
+ * It is useful for passing it around as a DTO.
  *
  * TIP: Avoid creating a child classes with properties from this one.
  * It will mess up your Zen.
