@@ -34,6 +34,28 @@ trait MutatorTrait
         return $this;
     }
 
+    public function upsert(string $index, $value)
+    {
+        return $this->has($index) ? $this : $this->set($index, $value);
+    }
+
+    public function pull(string $index, $default = null)
+    {
+        $value = $this->get($index, $default);
+        unset($this->storage[$index]);
+
+        return $value;
+    }
+
+    public function import(array $array): self
+    {
+        foreach ($array as $index => $value) {
+            $this->storage[$index] = $value;
+        }
+
+        return $this;
+    }
+
     public function delete(string $index): self
     {
         unset($this->storage[$index]);
