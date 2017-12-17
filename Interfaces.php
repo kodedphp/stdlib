@@ -12,21 +12,29 @@
 
 namespace Koded\Stdlib\Interfaces;
 
-interface Data extends ArrayDataFilter
+use Koded\Stdlib\Arguments;
+use Koded\Stdlib\Immutable;
+
+interface ArrayDataFilter
 {
 
-    const E_CLONING_DISALLOWED = 1000;
-    const E_READONLY_INSTANCE = 1001;
-
     /**
-     * Value accessor, gets a value by name.
+     * Strips the portions of the variable names defined by the namespace value.
+     * Returns a filtered array.
      *
-     * @param string $index   The name of the key
-     * @param mixed  $default [optional] Default value if property does not exist
+     * @param array  $data      The data should be filtered
+     * @param string $prefix    The namespace prefix for the indexes
+     * @param bool   $lowercase [optional] Returned indexes should be in lowercase
+     * @param bool   $trim      [optional] To remove the namespace from the index
      *
-     * @return mixed
+     * @return array A filtered array
      */
-    public function get(string $index, $default = null);
+    public function filter(
+        array $data,
+        string $prefix,
+        bool $lowercase = true,
+        bool $trim = true
+    ): array;
 
     /**
      * Search in the storage array for an array item with a dot-composite name.
@@ -60,6 +68,41 @@ interface Data extends ArrayDataFilter
      * @return array An array with filtered values
      */
     public function extract(array $keys): array;
+}
+
+interface NamespaceDataFilter
+{
+
+    /**
+     * Strips the portions of the variable names defined by the prefix value.
+     * It can also lowercase the names. Useful to transform the data from ENV variables.
+     *
+     * Returns a new instance from the original object populated with the filtered data.
+     *
+     * @param string $prefix    The namespace prefix
+     * @param bool   $lowercase [optional] Returned indexes should be lowercase
+     * @param bool   $trim      [optional] To remove the namespace from the indexes
+     *
+     * @return static A new instance of the original object
+     */
+    public function namespace(string $prefix, bool $lowercase = true, bool $trim = true);
+}
+
+interface Data
+{
+
+    const E_CLONING_DISALLOWED = 1000;
+    const E_READONLY_INSTANCE = 1001;
+
+    /**
+     * Value accessor, gets a value by name.
+     *
+     * @param string $index   The name of the key
+     * @param mixed  $default [optional] Default value if property does not exist
+     *
+     * @return mixed
+     */
+    public function get(string $index, $default = null);
 
     /**
      * Checks if the key exist.
@@ -79,7 +122,7 @@ interface Data extends ArrayDataFilter
 }
 
 
-interface Argument extends Data, NamespaceDataFilter
+interface Argument extends Data
 {
 
     /**
@@ -150,9 +193,26 @@ interface Argument extends Data, NamespaceDataFilter
     public function clear();
 }
 
-
-interface Configuration extends Data
+interface TransformsToArguments
 {
+
+    /**
+     * Creates a new instance of Arguments object with current data.
+     *
+     * @return Arguments
+     */
+    public function toArgument(): Arguments;
+}
+
+interface TransformsToImmutable
+{
+
+    /**
+     * Creates a new instance of Immutable object with current data.
+     *
+     * @return Immutable
+     */
+    public function toImmutable(): Immutable;
 }
 
 interface ConfigurationFactory extends ArrayDataFilter, NamespaceDataFilter
@@ -251,46 +311,11 @@ interface ConfigurationFactory extends ArrayDataFilter, NamespaceDataFilter
      * @param string $context The context in question
      *
      * @return Configuration
+     * @throws \Exception
      */
     public function build(string $context): Configuration;
 }
 
-interface NamespaceDataFilter
+interface Configuration extends Data
 {
-
-    /**
-     * Strips the portions of the variable names defined by the prefix value.
-     * It can also lowercase the names. Useful to transform the data from ENV variables.
-     *
-     * Returns a new instance from the original object populated with the filtered data.
-     *
-     * @param string $prefix    The namespace prefix
-     * @param bool   $lowercase [optional] Returned indexes should be lowercase
-     * @param bool   $trim      [optional] To remove the namespace from the indexes
-     *
-     * @return static A new instance of the original object
-     */
-    public function namespace(string $prefix, bool $lowercase = true, bool $trim = true);
-}
-
-interface ArrayDataFilter
-{
-
-    /**
-     * Strips the portions of the variable names defined by the namespace value.
-     * Returns a filtered array.
-     *
-     * @param array  $data      The data should be filtered
-     * @param string $prefix    The namespace prefix for the indexes
-     * @param bool   $lowercase [optional] Returned indexes should be in lowercase
-     * @param bool   $trim      [optional] To remove the namespace from the index
-     *
-     * @return array A filtered array
-     */
-    public function filter(
-        array $data,
-        string $prefix,
-        bool $lowercase = true,
-        bool $trim = true
-    ): array;
 }

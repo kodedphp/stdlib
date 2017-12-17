@@ -185,6 +185,7 @@ final class UUID
      *
      * @return string 128bit of pseudo-random UUID
      * @see http://en.wikipedia.org/wiki/UUID#Version_4_.28random.29
+     * @throws \Exception
      */
     public static function v4(): string
     {

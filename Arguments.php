@@ -12,43 +12,37 @@
 
 namespace Koded\Stdlib;
 
-use Koded\Stdlib\Interfaces\{ Argument, Data };
+use IteratorAggregate, Countable;
+use Koded\Stdlib\Interfaces\{ Argument, NamespaceDataFilter, TransformsToImmutable };
 
 /**
- * Arguments is a MUTABLE (multi purpose) class that encapsulates data.
+ * Arguments is a MUTABLE, multi purpose class that encapsulates data.
+ * It is useful for passing it around as a DTO.
  *
  * TIP: Avoid creating a child classes with properties from this one.
  * It will mess up your Zen.
  */
-class Arguments extends Immutable implements Argument
+class Arguments implements Argument, TransformsToImmutable, NamespaceDataFilter, IteratorAggregate, Countable
 {
 
-    public function __set($index, $value)
+    use AccessorTrait, MutatorTrait, ArrayDataFilterTrait {
+        MutatorTrait::__set insteadof AccessorTrait;
+    }
+
+    protected $storage = [];
+
+    public function __construct(array $values = [])
     {
-        return $this->set($index, $value);
+        $this->storage = $values;
     }
 
     public function __clone()
     {
     }
 
-    public function set(string $index, $value)
-    {
-        $this->storage[$index] = $value;
-
-        return $this;
-    }
-
     public function upsert(string $index, $value)
     {
         return $this->has($index) ? $this : $this->set($index, $value);
-    }
-
-    public function bind(string $index, &$variable)
-    {
-        $this->storage[$index] = &$variable;
-
-        return $this;
     }
 
     public function pull(string $index, $default = null)
@@ -59,7 +53,7 @@ class Arguments extends Immutable implements Argument
         return $value;
     }
 
-    public function import(array $array)
+    public function import(array $array): self
     {
         foreach ($array as $index => $value) {
             $this->storage[$index] = $value;
@@ -73,27 +67,8 @@ class Arguments extends Immutable implements Argument
         return new static($this->filter($this->toArray(), $prefix, $lowercase, $trim));
     }
 
-    public function delete(string $index)
+    public function toImmutable(): Immutable
     {
-        unset($this->storage[$index]);
-
-        return $this;
-    }
-
-    public function clear()
-    {
-        $this->storage = [];
-
-        return $this;
-    }
-
-    /**
-     * @experimental
-     *
-     * @return Data
-     */
-    public function toImmutable(): Data
-    {
-        return new Immutable($this->toArray());
+        return new Immutable($this->storage);
     }
 }
