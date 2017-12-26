@@ -198,6 +198,24 @@ class ArgumentObjectTest extends TestCase
         ]), $SUT->namespace('foo.'));
     }
 
+    /**
+     * Tests indirect array modification debacle introduced in 7.1.4
+     */
+    public function test_dynamic_object_property()
+    {
+        $this->SUT->schizo = 'phrenic';
+        $this->assertFalse(empty($this->SUT->schizo));
+        $this->assertSame('phrenic', $this->SUT->schizo);
+    }
+
+    public function test_indirect_modification()
+    {
+        $args = new Arguments;
+        $args->schizo['phrenic']['retard'] = 'PHP';
+
+        $this->assertSame(['schizo' => ['phrenic' => ['retard' => 'PHP']]], $args->toArray());
+    }
+
     protected function setUp()
     {
         $this->SUT = new Arguments([

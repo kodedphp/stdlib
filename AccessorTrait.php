@@ -19,9 +19,13 @@ use Traversable;
 trait AccessorTrait
 {
 
-    public function __get($index)
+    public function & __get($index)
     {
-        return $this->get($index);
+        if (false === array_key_exists($index, $this->storage)) {
+            $this->storage[$index] = null;
+        }
+
+        return $this->storage[$index];
     }
 
     public function __set($index, $value)
@@ -32,6 +36,11 @@ trait AccessorTrait
     public function __clone()
     {
         throw new ReadOnlyException(Data::E_CLONING_DISALLOWED, [':class' => get_class($this)]);
+    }
+
+    public function __isset($index)
+    {
+        return $this->has($index);
     }
 
     public function get(string $index, $default = null)
@@ -55,12 +64,11 @@ trait AccessorTrait
     }
 
     /**
-     * @internal
-     *
-     * Retrieve an external iterator.
+     * Retrieve the storage iterator.
      *
      * @return Traversable An instance of an object implementing Iterator or Traversable
      * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
+     * @internal
      */
     public function getIterator(): Traversable
     {
