@@ -16,6 +16,9 @@ use Koded\Exceptions\ReadOnlyException;
 use Koded\Stdlib\Interfaces\Data;
 use Traversable;
 
+/**
+ * @property array $storage
+ */
 trait AccessorTrait
 {
 

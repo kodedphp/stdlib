@@ -12,6 +12,9 @@
 
 namespace Koded\Stdlib;
 
+/**
+ * @property array $storage
+ */
 trait MutatorTrait
 {
 
