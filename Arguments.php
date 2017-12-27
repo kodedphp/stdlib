@@ -12,8 +12,12 @@
 
 namespace Koded\Stdlib;
 
-use IteratorAggregate, Countable;
-use Koded\Stdlib\Interfaces\{ Argument, NamespaceDataFilter, TransformsToImmutable };
+use Countable;
+use IteratorAggregate;
+use JsonSerializable;
+use Koded\Stdlib\Interfaces\{
+    Argument, NamespaceDataFilter, TransformsToImmutable
+};
 
 /**
  * Arguments is a MUTABLE, multi purpose class that encapsulates data.
@@ -22,7 +26,12 @@ use Koded\Stdlib\Interfaces\{ Argument, NamespaceDataFilter, TransformsToImmutab
  * TIP: Avoid creating a child classes with properties from this one.
  * It will mess up your Zen.
  */
-class Arguments implements Argument, TransformsToImmutable, NamespaceDataFilter, IteratorAggregate, Countable
+class Arguments implements Argument,
+                           TransformsToImmutable,
+                           NamespaceDataFilter,
+                           IteratorAggregate,
+                           Countable,
+                           JsonSerializable
 {
 
     use AccessorTrait, MutatorTrait, ArrayDataFilterTrait {

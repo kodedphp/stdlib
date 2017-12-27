@@ -119,6 +119,20 @@ interface Data
      * @return array
      */
     public function toArray(): array;
+
+    /**
+     * Returns the object state as JSON string.
+     *
+     * @param int $options JSON options for json_encode()
+     *                     By default these are added:
+     *                     - JSON_NUMERIC_CHECK
+     *                     - JSON_PRESERVE_ZERO_FRACTION
+     *                     - JSON_UNESCAPED_SLASHES
+     *
+     * @return string
+     * @link http://php.net/manual/en/json.constants.php
+     */
+    public function toJSON(int $options = 0): string;
 }
 
 

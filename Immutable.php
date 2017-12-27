@@ -12,14 +12,23 @@
 
 namespace Koded\Stdlib;
 
-use IteratorAggregate, Countable;
-use Koded\Stdlib\Interfaces\{ ArrayDataFilter, Data, TransformsToArguments };
+use Countable;
+use IteratorAggregate;
+use JsonSerializable;
+use Koded\Stdlib\Interfaces\{
+    ArrayDataFilter, Data, TransformsToArguments
+};
 
 /**
  * An IMMUTABLE, multi purpose class that encapsulates a read-only data.
  * It is useful for passing it around as a DTO.
  */
-class Immutable implements Data, ArrayDataFilter, TransformsToArguments, IteratorAggregate, Countable
+class Immutable implements Data,
+                           ArrayDataFilter,
+                           TransformsToArguments,
+                           IteratorAggregate,
+                           Countable,
+                           JsonSerializable
 {
 
     use AccessorTrait, ArrayDataFilterTrait;
