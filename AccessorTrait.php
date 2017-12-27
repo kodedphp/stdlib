@@ -16,6 +16,9 @@ use Koded\Exceptions\ReadOnlyException;
 use Koded\Stdlib\Interfaces\Data;
 use Traversable;
 
+/**
+ * @property array $storage
+ */
 trait AccessorTrait
 {
 
@@ -63,17 +66,21 @@ trait AccessorTrait
         return count($this->storage);
     }
 
-    /**
-     * Retrieve the storage iterator.
-     *
-     * @return Traversable An instance of an object implementing Iterator or Traversable
-     * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
-     * @internal
-     */
+    public function toJSON(int $options = 0): string
+    {
+        $options |= JSON_NUMERIC_CHECK | JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES;
+        return json_encode($this, $options);
+    }
+
     public function getIterator(): Traversable
     {
         foreach ($this->storage as $k => $v) {
             yield $k => $v;
         }
+    }
+
+    public function jsonSerialize(): array
+    {
+        return $this->storage;
     }
 }
