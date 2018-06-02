@@ -188,4 +188,12 @@ class UUIDTest extends TestCase
         $this->expectExceptionMessage('assert(): Expected UUID version 1, 3, 4 or 5 failed');
         UUID::matches(UUID::NAMESPACE_OID, 0);
     }
+
+    /**
+     * @test
+     */
+    public function issue7()
+    {
+        $this->assertSame('1cb8bac3-bb8e-3973-93dc-5119246f0585', UUID::v3(UUID::NAMESPACE_URL, 'fubar'));
+    }
 }

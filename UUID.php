@@ -232,7 +232,7 @@ final class UUID
     public static function matches(string $uuid, int $version = 4): bool
     {
         assert(in_array($version, [1, 3, 4, 5]), 'Expected UUID version 1, 3, 4 or 5');
-        return UUID::valid($uuid) && (int)$uuid[14] === $version;
+        return UUID::valid($uuid);
     }
 
     /**
