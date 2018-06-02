@@ -15,9 +15,7 @@ namespace Koded\Stdlib;
 use Countable;
 use IteratorAggregate;
 use JsonSerializable;
-use Koded\Stdlib\Interfaces\{
-    Argument, NamespaceDataFilter, TransformsToImmutable
-};
+use Koded\Stdlib\Interfaces\{ Argument, NamespaceDataFilter, TransformsToImmutable };
 
 /**
  * Arguments is a MUTABLE, multi purpose class that encapsulates data.

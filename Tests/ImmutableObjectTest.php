@@ -15,7 +15,7 @@ class ImmutableObjectTest extends TestCase
 
     public function test_should_load_the_array()
     {
-        $this->assertCount(8, $this->SUT);
+        $this->assertCount(9, $this->SUT);
     }
 
     public function test_should_disallow_cloning()
@@ -69,6 +69,9 @@ class ImmutableObjectTest extends TestCase
 
         // but it's fine if key is not nested
         $this->assertSame('four', $this->SUT->find('one.two.three'));
+
+        // also NULL value
+        $this->assertNull($this->SUT->find('one.null'));
     }
 
     public function test_should_filter_out_the_data()
@@ -78,7 +81,8 @@ class ImmutableObjectTest extends TestCase
             'null' => null,
             'one.two.three' => 'four',
             true => true,
-            'non-existing' => null
+            'non-existing' => null,
+            'one.null' => null
 
         ];
 
@@ -87,7 +91,8 @@ class ImmutableObjectTest extends TestCase
             'one.two.three',
             '0',
             'null',
-            'non-existing'
+            'non-existing',
+            'one.null'
         ]));
     }
 

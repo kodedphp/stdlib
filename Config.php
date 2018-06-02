@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the Koded package.
@@ -20,7 +20,7 @@ use Koded\Stdlib\Interfaces\{ Configuration, ConfigurationFactory, Data };
  * from files or other Config instances. There are 2 common patterns
  * to populate the config,
  *
- * either you can fill the Config instance from a config files:
+ * either you can fill the Config instance from config files:
  *
  *     $app->config()->fromPhpFile('myconfig.php');
  *     $app->config()->fromJsonFile('myconfig.json');
@@ -115,36 +115,47 @@ class Config extends Arguments implements ConfigurationFactory
 
     public function fromJsonFile(string $filename): ConfigurationFactory
     {
-        return $this->loadData(function($filename) {
+        return $this->loadDataFrom($filename, function($filename) {
             /** @noinspection PhpIncludeInspection */
             return json_decode(file_get_contents($filename), true);
-        }, $filename);
+        });
     }
 
     public function fromIniFile(string $filename): ConfigurationFactory
     {
-        return $this->loadData(function($filename) {
+        return $this->loadDataFrom($filename, function($filename) {
             return parse_ini_file($filename, true, INI_SCANNER_TYPED) ?: [];
-        }, $filename);
+        });
     }
 
     public function fromEnvFile(string $filename, string $namespace = ''): ConfigurationFactory
     {
-        return $this->loadData(function($filename) use ($namespace) {
-            $data = parse_ini_file($filename, false, INI_SCANNER_TYPED) ?: [];
+        return $this->loadDataFrom($filename, function($filename) use ($namespace) {
+            try {
+                $data = parse_ini_file($filename, false, INI_SCANNER_TYPED) ?: [];
+            } catch (Exception $e) {
+                return [];
+            }
+
+            foreach ($data as $key => $value) {
+                $_ENV[$key] = $value;
+
+                if (null !== $value) {
+                    putenv($key . '=' . $value);
+                }
+            }
 
             if (empty($namespace)) {
                 return $data;
             }
 
             return $this->filter($data, $namespace);
-
-        }, $filename);
+        });
     }
 
     public function fromEnvVariable(string $variable): ConfigurationFactory
     {
-        if (!empty($filename = getenv($variable))) {
+        if (false === empty($filename = getenv($variable))) {
             $extension = ucfirst(pathinfo($filename, PATHINFO_EXTENSION));
             return call_user_func([$this, "from{$extension}File"], $filename);
         }
@@ -160,10 +171,10 @@ class Config extends Arguments implements ConfigurationFactory
 
     public function fromPhpFile(string $filename): ConfigurationFactory
     {
-        return $this->loadData(function($filename) {
+        return $this->loadDataFrom($filename, function($filename) {
             /** @noinspection PhpIncludeInspection */;
             return include $filename;
-        }, $filename);
+        });
     }
 
     public function fromEnvironment(
@@ -175,7 +186,8 @@ class Config extends Arguments implements ConfigurationFactory
     {
         $data = [];
         foreach ($variableNames as $variable) {
-            $data[] = $variable . '=' . getenv($variable);
+            $value = getenv($variable);
+            $data[] = $variable . '=' . (false === $value ? 'null' : $value);
         }
 
         $data = parse_ini_string(join(PHP_EOL, $data), false, INI_SCANNER_TYPED) ?: [];
@@ -196,10 +208,10 @@ class Config extends Arguments implements ConfigurationFactory
         return (new static($this->rootPath))->import($this->filter($this->toArray(), $prefix, $lowercase, $trim));
     }
 
-    protected function loadData(callable $callable, string $filename): ConfigurationFactory
+    protected function loadDataFrom(string $filename, callable $loader): ConfigurationFactory
     {
         $file = ('/' === $filename[0]) ? $filename : $this->rootPath . '/' . ltrim($filename, '/');
-        $this->import($callable($file));
+        $this->import($loader($file));
 
         return $this;
     }

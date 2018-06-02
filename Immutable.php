@@ -15,9 +15,7 @@ namespace Koded\Stdlib;
 use Countable;
 use IteratorAggregate;
 use JsonSerializable;
-use Koded\Stdlib\Interfaces\{
-    ArrayDataFilter, Data, TransformsToArguments
-};
+use Koded\Stdlib\Interfaces\{ ArrayDataFilter, Data, TransformsToArguments };
 
 /**
  * An IMMUTABLE, multi purpose class that encapsulates a read-only data.

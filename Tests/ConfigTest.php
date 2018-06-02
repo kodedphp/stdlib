@@ -78,8 +78,15 @@ class ConfigTest extends TestCase
     public function test_should_load_env_file_as_is()
     {
         $config = new Config;
-        $config->fromEnvFile('Tests/fixtures/.env');
+        $config->fromEnvFile(__DIR__ . '/fixtures/.env');
         $this->assertSame(include __DIR__ . '/fixtures/expected-env-data.php', $config->toArray());
+    }
+
+    public function test_should_return_empty_if_env_file_was_not_found()
+    {
+        $config = new Config;
+        $config->fromEnvFile(__DIR__ . '/fixtures/non-existing.env');
+        $this->assertSame([], $config->toArray());
     }
 
     public function test_should_load_env_file_and_trim_the_namespace()
@@ -154,19 +161,17 @@ class ConfigTest extends TestCase
     {
         // ye..
         putenv('KEY_4=true');
-        $config = new Config;
-        $config->fromEnvironment(['KEY_1', 'KEY_3', 'KEY_4', 'KEY_5', 'UNKNOWN_VAR']);
+        $config = (new Config)->fromEnvironment(['KEY_1', 'KEY_3', 'KEY_4', 'KEY_5', 'UNKNOWN_VAR']);
 
         $expected = include __DIR__ . '/fixtures/expected-data-lowercase.php';
-        $expected['unknown_var'] = '';
+        $expected['unknown_var'] = null;
         $this->assertSame($expected, $config->toArray());
     }
 
     public function test_should_trim_names_from_environment_variables()
     {
         putenv('KEY_4=true');
-        $config = new Config;
-        $config->fromEnvironment(['KEY_1', 'KEY_3', 'KEY_4', 'KEY_5'], 'KEY_');
+        $config = (new Config)->fromEnvironment(['KEY_1', 'KEY_3', 'KEY_4', 'KEY_5'], 'KEY_');
 
         $this->assertSame(include __DIR__ . '/fixtures/expected-env-trim-ns.php', $config->toArray());
     }

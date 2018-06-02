@@ -23,5 +23,6 @@ return [
         true => true,
     ],
     'one.two.three' => 'four',
+    'one.null' => null,
     true => true,
 ];

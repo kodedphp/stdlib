@@ -11,13 +11,13 @@ class ReadOnlyExceptionTest extends TestCase
 
     public function test_message_and_code()
     {
-        $ex1 = new ReadOnlyException(Data::E_CLONING_DISALLOWED, [':class' => 'Foo']);
-        $ex2 = new ReadOnlyException(Data::E_READONLY_INSTANCE, [':class' => 'Bar']);
+        $ex1 = ReadOnlyException::forCloning('Foo');
+        $ex2 = ReadOnlyException::forInstance('foo', 'Bar');
 
         $this->assertEquals('Cloning the Foo instance is not allowed', $ex1->getMessage());
         $this->assertSame(Data::E_CLONING_DISALLOWED, $ex1->getCode());
 
-        $this->assertEquals('Bar instance is read-only', $ex2->getMessage());
+        $this->assertEquals('Cannot set foo. Bar instance is read-only', $ex2->getMessage());
         $this->assertSame(Data::E_READONLY_INSTANCE, $ex2->getCode());
     }
 }

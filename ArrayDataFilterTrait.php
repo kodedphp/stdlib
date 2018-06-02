@@ -14,11 +14,11 @@ trait ArrayDataFilterTrait
     {
         $filtered = [];
 
-        foreach ($data as $k => $v) {
-            if ($trim && '' !== $prefix && 0 === strpos($k, $prefix, 0)) {
-                $k = str_replace($prefix, '', $k);
+        foreach ($data as $index => $value) {
+            if ($trim && '' !== $prefix && 0 === strpos($index, $prefix, 0)) {
+                $index = str_replace($prefix, '', $index);
             }
-            $filtered[$lowercase ? strtolower($k) : $k] = $v;
+            $filtered[$lowercase ? strtolower($index) : $index] = $value;
         }
 
         return $filtered;
@@ -26,27 +26,26 @@ trait ArrayDataFilterTrait
 
     public function find(string $index, $default = null)
     {
-        $storage = $this->storage;
-
-        if (isset($storage[$index])) {
-            return $storage[$index];
+        if (isset($this->storage[$index])) {
+            return $this->storage[$index];
         }
 
+        $storage = $this->storage;
         foreach (explode('.', $index) as $token) {
-            if (!is_array($storage) || !array_key_exists($token, $storage)) {
+            if (false === is_array($storage) || false === array_key_exists($token, $storage)) {
                 return $default;
             }
 
-            $storage = $storage[$token];
+            $storage = &$storage[$token];
         }
 
         return $storage;
     }
 
-    public function extract(array $keys): array
+    public function extract(array $indexes): array
     {
         $found = [];
-        foreach ($keys as $index) {
+        foreach ($indexes as $index) {
             $found[$index] = $this->storage[$index] ?? null;
         }
 

@@ -41,7 +41,7 @@ function value(...$values): Data
 /**
  * Escapes a string. Useful for escaping the input values in HTML templates.
  *
- * @param string $input The input string
+ * @param string $input    The input string
  * @param string $encoding The encoding
  *
  * @return string
@@ -72,4 +72,30 @@ function random_alpha_numeric(int $length = 16, string $prefix = '', string $suf
     }
 
     return $prefix . $buffer . $suffix;
+}
+
+/**
+ * Transforms the simple snake_case string into CamelCaseName.
+ *
+ * @param string $string
+ *
+ * @return string Camel-cased string
+ */
+function snake_to_camel_case(string $string): string
+{
+    $string = preg_replace('/[\W_]+/', ' ', $string);
+
+    return str_replace(' ', '', ucwords($string));
+}
+
+/**
+ * Transforms simple CamelCaseName into camel_case_name (lower case underscored).
+ *
+ * @param string $string CamelCase string to be underscored
+ *
+ * @return string Transformed string (for weird strings, you get what you deserve)
+ */
+function camel_to_snake_case(string $string): string
+{
+    return strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', trim($string)));
 }
