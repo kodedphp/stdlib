@@ -132,7 +132,7 @@ class Config extends Arguments implements ConfigurationFactory
     {
         return $this->loadDataFrom($filename, function($filename) use ($namespace) {
             try {
-                $data = parse_ini_file($filename, false, INI_SCANNER_TYPED);
+                $data = parse_ini_file($filename, false, INI_SCANNER_TYPED) ?: [];
             } catch (Exception $e) {
                 return [];
             }
