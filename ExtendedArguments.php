@@ -77,7 +77,7 @@ class ExtendedArguments extends Arguments
             $storage = &$storage[$i];
         }
 
-        if ($i) {
+        if (isset($i)) {
             unset($storage[$i]);
         }
 
