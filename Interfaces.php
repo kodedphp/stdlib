@@ -12,8 +12,7 @@
 
 namespace Koded\Stdlib\Interfaces;
 
-use Koded\Stdlib\Arguments;
-use Koded\Stdlib\Immutable;
+use Koded\Stdlib\{ Arguments, Immutable };
 
 interface ArrayDataFilter
 {
@@ -93,6 +92,7 @@ interface Data
 
     const E_CLONING_DISALLOWED = 1000;
     const E_READONLY_INSTANCE = 1001;
+    const E_PHP_EXCEPTION = 1002;
 
     /**
      * Value accessor, gets a value by name.
@@ -124,10 +124,6 @@ interface Data
      * Returns the object state as JSON string.
      *
      * @param int $options JSON options for json_encode()
-     *                     By default these are added:
-     *                     - JSON_NUMERIC_CHECK
-     *                     - JSON_PRESERVE_ZERO_FRACTION
-     *                     - JSON_UNESCAPED_SLASHES
      *
      * @return string
      * @link http://php.net/manual/en/json.constants.php
@@ -229,7 +225,7 @@ interface TransformsToImmutable
     public function toImmutable(): Immutable;
 }
 
-interface ConfigurationFactory extends ArrayDataFilter, NamespaceDataFilter
+interface ConfigurationFactory extends Argument, ArrayDataFilter, NamespaceDataFilter
 {
 
     /**
@@ -332,4 +328,26 @@ interface ConfigurationFactory extends ArrayDataFilter, NamespaceDataFilter
 
 interface Configuration extends Data
 {
+}
+
+interface StringSerializable
+{
+
+    /**
+     * Generates a string representation of a value.
+     *
+     * @param mixed $value
+     *
+     * @return string Should return a byte-stream representation of the value
+     */
+    public function serialize($value): string;
+
+    /**
+     * Recreates the value back from the serialized representation.
+     *
+     * @param string $value The serialized value
+     *
+     * @return mixed The converted value
+     */
+    public function unserialize(string $value);
 }

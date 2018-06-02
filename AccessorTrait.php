@@ -13,7 +13,6 @@
 namespace Koded\Stdlib;
 
 use Koded\Exceptions\ReadOnlyException;
-use Koded\Stdlib\Interfaces\Data;
 use Traversable;
 
 /**
@@ -33,12 +32,12 @@ trait AccessorTrait
 
     public function __set($index, $value)
     {
-        throw new ReadOnlyException(Data::E_READONLY_INSTANCE, [':class' => get_class($this)]);
+        throw ReadOnlyException::forInstance($index, get_class($this));
     }
 
     public function __clone()
     {
-        throw new ReadOnlyException(Data::E_CLONING_DISALLOWED, [':class' => get_class($this)]);
+        throw ReadOnlyException::forCloning(get_class($this));
     }
 
     public function __isset($index)
@@ -51,11 +50,6 @@ trait AccessorTrait
         return $this->storage[$index] ?? $default;
     }
 
-    public function toArray(): array
-    {
-        return $this->storage;
-    }
-
     public function has($index): bool
     {
         return array_key_exists($index, $this->storage);
@@ -66,10 +60,26 @@ trait AccessorTrait
         return count($this->storage);
     }
 
+    public function toArray(): array
+    {
+        return $this->storage;
+    }
+
+    /**
+     * Returns the object state as JSON string.
+     *
+     * @param int $options By default these are added:
+     *                     - JSON_NUMERIC_CHECK
+     *                     - JSON_PRESERVE_ZERO_FRACTION
+     *                     - JSON_UNESCAPED_SLASHES
+     *                     - JSON_UNESCAPED_UNICODE
+     *
+     * @return string
+     */
     public function toJSON(int $options = 0): string
     {
-        $options |= JSON_NUMERIC_CHECK | JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES;
-        return json_encode($this, $options);
+        $options |= JSON_NUMERIC_CHECK | JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
+        return json_encode($this->storage, $options);
     }
 
     public function getIterator(): Traversable

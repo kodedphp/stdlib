@@ -3,7 +3,7 @@
   "type": "library",
   "license": "BSD-3-Clause",
   "description": "A standard library for shareable classes and functions",
-  "keywords": ["mime", "mime-types", "uuid", "uuid-generator", "immutable", "utility", "exceptions", "dto", "php7"],
+  "keywords": ["mime", "mime-types", "uuid", "uuid-generator", "immutable", "utility", "exceptions", "dto", "dot-array", "php7"],
   "authors": [
     {
       "name": "Mihail Binev",
@@ -36,7 +36,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "1.9.x-dev"
+      "dev-master": "3.x-dev"
     }
   }
 }
