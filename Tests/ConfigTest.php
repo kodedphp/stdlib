@@ -98,7 +98,7 @@ class ConfigTest extends TestCase
 
     public function test_should_load_from_env_variable()
     {
-        putenv('CONFIG_FILE=Tests/fixtures/nested_array.php');
+        putenv('CONFIG_FILE=Tests/fixtures/nested-array.php');
         $config = new Config;
         $config->fromEnvVariable('CONFIG_FILE');
 
@@ -204,6 +204,6 @@ class MockOtherConfigInstance extends Config
     public function __construct()
     {
         parent::__construct();
-        $this->fromPhpFile(__DIR__ . '/fixtures/nested_array.php');
+        $this->fromPhpFile(__DIR__ . '/fixtures/nested-array.php');
     }
 }
