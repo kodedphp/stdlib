@@ -95,7 +95,7 @@ class ExtendedArgumentsTest extends TestCase
 
     public function test_frakked_up_keys()
     {
-        $data = include __DIR__ . '/fixtures/nested_array.php';
+        $data = include __DIR__ . '/fixtures/nested-array.php';
 
         $arguments = new ExtendedArguments($data);
         $this->assertSame($data, $arguments->toArray(), 'The data is intact');

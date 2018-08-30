@@ -17,6 +17,11 @@ final class JsonSerializer implements StringSerializable
      */
     private $options;
 
+    /**
+     * JsonSerializer constructor.
+     *
+     * @param int $options [optional] JSON encode options
+     */
     public function __construct(int $options = null)
     {
         $this->options = $options ??
@@ -33,7 +38,7 @@ final class JsonSerializer implements StringSerializable
 
     public function unserialize(string $value)
     {
-        $json = json_decode($value, true);
+        $json = json_decode(utf8_encode($value), true, 512, JSON_BIGINT_AS_STRING);
 
         if (JSON_ERROR_NONE !== json_last_error()) {
             throw KodedException::generic(json_last_error_msg());

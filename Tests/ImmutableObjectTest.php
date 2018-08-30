@@ -98,6 +98,6 @@ class ImmutableObjectTest extends TestCase
 
     protected function setUp()
     {
-        $this->SUT = new Immutable(require __DIR__ . '/fixtures/nested_array.php');
+        $this->SUT = new Immutable(require __DIR__ . '/fixtures/nested-array.php');
     }
 }

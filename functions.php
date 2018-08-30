@@ -13,6 +13,7 @@
 namespace Koded\Stdlib;
 
 use Koded\Stdlib\Interfaces\{ Argument, Data };
+use Koded\Stdlib\Serializer\{JsonSerializer, PhpSerializer, XmlSerializer};
 
 /**
  * Creates a new Argument instance with optional arbitrary number of arguments.
@@ -98,4 +99,89 @@ function snake_to_camel_case(string $string): string
 function camel_to_snake_case(string $string): string
 {
     return strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', trim($string)));
+}
+
+/**
+ * Serializes the iterable instance or array into JSON format.
+ *
+ * @param mixed $data    The data to be serialized, except resource
+ * @param int      $options [optional] JSON bitmask options
+ *
+ * @return string JSON encoded string
+ * @see http://php.net/manual/en/function.json-encode.php
+ */
+function json_serialize($data, int $options = null): string
+{
+    return (new JsonSerializer($options))->serialize($data);
+}
+
+/**
+ * Decodes the encoded JSON string into appropriate PHP type.
+ *
+ * @param string $json The encoded JSON string
+ *
+ * @return mixed The value encoded in JSON in appropriate PHP type
+ * @throws \Koded\Exceptions\KodedException on error
+ */
+function json_unserialize(string $json)
+{
+    return (new JsonSerializer)->unserialize($json);
+}
+
+/**
+ * Serializes the PHP object into string.
+ *
+ * @param object $object The PHP object to be serialized
+ * @param bool   $binary [optional] TRUE for igbinary serialization,
+ *                       or standard PHP serialize() function
+ *
+ * @return string byte-stream representation of the serialized PHP object
+ */
+function php_serialize($object, bool $binary = false): string
+{
+    return (new PhpSerializer($binary))->serialize($object);
+}
+
+/**
+ * Unserialize the serialized PHP object into it's appropriate type.
+ *
+ * @param string $serialized The serialized PHP object
+ * @param bool   $binary     [optional] TRUE for igbinary serialization,
+ *                           or standard PHP serialize() function
+ *
+ * @return mixed The PHP variant if serialization was successful,
+ *               or FALSE if converted object is unserializeable
+ */
+function php_unserialize(string $serialized, bool $binary = false)
+{
+    return (new PhpSerializer($binary))->unserialize($serialized);
+}
+
+/**
+ * Serializes the data into XML document.
+ *
+ * @param string   $root The XML document root name
+ * @param iterable $data The data to be encoded
+ *
+ * @return string XML document
+ */
+function xml_serialize(string $root, iterable $data): string
+{
+    return (new XmlSerializer($root))->serialize($data);
+
+}
+
+/**
+ * Unserialize the XML document into PHP array.
+ * This function does not deal with magical conversions of complicated XML structures.
+ *
+ * @param string $root The XML document root name
+ * @param string $xml The XML document to be decoded into array
+ *
+ * @return array Decoded version of the XML string,
+ *               or empty array on malformed XML
+ */
+function xml_unserialize(string $root, string $xml): array
+{
+    return (new XmlSerializer($root))->unserialize($xml);
 }
