@@ -27,8 +27,7 @@
     "ext-json": "*",
     "ext-dom": "*",
     "ext-libxml": "*",
-    "ext-simplexml": "*",
-    "ext-igbinary": "*"
+    "ext-simplexml": "*"
   },
   "autoload": {
     "psr-4": {
