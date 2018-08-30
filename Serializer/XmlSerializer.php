@@ -35,11 +35,11 @@ final class XmlSerializer implements StringSerializable
     }
 
     /**
-     * @param array $value
+     * @param iterable $data
      *
      * @return string XML
      */
-    public function serialize($value): string
+    public function serialize($data): string
     {
         $xml = new DOMDocument('1.0', 'UTF-8');
         $xml->preserveWhiteSpace = false;
@@ -47,7 +47,7 @@ final class XmlSerializer implements StringSerializable
 
         $root = $xml->createElement($this->root);
         $xml->appendChild($root);
-        $this->parseFromArray($value, $root);
+        $this->parseFromArray($data, $root);
 
         return $xml->saveXML();
     }
@@ -70,7 +70,7 @@ final class XmlSerializer implements StringSerializable
         return $this->parseFromElement($xml->documentElement);
     }
 
-    private function parseFromArray(array $data, DOMElement $element): DOMElement
+    private function parseFromArray(iterable $data, DOMElement $element): DOMElement
     {
         foreach ($data as $key => $value) {
             if (is_numeric($key)) {
