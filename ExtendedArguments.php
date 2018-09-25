@@ -12,7 +12,8 @@
 
 namespace Koded\Stdlib;
 
-use RecursiveArrayIterator, RecursiveIteratorIterator;
+use RecursiveArrayIterator;
+use RecursiveIteratorIterator;
 
 /**
  * Class ExtendedArguments

@@ -65,21 +65,14 @@ trait AccessorTrait
         return $this->storage;
     }
 
-    /**
-     * Returns the object state as JSON string.
-     *
-     * @param int $options By default these are added:
-     *                     - JSON_NUMERIC_CHECK
-     *                     - JSON_PRESERVE_ZERO_FRACTION
-     *                     - JSON_UNESCAPED_SLASHES
-     *                     - JSON_UNESCAPED_UNICODE
-     *
-     * @return string
-     */
     public function toJSON(int $options = 0): string
     {
-        $options |= JSON_NUMERIC_CHECK | JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
-        return json_encode($this->storage, $options);
+        return json_serialize($this->storage, $options);
+    }
+
+    public function toXML(string $root): string
+    {
+        return xml_serialize($root, $this->storage);
     }
 
     public function getIterator(): Traversable

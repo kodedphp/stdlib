@@ -13,7 +13,7 @@
 namespace Koded\Stdlib;
 
 use Exception;
-use Koded\Stdlib\Interfaces\{ Configuration, ConfigurationFactory, Data };
+use Koded\Stdlib\Interfaces\{Configuration, ConfigurationFactory, Data};
 
 /**
  * Class Config works as a parameter bag that provides ways to fill it
@@ -77,8 +77,8 @@ class Config extends Arguments implements ConfigurationFactory
      *
      * The calling app should handle their configuration appropriately.
      *
-     * @param string $name Method name
-     * @param array $arguments [optional]
+     * @param string $name      Method name
+     * @param array  $arguments [optional]
      *
      * @return ConfigurationFactory
      * @throws Exception
