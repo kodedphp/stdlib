@@ -3,7 +3,7 @@ Koded Standard Library
 
 A standard library for shareable classes and functions.
 
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.0-8892BF.svg)](https://php.net/)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.1.4-8892BF.svg)](https://php.net/)
 [![Build Status](https://travis-ci.org/kodedphp/stdlib.svg?branch=master)](https://travis-ci.org/kodedphp/stdlib)
 [![Coverage Status](https://coveralls.io/repos/github/kodedphp/stdlib/badge.svg?branch=master)](https://coveralls.io/github/kodedphp/stdlib?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kodedphp/stdlib/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/kodedphp/stdlib/?branch=master)

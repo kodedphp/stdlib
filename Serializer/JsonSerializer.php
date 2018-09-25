@@ -9,11 +9,12 @@ final class JsonSerializer implements StringSerializable
 {
 
     /**
-     * @var int JSON encode options. Defaults to (1376):
+     * @var int JSON encode options. Defaults to (1392):
      *          - JSON_PRESERVE_ZERO_FRACTION
      *          - JSON_NUMERIC_CHECK
      *          - JSON_UNESCAPED_SLASHES
      *          - JSON_UNESCAPED_UNICODE
+     *          - JSON_FORCE_OBJECT
      */
     private $options;
 
@@ -28,7 +29,8 @@ final class JsonSerializer implements StringSerializable
             JSON_PRESERVE_ZERO_FRACTION
             | JSON_NUMERIC_CHECK
             | JSON_UNESCAPED_SLASHES
-            | JSON_UNESCAPED_UNICODE;
+            | JSON_UNESCAPED_UNICODE
+            | JSON_FORCE_OBJECT;
     }
 
     public function serialize($value): string

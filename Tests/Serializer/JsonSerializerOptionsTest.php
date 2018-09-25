@@ -22,7 +22,8 @@ class JsonSerializerOptionsTest extends TestCase
         $expected = JSON_PRESERVE_ZERO_FRACTION
             | JSON_NUMERIC_CHECK
             | JSON_UNESCAPED_SLASHES
-            | JSON_UNESCAPED_UNICODE;
+            | JSON_UNESCAPED_UNICODE
+            | JSON_FORCE_OBJECT;
 
         $this->assertAttributeEquals($expected, 'options', new JsonSerializer($expected));
     }

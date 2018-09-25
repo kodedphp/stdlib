@@ -2,7 +2,7 @@
 
 namespace Koded\Stdlib;
 
-use Koded\Stdlib\Interfaces\{ Argument, Data };
+use Koded\Stdlib\Interfaces\{Argument, Data};
 use PHPUnit\Framework\TestCase;
 
 class ArgumentObjectTest extends TestCase
@@ -199,7 +199,7 @@ class ArgumentObjectTest extends TestCase
     }
 
     /**
-     * Tests indirect array modification debacle introduced in 7.1.4+
+     * Tests indirect array modification introduced in 7.1.4+
      */
     public function test_expected_dynamic_object_property_setter()
     {

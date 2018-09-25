@@ -12,7 +12,7 @@
 
 namespace Koded\Stdlib\Interfaces;
 
-use Koded\Stdlib\{ Arguments, Immutable };
+use Koded\Stdlib\{Arguments, Immutable};
 
 interface ArrayDataFilter
 {
@@ -46,7 +46,7 @@ interface ArrayDataFilter
      *      ]
      *  ];
      *
-     *  $dataObject->find('foo'); // yields 1
+     *  $dataObject->find('foo');     // yields 1
      *  $dataObject->find('bar.baz'); // yields 'gir'
      *
      * @return array
@@ -69,6 +69,7 @@ interface ArrayDataFilter
     public function extract(array $keys): array;
 }
 
+
 interface NamespaceDataFilter
 {
 
@@ -86,6 +87,7 @@ interface NamespaceDataFilter
      */
     public function namespace(string $prefix, bool $lowercase = true, bool $trim = true);
 }
+
 
 interface Data
 {
@@ -121,14 +123,23 @@ interface Data
     public function toArray(): array;
 
     /**
-     * Returns the object state as JSON string.
+     * Returns the object as JSON representation.
      *
-     * @param int $options JSON options for json_encode()
+     * @param int $options JSON options for json_serialize()
      *
-     * @return string
-     * @link http://php.net/manual/en/json.constants.php
+     * @return string JSON representation of the object
+     * @see http://php.net/manual/en/json.constants.php
      */
     public function toJSON(int $options = 0): string;
+
+    /**
+     * Returns the object as XML representation.
+     *
+     * @param string $root The XML root element name
+     *
+     * @return string XML representation of the object
+     */
+    public function toXML(string $root): string;
 }
 
 
@@ -203,6 +214,7 @@ interface Argument extends Data
     public function clear();
 }
 
+
 interface TransformsToArguments
 {
 
@@ -214,6 +226,7 @@ interface TransformsToArguments
     public function toArgument(): Arguments;
 }
 
+
 interface TransformsToImmutable
 {
 
@@ -224,6 +237,7 @@ interface TransformsToImmutable
      */
     public function toImmutable(): Immutable;
 }
+
 
 interface ConfigurationFactory extends Argument, ArrayDataFilter, NamespaceDataFilter
 {
@@ -245,7 +259,12 @@ interface ConfigurationFactory extends Argument, ArrayDataFilter, NamespaceDataF
      *
      * @return ConfigurationFactory
      */
-    public function fromEnvironment(array $variableNames, string $namespace = '', bool $lowercase = true, bool $trim = true): ConfigurationFactory;
+    public function fromEnvironment(
+        array $variableNames,
+        string $namespace = '',
+        bool $lowercase = true,
+        bool $trim = true
+    ): ConfigurationFactory;
 
     /**
      * Loads the configuration options from JSON file.
@@ -326,9 +345,11 @@ interface ConfigurationFactory extends Argument, ArrayDataFilter, NamespaceDataF
     public function build(string $context): Configuration;
 }
 
+
 interface Configuration extends Data
 {
 }
+
 
 interface StringSerializable
 {
