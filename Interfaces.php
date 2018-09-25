@@ -123,7 +123,7 @@ interface Data
     public function toArray(): array;
 
     /**
-     * Returns the object as JSON string.
+     * Returns the object as JSON representation.
      *
      * @param int $options JSON options for json_serialize()
      *
@@ -133,7 +133,7 @@ interface Data
     public function toJSON(int $options = 0): string;
 
     /**
-     * Returns the object as JSON string.
+     * Returns the object as XML representation.
      *
      * @param string $root The XML root element name
      *
