@@ -57,12 +57,12 @@ class ExtendedArguments extends Arguments
 
     public function has($index): bool
     {
-        $storage =& $this->storage;
+        $storage = & $this->storage;
         foreach (explode('.', $index) as $i) {
             if (false === is_array($storage) || false === array_key_exists($i, $storage)) {
                 return false;
             }
-            $storage =& $storage[$i];
+            $storage = & $storage[$i];
         }
 
         return true;
