@@ -18,7 +18,7 @@ class JsonSerializerFunctionsTest extends TestCase
     public function test_unserialize_json()
     {
         $this->assertEquals(
-            json_decode(JsonSerializerTest::SERIALIZED_JSON, true),
+            json_decode(JsonSerializerTest::SERIALIZED_JSON, false),
             json_unserialize(JsonSerializerTest::SERIALIZED_JSON)
         );
     }

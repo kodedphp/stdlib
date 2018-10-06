@@ -60,7 +60,7 @@ final class UUID
     /**
      * Regex pattern for UUIDs
      */
-    const PATTERN = '~^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$~i';
+    const PATTERN = '[a-f0-9]{8}\-[a-f0-9]{4}\-[a-f0-9]{4}\-[a-f0-9]{4}\-[a-f0-9]{12}';
 
     /**
      * UUID v1 is generated from host (hardware address), clock sequence and
@@ -218,7 +218,7 @@ final class UUID
      */
     public static function valid(string $uuid): bool
     {
-        return (bool)preg_match(UUID::PATTERN, $uuid);
+        return (bool)preg_match('/^' . UUID::PATTERN . '$/i', $uuid);
     }
 
     /**
