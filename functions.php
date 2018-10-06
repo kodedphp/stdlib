@@ -12,7 +12,7 @@
 
 namespace Koded\Stdlib;
 
-use Koded\Stdlib\Interfaces\{ Argument, Data };
+use Koded\Stdlib\Interfaces\{Argument, Data};
 use Koded\Stdlib\Serializer\{JsonSerializer, PhpSerializer, XmlSerializer};
 
 /**
@@ -84,7 +84,7 @@ function random_alpha_numeric(int $length = 16, string $prefix = '', string $suf
  */
 function snake_to_camel_case(string $string): string
 {
-    $string = preg_replace('/[\W_]+/', ' ', $string);
+    $string = preg_replace('/[\W\_]++/', ' ', $string);
 
     return str_replace(' ', '', ucwords($string));
 }
@@ -105,12 +105,12 @@ function camel_to_snake_case(string $string): string
  * Serializes the iterable instance or array into JSON format.
  *
  * @param mixed $data    The data to be serialized, except resource
- * @param int      $options [optional] JSON bitmask options
+ * @param int   $options [optional] JSON bitmask options
  *
  * @return string JSON encoded string
  * @see http://php.net/manual/en/function.json-encode.php
  */
-function json_serialize($data, int $options = null): string
+function json_serialize($data, int $options = 0): string
 {
     return (new JsonSerializer($options))->serialize($data);
 }
@@ -176,7 +176,7 @@ function xml_serialize(string $root, iterable $data): string
  * This function does not deal with magical conversions of complicated XML structures.
  *
  * @param string $root The XML document root name
- * @param string $xml The XML document to be decoded into array
+ * @param string $xml  The XML document to be decoded into array
  *
  * @return array Decoded version of the XML string,
  *               or empty array on malformed XML

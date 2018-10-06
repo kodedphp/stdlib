@@ -1,7 +1,10 @@
 <?php
 
 return [
-    'php-key-1' => new stdClass,
-    'normalizer' => 'php',
-    'timeout' => 2.5,
+    'object' => new \stdClass,
+    'array' => [],
+    'str' => 'php',
+    'float' => 2.50,
+    'int' => 7,
+    'bool' => false,
 ];

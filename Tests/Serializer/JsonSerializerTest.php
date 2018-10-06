@@ -9,7 +9,7 @@ use function Koded\Stdlib\{json_serialize, json_unserialize};
 class JsonSerializerTest extends TestCase
 {
 
-    const SERIALIZED_JSON = '{"php-key-1":{},"normalizer":"php","timeout":2.5}';
+    const SERIALIZED_JSON = '{"object":{},"array":[],"str":"php","float":2.5,"int":7,"bool":false}';
 
     /** @var JsonSerializer */
     private $SUT;
@@ -20,7 +20,7 @@ class JsonSerializerTest extends TestCase
         $this->assertEquals(self::SERIALIZED_JSON, $this->SUT->serialize($data));
     }
 
-    public function test_serialize_with_iterable()
+    public function test_serialize_iterable()
     {
         $data = json_unserialize(self::SERIALIZED_JSON);
         $iter = new \ArrayIterator($data);
@@ -28,14 +28,24 @@ class JsonSerializerTest extends TestCase
         $this->assertEquals(self::SERIALIZED_JSON, $this->SUT->serialize($iter));
     }
 
-    public function test_expects_empty_object_if_data_is_empty_array()
+    public function test_expects_array_if_data_is_empty_array()
     {
-        $this->assertSame('{}', json_serialize([]));
+        $this->assertSame('[]', json_serialize([]));
+    }
+
+    public function test_expects_stdClass_if_data_is_object()
+    {
+        $this->assertSame('{}', json_serialize(new \stdClass));
+    }
+
+    public function test_expects_trailing_zero_to_be_removed()
+    {
+        $this->assertEquals('[2.5]', json_serialize([2.50]));
     }
 
     public function test_unserialize()
     {
-        $this->assertEquals(json_decode(self::SERIALIZED_JSON, true), $this->SUT->unserialize(self::SERIALIZED_JSON));
+        $this->assertEquals(json_decode(self::SERIALIZED_JSON, false), $this->SUT->unserialize(self::SERIALIZED_JSON));
     }
 
     public function test_unserialize_error()

@@ -9,28 +9,22 @@ final class JsonSerializer implements StringSerializable
 {
 
     /**
-     * @var int JSON encode options. Defaults to (1392):
+     * @var int JSON encode options. Defaults to (1088):
      *          - JSON_PRESERVE_ZERO_FRACTION
-     *          - JSON_NUMERIC_CHECK
      *          - JSON_UNESCAPED_SLASHES
-     *          - JSON_UNESCAPED_UNICODE
-     *          - JSON_FORCE_OBJECT
      */
-    private $options;
+    private $options = JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES;
 
     /**
      * JsonSerializer constructor.
      *
-     * @param int $options [optional] JSON encode options
+     * @param int $options [optional] JSON encode options.
+     *                     - to add more JSON options use OR "|" bitmask operator
+     *                     - to exclude multiple default options use XOR "^"
      */
-    public function __construct(int $options = null)
+    public function __construct(int $options = 0)
     {
-        $this->options = $options ??
-            JSON_PRESERVE_ZERO_FRACTION
-            | JSON_NUMERIC_CHECK
-            | JSON_UNESCAPED_SLASHES
-            | JSON_UNESCAPED_UNICODE
-            | JSON_FORCE_OBJECT;
+        $this->options ^= $options;
     }
 
     public function serialize($value): string
@@ -40,7 +34,7 @@ final class JsonSerializer implements StringSerializable
 
     public function unserialize(string $value)
     {
-        $json = json_decode(utf8_encode($value), true, 512, JSON_BIGINT_AS_STRING);
+        $json = json_decode($value, false, 512, JSON_BIGINT_AS_STRING);
 
         if (JSON_ERROR_NONE !== json_last_error()) {
             throw KodedException::generic(json_last_error_msg());
