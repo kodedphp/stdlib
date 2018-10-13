@@ -37,6 +37,11 @@ class XmlSerializerTest extends TestCase
         $this->assertEquals(require __DIR__ . '/../fixtures/nested-array.php', $array);
     }
 
+    public function testName()
+    {
+        $this->assertSame(SerializerFactory::XML, $this->SUT->name());
+    }
+
     protected function setUp()
     {
         $this->SUT = new XmlSerializer('payload');

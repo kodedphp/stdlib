@@ -56,6 +56,11 @@ class JsonSerializerTest extends TestCase
         $this->SUT->unserialize('');
     }
 
+    public function testName()
+    {
+        $this->assertSame(SerializerFactory::JSON, $this->SUT->name());
+    }
+
     public function data()
     {
         return [

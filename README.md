@@ -8,6 +8,7 @@ A standard library for shareable classes and functions.
 [![Coverage Status](https://coveralls.io/repos/github/kodedphp/stdlib/badge.svg?branch=master)](https://coveralls.io/github/kodedphp/stdlib?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kodedphp/stdlib/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/kodedphp/stdlib/?branch=master)
 [![Latest Stable Version](https://img.shields.io/packagist/v/koded/stdlib.svg)](https://packagist.org/packages/koded/stdlib)
+[![Packagist Downloads](https://img.shields.io/packagist/dt/koded/stdlib.svg)](https://packagist.org/packages/koded/stdlib)
 [![Software license](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](LICENSE)
 
 

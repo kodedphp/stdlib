@@ -371,4 +371,11 @@ interface StringSerializable
      * @return mixed The converted value
      */
     public function unserialize(string $value);
+
+    /**
+     * The name of the serializer.
+     *
+     * @return string
+     */
+    public function name(): string;
 }

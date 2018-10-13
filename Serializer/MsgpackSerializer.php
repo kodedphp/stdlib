@@ -14,21 +14,21 @@ namespace Koded\Stdlib\Serializer;
 
 use Koded\Stdlib\Interfaces\StringSerializable;
 
-final class PhpSerializer implements StringSerializable
+final class MsgpackSerializer implements StringSerializable
 {
 
     public function serialize($value): string
     {
-        return serialize($value);
+        return msgpack_pack($value);
     }
 
     public function unserialize(string $value)
     {
-        return unserialize($value);
+        return msgpack_unpack($value);
     }
 
     public function name(): string
     {
-        return SerializerFactory::PHP;
+        return SerializerFactory::MSGPACK;
     }
 }
