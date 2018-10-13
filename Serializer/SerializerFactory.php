@@ -34,6 +34,12 @@ final class SerializerFactory
             case Serializer::JSON:
                 return new JsonSerializer((int)$args);
 
+            case Serializer::PHP:
+                return new PhpSerializer;
+
+            case Serializer::XML:
+                return new XmlSerializer((string)$args);
+
             case Serializer::IGBINARY:
                 // @codeCoverageIgnoreStart
                 if (false === function_exists('igbinary_serialize')) {
@@ -42,12 +48,6 @@ final class SerializerFactory
 
                 return new IgbinarySerializer;
             // @codeCoverageIgnoreEnd
-
-            case Serializer::PHP:
-                return new PhpSerializer;
-
-            case Serializer::XML:
-                return new XmlSerializer((string)$args);
 
             case Serializer::MSGPACK:
                 // @codeCoverageIgnoreStart
