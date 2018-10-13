@@ -12,9 +12,9 @@
 
 namespace Koded\Stdlib\Serializer;
 
-use Koded\Stdlib\Interfaces\StringSerializable;
+use Koded\Stdlib\Interfaces\Serializer;
 
-final class PhpSerializer implements StringSerializable
+final class PhpSerializer implements Serializer
 {
 
     public function serialize($value): string
@@ -29,6 +29,6 @@ final class PhpSerializer implements StringSerializable
 
     public function name(): string
     {
-        return SerializerFactory::PHP;
+        return Serializer::PHP;
     }
 }

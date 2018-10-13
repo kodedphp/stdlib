@@ -3,6 +3,7 @@
 namespace Koded\Stdlib\Serializer;
 
 use Koded\Exceptions\KodedException;
+use Koded\Stdlib\Interfaces\Serializer;
 use PHPUnit\Framework\TestCase;
 use function Koded\Stdlib\{json_serialize, json_unserialize};
 
@@ -58,7 +59,7 @@ class JsonSerializerTest extends TestCase
 
     public function testName()
     {
-        $this->assertSame(SerializerFactory::JSON, $this->SUT->name());
+        $this->assertSame(Serializer::JSON, $this->SUT->name());
     }
 
     public function data()

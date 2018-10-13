@@ -12,23 +12,23 @@
 
 namespace Koded\Stdlib\Serializer;
 
-use Koded\Stdlib\Interfaces\StringSerializable;
+use Koded\Stdlib\Interfaces\Serializer;
 
-final class MsgpackSerializer implements StringSerializable
+final class MsgpackSerializer implements Serializer
 {
 
     public function serialize($value): string
     {
-        return msgpack_pack($value);
+        return \msgpack_pack($value);
     }
 
     public function unserialize(string $value)
     {
-        return msgpack_unpack($value);
+        return \msgpack_unpack($value);
     }
 
     public function name(): string
     {
-        return SerializerFactory::MSGPACK;
+        return Serializer::MSGPACK;
     }
 }

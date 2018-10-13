@@ -20,6 +20,6 @@ class ExceptionsTest extends TestCase
         $this->expectException(SerializerException::class);
         $this->expectExceptionMessage('Failed to create a serializer for "fubar"');
         $this->expectExceptionCode(409);
-        throw SerializerException::forCreate('fubar');
+        throw SerializerException::forCreateSerializer('fubar');
     }
 }

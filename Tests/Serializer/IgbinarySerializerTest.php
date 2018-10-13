@@ -2,6 +2,7 @@
 
 namespace Koded\Stdlib\Serializer;
 
+use Koded\Stdlib\Interfaces\Serializer;
 use PHPUnit\Framework\TestCase;
 
 class IgbinarySerializerTest extends TestCase
@@ -25,7 +26,7 @@ class IgbinarySerializerTest extends TestCase
 
     public function testName()
     {
-        $this->assertSame(SerializerFactory::IGBINARY, $this->SUT->name());
+        $this->assertSame(Serializer::IGBINARY, $this->SUT->name());
     }
 
     protected function setUp()

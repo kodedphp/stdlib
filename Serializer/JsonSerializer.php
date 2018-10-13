@@ -13,9 +13,9 @@
 namespace Koded\Stdlib\Serializer;
 
 use Koded\Exceptions\KodedException;
-use Koded\Stdlib\Interfaces\StringSerializable;
+use Koded\Stdlib\Interfaces\Serializer;
 
-final class JsonSerializer implements StringSerializable
+final class JsonSerializer implements Serializer
 {
 
     /**
@@ -55,6 +55,6 @@ final class JsonSerializer implements StringSerializable
 
     public function name(): string
     {
-        return SerializerFactory::JSON;
+        return Serializer::JSON;
     }
 }
