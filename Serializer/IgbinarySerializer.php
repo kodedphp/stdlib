@@ -12,23 +12,23 @@
 
 namespace Koded\Stdlib\Serializer;
 
-use Koded\Stdlib\Interfaces\StringSerializable;
+use Koded\Stdlib\Interfaces\Serializer;
 
-final class IgbinarySerializer implements StringSerializable
+final class IgbinarySerializer implements Serializer
 {
 
     public function serialize($value): string
     {
-        return igbinary_serialize($value);
+        return \igbinary_serialize($value);
     }
 
     public function unserialize(string $value)
     {
-        return igbinary_unserialize($value);
+        return \igbinary_unserialize($value);
     }
 
     public function name(): string
     {
-        return SerializerFactory::IGBINARY;
+        return Serializer::IGBINARY;
     }
 }

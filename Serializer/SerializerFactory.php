@@ -13,61 +13,56 @@
 namespace Koded\Stdlib\Serializer;
 
 use Koded\Exceptions\SerializerException;
-use Koded\Stdlib\Interfaces\StringSerializable;
+use Koded\Stdlib\Interfaces\Serializer;
 
 final class SerializerFactory
 {
-    const IGBINARY = 'igbinary';
-    const MSGPACK = 'msgpack';
-    const JSON = 'json';
-    const XML = 'xml';
-    const PHP = 'php';
 
     /**
-     * Factory that creates a new instance of StringSerializable.
+     * Factory that creates a new instance of Serializer.
      *
      * @param string $name The name of the supported serializer
      *                     Provide a FQCN for custom serializers
      * @param        $args [optional] Optional arguments for the serializer class
      *
-     * @return StringSerializable
+     * @return Serializer
      * @throws SerializerException
      */
-    public static function new(string $name, $args = null): StringSerializable
+    public static function new(string $name, $args = null): Serializer
     {
         switch ($name) {
-            case self::JSON:
+            case Serializer::JSON:
                 return new JsonSerializer((int)$args);
 
-            case self::IGBINARY:
+            case Serializer::IGBINARY:
                 // @codeCoverageIgnoreStart
                 if (false === function_exists('igbinary_serialize')) {
-                    throw SerializerException::forMissingModule(SerializerFactory::MSGPACK);
+                    throw SerializerException::forMissingModule(Serializer::MSGPACK);
                 }
 
                 return new IgbinarySerializer;
             // @codeCoverageIgnoreEnd
 
-            case self::PHP:
+            case Serializer::PHP:
                 return new PhpSerializer;
 
-            case self::XML:
+            case Serializer::XML:
                 return new XmlSerializer((string)$args);
 
-            case self::MSGPACK:
+            case Serializer::MSGPACK:
                 // @codeCoverageIgnoreStart
                 if (false === function_exists('msgpack_pack')) {
-                    throw SerializerException::forMissingModule(SerializerFactory::MSGPACK);
+                    throw SerializerException::forMissingModule(Serializer::MSGPACK);
                 }
 
                 return new MsgpackSerializer;
             // @codeCoverageIgnoreEnd
         }
 
-        if (is_a($name, StringSerializable::class, true)) {
+        if (is_a($name, Serializer::class, true)) {
             return new $name($args);
         }
 
-        throw SerializerException::forCreate($name);
+        throw SerializerException::forCreateSerializer($name);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Koded\Stdlib\Serializer;
 
+use Koded\Stdlib\Interfaces\Serializer;
 use PHPUnit\Framework\TestCase;
 
 class PhpSerializerTest extends TestCase
@@ -25,7 +26,7 @@ class PhpSerializerTest extends TestCase
 
     public function testName()
     {
-        $this->assertSame(SerializerFactory::PHP, $this->SUT->name());
+        $this->assertSame(Serializer::PHP, $this->SUT->name());
     }
 
     protected function setUp()

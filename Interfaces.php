@@ -351,8 +351,13 @@ interface Configuration extends Data
 }
 
 
-interface StringSerializable
+interface Serializer
 {
+    const IGBINARY = 'igbinary';
+    const MSGPACK = 'msgpack';
+    const JSON = 'json';
+    const XML = 'xml';
+    const PHP = 'php';
 
     /**
      * Generates a string representation of a value.

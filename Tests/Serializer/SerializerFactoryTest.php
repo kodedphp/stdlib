@@ -3,7 +3,7 @@
 namespace Koded\Stdlib\Serializer;
 
 use Koded\Exceptions\SerializerException;
-use Koded\Stdlib\Interfaces\StringSerializable;
+use Koded\Stdlib\Interfaces\Serializer;
 use PHPUnit\Framework\TestCase;
 
 class SerializerFactoryTest extends TestCase
@@ -11,13 +11,13 @@ class SerializerFactoryTest extends TestCase
 
     public function test_native()
     {
-        $json = SerializerFactory::new(SerializerFactory::JSON);
-        $xml = SerializerFactory::new(SerializerFactory::XML, 'root');
-        $php = SerializerFactory::new(SerializerFactory::PHP);
+        $json = SerializerFactory::new(Serializer::JSON);
+        $xml = SerializerFactory::new(Serializer::XML, 'root');
+        $php = SerializerFactory::new(Serializer::PHP);
 
-        $this->assertSame(SerializerFactory::JSON, $json->name());
-        $this->assertSame(SerializerFactory::XML, $xml->name());
-        $this->assertSame(SerializerFactory::PHP, $php->name());
+        $this->assertSame(Serializer::JSON, $json->name());
+        $this->assertSame(Serializer::XML, $xml->name());
+        $this->assertSame(Serializer::PHP, $php->name());
     }
 
     public function test_igbinary()
@@ -26,8 +26,8 @@ class SerializerFactoryTest extends TestCase
             $this->markTestSkipped('igbinary extension is not loaded');
         }
 
-        $igbinary = SerializerFactory::new(SerializerFactory::IGBINARY);
-        $this->assertSame(SerializerFactory::IGBINARY, $igbinary->name());
+        $igbinary = SerializerFactory::new(Serializer::IGBINARY);
+        $this->assertSame(Serializer::IGBINARY, $igbinary->name());
     }
 
     public function test_msgpack()
@@ -36,8 +36,8 @@ class SerializerFactoryTest extends TestCase
             $this->markTestSkipped('msgpack extension is not loaded');
         }
 
-        $msgpack = SerializerFactory::new(SerializerFactory::MSGPACK);
-        $this->assertSame(SerializerFactory::MSGPACK, $msgpack->name());
+        $msgpack = SerializerFactory::new(Serializer::MSGPACK);
+        $this->assertSame(Serializer::MSGPACK, $msgpack->name());
     }
 
     public function test_custom()
@@ -57,7 +57,7 @@ class SerializerFactoryTest extends TestCase
 }
 
 
-class TestSerializer implements StringSerializable
+class TestSerializer implements Serializer
 {
     public function serialize($value): string
     {

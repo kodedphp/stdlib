@@ -2,6 +2,7 @@
 
 namespace Koded\Stdlib\Serializer;
 
+use Koded\Stdlib\Interfaces\Serializer;
 use PHPUnit\Framework\TestCase;
 
 class XmlSerializerTest extends TestCase
@@ -39,7 +40,7 @@ class XmlSerializerTest extends TestCase
 
     public function testName()
     {
-        $this->assertSame(SerializerFactory::XML, $this->SUT->name());
+        $this->assertSame(Serializer::XML, $this->SUT->name());
     }
 
     protected function setUp()

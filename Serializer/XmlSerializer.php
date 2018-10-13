@@ -17,14 +17,14 @@ use DateTimeInterface;
 use DOMDocument;
 use DOMElement;
 use Exception;
-use Koded\Stdlib\Interfaces\StringSerializable;
+use Koded\Stdlib\Interfaces\Serializer;
 
 /**
  * Class XmlSerializer is heavily copied from excellent
  * Propel 3 runtime parser (XmlParser) and modified.
  *
  */
-final class XmlSerializer implements StringSerializable
+final class XmlSerializer implements Serializer
 {
 
     private $root;
@@ -72,7 +72,7 @@ final class XmlSerializer implements StringSerializable
 
     public function name(): string
     {
-        return SerializerFactory::XML;
+        return Serializer::XML;
     }
 
     private function parseFromArray(iterable $data, DOMElement $element): DOMElement

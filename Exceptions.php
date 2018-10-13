@@ -79,7 +79,7 @@ class SerializerException extends KodedException
         return new static(424, [':module' => $module]);
     }
 
-    public static function forCreate(string $name)
+    public static function forCreateSerializer(string $name)
     {
         return new static(409, [':name' => $name]);
     }
