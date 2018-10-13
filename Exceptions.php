@@ -16,6 +16,7 @@ use Exception;
 use Koded\Stdlib\Interfaces\Data;
 use RuntimeException;
 
+
 class KodedException extends RuntimeException
 {
 
@@ -45,6 +46,7 @@ class KodedException extends RuntimeException
     }
 }
 
+
 class ReadOnlyException extends KodedException
 {
 
@@ -61,5 +63,24 @@ class ReadOnlyException extends KodedException
     public static function forCloning(string $class)
     {
         return new static(Data::E_CLONING_DISALLOWED, [':class' => $class]);
+    }
+}
+
+
+class SerializerException extends KodedException
+{
+    protected $messages = [
+        409 => 'Failed to create a serializer for ":name"',
+        424 => '[Dependency error] ":module" module is not installed on this machine',
+    ];
+
+    public static function forMissingModule(string $module)
+    {
+        return new static(424, [':module' => $module]);
+    }
+
+    public static function forCreate(string $name)
+    {
+        return new static(409, [':name' => $name]);
     }
 }

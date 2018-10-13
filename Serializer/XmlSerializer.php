@@ -70,6 +70,11 @@ final class XmlSerializer implements StringSerializable
         return $this->parseFromElement($xml->documentElement);
     }
 
+    public function name(): string
+    {
+        return SerializerFactory::XML;
+    }
+
     private function parseFromArray(iterable $data, DOMElement $element): DOMElement
     {
         foreach ($data as $key => $value) {

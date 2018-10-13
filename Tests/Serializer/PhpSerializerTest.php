@@ -10,10 +10,7 @@ class PhpSerializerTest extends TestCase
     /** @var PhpSerializer */
     private $SUT;
 
-    /** @var array */
     private $original;
-
-    /** @var string */
     private $serialized;
 
     public function test_serialize()
@@ -26,9 +23,14 @@ class PhpSerializerTest extends TestCase
         $this->assertEquals($this->original, $this->SUT->unserialize($this->serialized));
     }
 
+    public function testName()
+    {
+        $this->assertSame(SerializerFactory::PHP, $this->SUT->name());
+    }
+
     protected function setUp()
     {
-        $this->SUT = new PhpSerializer(false);
+        $this->SUT = new PhpSerializer;
         $this->original = require __DIR__ . '/../fixtures/config-test.php';
         $this->serialized = serialize($this->original);
     }

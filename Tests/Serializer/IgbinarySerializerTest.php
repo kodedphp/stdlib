@@ -4,16 +4,13 @@ namespace Koded\Stdlib\Serializer;
 
 use PHPUnit\Framework\TestCase;
 
-class PhpBinarySerializerTest extends TestCase
+class IgbinarySerializerTest extends TestCase
 {
 
-    /** @var PhpSerializer */
+    /** @var IgbinarySerializer */
     private $SUT;
 
-    /** @var array */
     private $original;
-
-    /** @var string */
     private $igb;
 
     public function test_serialize()
@@ -26,13 +23,18 @@ class PhpBinarySerializerTest extends TestCase
         $this->assertEquals($this->original, $this->SUT->unserialize($this->igb));
     }
 
+    public function testName()
+    {
+        $this->assertSame(SerializerFactory::IGBINARY, $this->SUT->name());
+    }
+
     protected function setUp()
     {
         if (false === function_exists('igbinary_serialize')) {
             $this->markTestSkipped('igbinary extension is not loaded');
         }
 
-        $this->SUT = new PhpSerializer(true);
+        $this->SUT = new IgbinarySerializer;
         $this->original = require __DIR__ . '/../fixtures/config-test.php';
         $this->igb = igbinary_serialize($this->original);
     }
