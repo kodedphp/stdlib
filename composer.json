@@ -51,5 +51,10 @@
     "files": [
       "functions-dev.php"
     ]
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "2.0-dev"
+    }
   }
 }

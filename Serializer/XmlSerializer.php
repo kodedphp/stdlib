@@ -62,7 +62,7 @@ final class XmlSerializer implements Serializer
         $xml = new DOMDocument('1.0', 'UTF-8');
 
         try {
-            $xml->loadXML(utf8_encode($document));
+            $xml->loadXML($document);
         } catch (Exception $e) {
             return [];
         }
