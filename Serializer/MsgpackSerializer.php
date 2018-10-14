@@ -17,17 +17,17 @@ use Koded\Stdlib\Interfaces\Serializer;
 final class MsgpackSerializer implements Serializer
 {
 
-    public function serialize($value): string
+    public function serialize($value)
     {
-        return \msgpack_pack($value);
+        return msgpack_pack($value);
     }
 
     public function unserialize($value)
     {
-        return \msgpack_unpack($value);
+        return msgpack_unpack($value);
     }
 
-    public function name(): string
+    public function type(): string
     {
         return Serializer::MSGPACK;
     }

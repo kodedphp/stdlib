@@ -2,6 +2,7 @@
 
 namespace Koded\Stdlib\Serializer;
 
+use Koded\Stdlib\Interfaces\Serializer;
 use PHPUnit\Framework\TestCase;
 
 class MsgpackSerializerTest extends TestCase
@@ -11,7 +12,7 @@ class MsgpackSerializerTest extends TestCase
     private $SUT;
 
     private $original;
-    private $igb;
+    private $msg;
 
     public function test_serialize()
     {
@@ -20,12 +21,12 @@ class MsgpackSerializerTest extends TestCase
 
     public function test_unserialize()
     {
-        $this->assertEquals($this->original, $this->SUT->unserialize($this->igb));
+        $this->assertEquals($this->original, $this->SUT->unserialize($this->msg));
     }
 
     public function testName()
     {
-        $this->assertSame(SerializerFactory::MSGPACK, $this->SUT->name());
+        $this->assertSame(Serializer::MSGPACK, $this->SUT->type());
     }
 
     protected function setUp()
@@ -36,6 +37,6 @@ class MsgpackSerializerTest extends TestCase
 
         $this->SUT = new IgbinarySerializer;
         $this->original = require __DIR__ . '/../fixtures/config-test.php';
-        $this->igb = msgpack_pack($this->original);
+        $this->msg = msgpack_pack($this->original);
     }
 }

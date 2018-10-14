@@ -15,9 +15,9 @@ class SerializerFactoryTest extends TestCase
         $xml = SerializerFactory::new(Serializer::XML, 'root');
         $php = SerializerFactory::new(Serializer::PHP);
 
-        $this->assertSame(Serializer::JSON, $json->name());
-        $this->assertSame(Serializer::XML, $xml->name());
-        $this->assertSame(Serializer::PHP, $php->name());
+        $this->assertSame(Serializer::JSON, $json->type());
+        $this->assertSame(Serializer::XML, $xml->type());
+        $this->assertSame(Serializer::PHP, $php->type());
     }
 
     public function test_igbinary()
@@ -27,7 +27,7 @@ class SerializerFactoryTest extends TestCase
         }
 
         $igbinary = SerializerFactory::new(Serializer::IGBINARY);
-        $this->assertSame(Serializer::IGBINARY, $igbinary->name());
+        $this->assertSame(Serializer::IGBINARY, $igbinary->type());
     }
 
     public function test_msgpack()
@@ -37,13 +37,13 @@ class SerializerFactoryTest extends TestCase
         }
 
         $msgpack = SerializerFactory::new(Serializer::MSGPACK);
-        $this->assertSame(Serializer::MSGPACK, $msgpack->name());
+        $this->assertSame(Serializer::MSGPACK, $msgpack->type());
     }
 
     public function test_custom()
     {
         $serializer = SerializerFactory::new(TestSerializer::class);
-        $this->assertSame(TestSerializer::class, $serializer->name());
+        $this->assertSame(TestSerializer::class, $serializer->type());
     }
 
     public function test_exception()
@@ -61,5 +61,5 @@ class TestSerializer implements Serializer
 {
     public function serialize($value): string {}
     public function unserialize($value) {}
-    public function name(): string { return self::class; }
+    public function type(): string { return self::class; }
 }

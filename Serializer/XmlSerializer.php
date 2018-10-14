@@ -39,7 +39,7 @@ final class XmlSerializer implements Serializer
      *
      * @return string XML
      */
-    public function serialize($data): string
+    public function serialize($data)
     {
         $xml = new DOMDocument('1.0', 'UTF-8');
         $xml->preserveWhiteSpace = false;
@@ -70,7 +70,7 @@ final class XmlSerializer implements Serializer
         return $this->parseFromElement($xml->documentElement);
     }
 
-    public function name(): string
+    public function type(): string
     {
         return Serializer::XML;
     }

@@ -360,27 +360,27 @@ interface Serializer
     const PHP = 'php';
 
     /**
-     * Generates a string representation of a value.
+     * Creates a serialized representation of the data.
      *
      * @param mixed $value
      *
-     * @return string Should return a byte-stream representation of the value
+     * @return string The serialized representation of the data
      */
-    public function serialize($value): string;
+    public function serialize($value);
 
     /**
-     * Recreates the value back from the serialized representation.
+     * Recreates the data back from the serialized representation.
      *
-     * @param mixed $value The serialized value
+     * @param mixed $value The serialized data
      *
      * @return mixed The converted value
      */
     public function unserialize($value);
 
     /**
-     * The name of the serializer.
+     * The string identifier for the serializer object.
      *
      * @return string
      */
-    public function name(): string;
+    public function type(): string;
 }

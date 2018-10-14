@@ -26,7 +26,7 @@ class IgbinarySerializerTest extends TestCase
 
     public function testName()
     {
-        $this->assertSame(Serializer::IGBINARY, $this->SUT->name());
+        $this->assertSame(Serializer::IGBINARY, $this->SUT->type());
     }
 
     protected function setUp()

@@ -12,7 +12,6 @@
 
 namespace Koded\Stdlib\Serializer;
 
-use Koded\Exceptions\KodedException;
 use Koded\Stdlib\Interfaces\Serializer;
 
 final class JsonSerializer implements Serializer
@@ -37,9 +36,15 @@ final class JsonSerializer implements Serializer
         $this->options ^= $options;
     }
 
-    public function serialize($value): string
+    public function serialize($value)
     {
-        return json_encode($value, $this->options);
+        if (false === $json = json_encode($value, $this->options)) {
+            $this->logError(__METHOD__, $value);
+
+            return '';
+        }
+
+        return $json;
     }
 
     public function unserialize($value)
@@ -47,14 +52,23 @@ final class JsonSerializer implements Serializer
         $json = json_decode($value, false, 512, JSON_BIGINT_AS_STRING);
 
         if (JSON_ERROR_NONE !== json_last_error()) {
-            throw KodedException::generic(json_last_error_msg());
+            $this->logError(__METHOD__, $value);
+
+            return '';
         }
 
         return $json;
     }
 
-    public function name(): string
+    public function type(): string
     {
         return Serializer::JSON;
+    }
+
+    private function logError(string $method, $value)
+    {
+        error_log(sprintf('[Serializer Error] (%s): %s for value: %s',
+            $method, json_last_error_msg(), var_export($value, true)
+        ));
     }
 }

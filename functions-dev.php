@@ -50,20 +50,23 @@ function dump($var, $label = null, bool $traceback = false, bool $die = true)
 
     $backtrace = ($traceback ? 'Traceback (most recent call last):' . PHP_EOL . $backtrace . PHP_EOL . str_repeat('-', 80) : date(DATE_COOKIE)) . PHP_EOL;
 
-    $format = function($var) {
-        ob_start();
-        var_dump($var);
-        $o = ob_get_contents();
-        $o = preg_replace('/<small>\/.*<\/small>/', '\\1', $o);
-        ob_end_clean();
+    if ('cli' === php_sapi_name()) {
+        $output = sprintf($MESSAGE_CLI, $backtrace, var_export($label, true), gettype($var), $position, print_r($var, true));
+    } elseif (strtoupper($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') == 'XMLHTTPREQUEST') {
+        $output = json_encode($var, JSON_UNESCAPED_SLASHES);
+    } else {
+        $format = function($var) {
+            ob_start();
+            var_dump($var);
+            $dump = ob_get_contents();
+            $dump = preg_replace('/<small>\/.*<\/small>/', '\\1', $dump);
+            ob_end_clean();
 
-        return $o;
-    };
+            return $dump;
+        };
 
-    $output = ('cli' === php_sapi_name()
-            ? sprintf($MESSAGE_CLI, $backtrace, var_export($label, true), gettype($var), $position, print_r($var, true))
-            : sprintf($MESSAGE_HTM, $position, var_export($label, true), gettype($var), $format($var))
-        ) . PHP_EOL;
+        $output = sprintf($MESSAGE_HTM, $position, var_export($label, true), gettype($var), $format($var));
+    }
 
     $die and die($output);
     print $output;

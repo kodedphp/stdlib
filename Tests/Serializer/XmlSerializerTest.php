@@ -40,7 +40,7 @@ class XmlSerializerTest extends TestCase
 
     public function testName()
     {
-        $this->assertSame(Serializer::XML, $this->SUT->name());
+        $this->assertSame(Serializer::XML, $this->SUT->type());
     }
 
     protected function setUp()
