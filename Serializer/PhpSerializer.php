@@ -22,7 +22,7 @@ final class PhpSerializer implements Serializer
         return serialize($value);
     }
 
-    public function unserialize(string $value)
+    public function unserialize($value)
     {
         return unserialize($value);
     }

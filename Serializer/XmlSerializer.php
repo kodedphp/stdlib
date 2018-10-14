@@ -57,7 +57,7 @@ final class XmlSerializer implements Serializer
      *
      * @return array
      */
-    public function unserialize(string $document)
+    public function unserialize($document)
     {
         $xml = new DOMDocument('1.0', 'UTF-8');
 

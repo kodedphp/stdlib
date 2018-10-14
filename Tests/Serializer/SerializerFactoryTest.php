@@ -59,16 +59,7 @@ class SerializerFactoryTest extends TestCase
 
 class TestSerializer implements Serializer
 {
-    public function serialize($value): string
-    {
-    }
-
-    public function unserialize(string $value)
-    {
-    }
-
-    public function name(): string
-    {
-        return self::class;
-    }
+    public function serialize($value): string {}
+    public function unserialize($value) {}
+    public function name(): string { return self::class; }
 }

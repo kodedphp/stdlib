@@ -371,11 +371,11 @@ interface Serializer
     /**
      * Recreates the value back from the serialized representation.
      *
-     * @param string $value The serialized value
+     * @param mixed $value The serialized value
      *
      * @return mixed The converted value
      */
-    public function unserialize(string $value);
+    public function unserialize($value);
 
     /**
      * The name of the serializer.

@@ -22,7 +22,7 @@ final class MsgpackSerializer implements Serializer
         return \msgpack_pack($value);
     }
 
-    public function unserialize(string $value)
+    public function unserialize($value)
     {
         return \msgpack_unpack($value);
     }
