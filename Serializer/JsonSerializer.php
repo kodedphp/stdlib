@@ -42,7 +42,7 @@ final class JsonSerializer implements Serializer
         return json_encode($value, $this->options);
     }
 
-    public function unserialize(string $value)
+    public function unserialize($value)
     {
         $json = json_decode($value, false, 512, JSON_BIGINT_AS_STRING);
 

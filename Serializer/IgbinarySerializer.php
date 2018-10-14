@@ -22,7 +22,7 @@ final class IgbinarySerializer implements Serializer
         return \igbinary_serialize($value);
     }
 
-    public function unserialize(string $value)
+    public function unserialize($value)
     {
         return \igbinary_unserialize($value);
     }
