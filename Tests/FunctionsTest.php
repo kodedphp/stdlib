@@ -67,10 +67,10 @@ class FunctionsTest extends TestCase
     {
         return [
             ['onlyCamelCaseStringMakesSense', 'only_camel_case_string_makes_sense'],
-            ['This is NOT Converted as youThink', 'this is n_o_t converted as you_think'],
+            ['This is NOT Converted as youThink', 'this_is_n_o_t_converted_as_you_think'],
             ['All123Numbers456Are789There', 'all123_numbers456_are789_there'],
-            ['Non?AlphaNumeric4*XCharacters#1q"Are"mess', 'non?alpha_numeric4*x_characters#1q"are"mess'],
-            ['th*1s-is%-ridic&&&&ULous', 'th*1s-is%-ridic&&&&u_lous'],
+            ['Non?AlphaNumeric4*XCharacters#1q"Are"mess', 'non_alpha_numeric4_x_characters1q_are_mess'],
+            ['th*1s-is%-ridic&&&&ULous', 'th1s_is_ridic_u_lous'],
         ];
     }
 }

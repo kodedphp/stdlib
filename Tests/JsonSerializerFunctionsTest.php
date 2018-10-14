@@ -2,7 +2,6 @@
 
 namespace Koded\Stdlib;
 
-use Koded\Exceptions\KodedException;
 use Koded\Stdlib\Serializer\JsonSerializerTest;
 use PHPUnit\Framework\TestCase;
 
@@ -12,7 +11,7 @@ class JsonSerializerFunctionsTest extends TestCase
     /** @dataProvider data */
     public function test_serialize_to_json($data)
     {
-        $this->assertEquals(JsonSerializerTest::SERIALIZED_JSON, json_serialize($data));
+        $this->assertEquals(JsonSerializerTest::SERIALIZED_JSON, json_encode($data));
     }
 
     public function test_unserialize_json()
@@ -25,12 +24,7 @@ class JsonSerializerFunctionsTest extends TestCase
 
     public function test_unserialize_error()
     {
-//        $this->expectException(KodedException::class);
-//        $this->expectExceptionMessage('[Exception] Syntax error');
-//
-//        json_unserialize('');
-
-        $this->assertSame('', json_unserialize(''), 'Returns empty string on JSON unserialize error');
+        $this->assertSame('', json_unserialize(''), 'Returns empty string on JSON decoding fails');
     }
 
     public function data()

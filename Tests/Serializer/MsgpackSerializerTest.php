@@ -35,7 +35,7 @@ class MsgpackSerializerTest extends TestCase
             $this->markTestSkipped('msgpack extension is not loaded');
         }
 
-        $this->SUT = new IgbinarySerializer;
+        $this->SUT = new MsgpackSerializer;
         $this->original = require __DIR__ . '/../fixtures/config-test.php';
         $this->msg = msgpack_pack($this->original);
     }

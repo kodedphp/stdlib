@@ -13,6 +13,7 @@
 namespace Koded\Stdlib\Serializer;
 
 use Koded\Stdlib\Interfaces\Serializer;
+use function Koded\Stdlib\{json_serialize, json_unserialize};
 
 final class JsonSerializer implements Serializer
 {
@@ -38,37 +39,16 @@ final class JsonSerializer implements Serializer
 
     public function serialize($value)
     {
-        if (false === $json = json_encode($value, $this->options)) {
-            $this->logError(__METHOD__, $value);
-
-            return '';
-        }
-
-        return $json;
+        return json_serialize($value, $this->options);
     }
 
     public function unserialize($value)
     {
-        $json = json_decode($value, false, 512, JSON_BIGINT_AS_STRING);
-
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            $this->logError(__METHOD__, $value);
-
-            return '';
-        }
-
-        return $json;
+        return json_unserialize($value);
     }
 
     public function type(): string
     {
         return Serializer::JSON;
-    }
-
-    private function logError(string $method, $value)
-    {
-        error_log(sprintf('[Serializer Error] (%s): %s for value: %s',
-            $method, json_last_error_msg(), var_export($value, true)
-        ));
     }
 }

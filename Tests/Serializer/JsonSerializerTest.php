@@ -2,7 +2,6 @@
 
 namespace Koded\Stdlib\Serializer;
 
-use Koded\Exceptions\KodedException;
 use Koded\Stdlib\Interfaces\Serializer;
 use PHPUnit\Framework\TestCase;
 use function Koded\Stdlib\{json_serialize, json_unserialize};
