@@ -51,15 +51,17 @@ class JsonSerializerTest extends TestCase
 
     public function test_unserialize_error()
     {
-        $this->expectException(KodedException::class);
-        $this->expectExceptionMessage('[Exception] Syntax error');
+//        $this->expectException(KodedException::class);
+//        $this->expectExceptionMessage('[Exception] Syntax error');
 
-        $this->SUT->unserialize('');
+//        $this->SUT->unserialize('');
+
+        $this->assertSame('', $this->SUT->unserialize(''), 'Returns empty string on JSON unserialize error');
     }
 
     public function testName()
     {
-        $this->assertSame(Serializer::JSON, $this->SUT->name());
+        $this->assertSame(Serializer::JSON, $this->SUT->type());
     }
 
     public function data()

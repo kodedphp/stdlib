@@ -17,7 +17,7 @@ use Koded\Stdlib\Interfaces\Serializer;
 final class PhpSerializer implements Serializer
 {
 
-    public function serialize($value): string
+    public function serialize($value)
     {
         return serialize($value);
     }
@@ -27,7 +27,7 @@ final class PhpSerializer implements Serializer
         return unserialize($value);
     }
 
-    public function name(): string
+    public function type(): string
     {
         return Serializer::PHP;
     }

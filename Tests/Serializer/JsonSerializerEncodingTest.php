@@ -31,6 +31,6 @@ class JsonSerializerEncodingTest extends TestCase
     public function test_fails_for_serialize_because_php_brilliant_utf8_requirement()
     {
         $actual = (new JsonSerializer)->serialize(require __DIR__ . '/../fixtures/non-utf8-file.php');
-        $this->assertSame('', $actual, 'json_encode() fails when data is, but the file is not saved in UTF-8');
+        $this->assertSame('', $actual, 'json_encode() failed to encode the data (non UTF-8 content)');
     }
 }

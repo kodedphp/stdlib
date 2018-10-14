@@ -26,7 +26,7 @@ class PhpSerializerTest extends TestCase
 
     public function testName()
     {
-        $this->assertSame(Serializer::PHP, $this->SUT->name());
+        $this->assertSame(Serializer::PHP, $this->SUT->type());
     }
 
     protected function setUp()
