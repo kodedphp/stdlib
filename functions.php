@@ -13,10 +13,11 @@
 namespace Koded\Stdlib;
 
 use Koded\Stdlib\Interfaces\{Argument, Data};
-use Koded\Stdlib\Serializer\{JsonSerializer, PhpSerializer, XmlSerializer};
+use Koded\Stdlib\Serializer\XmlSerializer;
 
 /**
- * Creates a new Argument instance with optional arbitrary number of arguments.
+ * Creates a new Argument instance
+ * with optional arbitrary number of arguments.
  *
  * @param array ...$values
  *
@@ -28,7 +29,8 @@ function arguments(...$values): Argument
 }
 
 /**
- * Creates a new Immutable instance with optional arbitrary number of arguments.
+ * Creates a new Immutable instance
+ * with optional arbitrary number of arguments.
  *
  * @param array ...$values
  *
@@ -40,7 +42,8 @@ function value(...$values): Data
 }
 
 /**
- * Escapes a string. Useful for escaping the input values in HTML templates.
+ * Escapes a string.
+ * Useful for escaping the input values in HTML templates.
  *
  * @param string $input    The input string
  * @param string $encoding The encoding
@@ -85,7 +88,6 @@ function random_alpha_numeric(int $length = 16, string $prefix = '', string $suf
 function snake_to_camel_case(string $string): string
 {
     $string = preg_replace('/[\W\_]++/', ' ', $string);
-
     return str_replace(' ', '', ucwords($string));
 }
 
@@ -98,63 +100,46 @@ function snake_to_camel_case(string $string): string
  */
 function camel_to_snake_case(string $string): string
 {
+    $string = snake_to_camel_case($string);
     return strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', trim($string)));
 }
 
 /**
- * Serializes the iterable instance or array into JSON format.
+ * Returns the JSON representation of a value.
  *
- * @param mixed $data    The data to be serialized, except resource
- * @param int   $options [optional] JSON bitmask options
+ * @param mixed $value   The data to be serialized
+ * @param int   $options [optional] JSON bitmask options for JSON encoding
  *
- * @return string JSON encoded string
+ * @return string JSON encoded string, or EMPTY STRING if encoding failed
  * @see http://php.net/manual/en/function.json-encode.php
  */
-function json_serialize($data, int $options = 0): string
+function json_serialize($value, int $options = JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES): string
 {
-    return (new JsonSerializer($options))->serialize($data);
+    if (false === $json = json_encode($value, $options)) {
+        error_log(__FUNCTION__, json_last_error_msg(), $value);
+        return '';
+    }
+
+    return $json;
 }
 
 /**
- * Decodes the encoded JSON string into appropriate PHP type.
+ * Decodes a JSON string into appropriate PHP type.
  *
- * @param string $json The encoded JSON string
+ * @param string $json A JSON string
  *
- * @return mixed The value encoded in JSON in appropriate PHP type
- * @throws \Koded\Exceptions\KodedException on error
+ * @return mixed The decoded value, or EMPTY STRING on error
  */
 function json_unserialize(string $json)
 {
-    return (new JsonSerializer)->unserialize($json);
-}
+    $data = json_decode($json, false, 512, JSON_BIGINT_AS_STRING);
 
-/**
- * Serializes the PHP object into string.
- *
- * @param object $object The PHP object to be serialized
- * @param bool   $binary [optional] TRUE for igbinary serialization,
- *                       or standard PHP serialize() function
- *
- * @return string byte-stream representation of the serialized PHP object
- */
-function php_serialize($object, bool $binary = false): string
-{
-    return (new PhpSerializer($binary))->serialize($object);
-}
+    if (JSON_ERROR_NONE !== json_last_error()) {
+        error_log(__FUNCTION__, json_last_error_msg(), $json);
+        return '';
+    }
 
-/**
- * Unserialize the serialized PHP object into it's appropriate type.
- *
- * @param string $serialized The serialized PHP object
- * @param bool   $binary     [optional] TRUE for igbinary serialization,
- *                           or standard PHP serialize() function
- *
- * @return mixed The PHP variant if serialization was successful,
- *               or FALSE if converted object is unserializeable
- */
-function php_unserialize(string $serialized, bool $binary = false)
-{
-    return (new PhpSerializer($binary))->unserialize($serialized);
+    return $data;
 }
 
 /**
@@ -168,12 +153,12 @@ function php_unserialize(string $serialized, bool $binary = false)
 function xml_serialize(string $root, iterable $data): string
 {
     return (new XmlSerializer($root))->serialize($data);
-
 }
 
 /**
- * Unserialize the XML document into PHP array.
- * This function does not deal with magical conversions of complicated XML structures.
+ * Unserialize an XML document into PHP array.
+ * This function does not deal with magical conversions
+ * of complicated XML structures.
  *
  * @param string $root The XML document root name
  * @param string $xml  The XML document to be decoded into array
@@ -184,4 +169,18 @@ function xml_serialize(string $root, iterable $data): string
 function xml_unserialize(string $root, string $xml): array
 {
     return (new XmlSerializer($root))->unserialize($xml);
+}
+
+/**
+ * Send an error message to PHP's system logger.
+ *
+ * @param string $function The function name where error occured
+ * @param string $message  The error message
+ * @param mixed  $data     Original data passed into function
+ */
+function error_log(string $function, string $message, $data): void
+{
+    \error_log(sprintf('(%s) [Error] - %s for value: %s',
+        $function, $message, var_export($data, true)
+    ));
 }
