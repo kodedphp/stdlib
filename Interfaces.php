@@ -116,6 +116,16 @@ interface Data
     public function has($index): bool;
 
     /**
+     * Checks if two properties has equal values.
+     *
+     * @param string $propertyA Property name
+     * @param string $propertyB Property name
+     *
+     * @return bool
+     */
+    public function equals(string $propertyA, string $propertyB): bool;
+
+    /**
      * Returns the object state as array.
      *
      * @return array

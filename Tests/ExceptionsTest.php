@@ -22,4 +22,12 @@ class ExceptionsTest extends TestCase
         $this->expectExceptionCode(409);
         throw SerializerException::forCreateSerializer('fubar');
     }
+
+    public function testGenericException()
+    {
+        $this->expectException(KodedException::class);
+        $this->expectExceptionMessage('hello');
+        $this->expectExceptionCode(1002);
+        throw KodedException::generic('hello');
+    }
 }
