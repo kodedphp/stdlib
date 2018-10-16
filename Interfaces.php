@@ -363,6 +363,9 @@ interface Configuration extends Data
 
 interface Serializer
 {
+    const E_INVALID_SERIALIZER = 409;
+    const E_MISSING_MODULE = 424;
+
     const IGBINARY = 'igbinary';
     const MSGPACK = 'msgpack';
     const JSON = 'json';

@@ -13,7 +13,7 @@
 namespace Koded\Exceptions;
 
 use Exception;
-use Koded\Stdlib\Interfaces\Data;
+use Koded\Stdlib\Interfaces\{Data, Serializer};
 use RuntimeException;
 
 
@@ -70,17 +70,17 @@ class ReadOnlyException extends KodedException
 class SerializerException extends KodedException
 {
     protected $messages = [
-        409 => 'Failed to create a serializer for ":name"',
-        424 => '[Dependency error] ":module" module is not installed on this machine',
+        Serializer::E_INVALID_SERIALIZER => 'Failed to create a serializer for ":name"',
+        Serializer::E_MISSING_MODULE => '[Dependency error] ":module" module is not installed on this machine',
     ];
 
     public static function forMissingModule(string $module)
     {
-        return new static(424, [':module' => $module]);
+        return new static(Serializer::E_MISSING_MODULE, [':module' => $module]);
     }
 
     public static function forCreateSerializer(string $name)
     {
-        return new static(409, [':name' => $name]);
+        return new static(Serializer::E_INVALID_SERIALIZER, [':name' => $name]);
     }
 }
