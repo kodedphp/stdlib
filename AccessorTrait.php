@@ -55,6 +55,11 @@ trait AccessorTrait
         return array_key_exists($index, $this->storage);
     }
 
+    public function equals(string $propertyA, string $propertyB): bool
+    {
+        return $this->get($propertyA) === $this->get($propertyB);
+    }
+
     public function count()
     {
         return count($this->storage);
