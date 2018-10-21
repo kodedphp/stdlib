@@ -18,6 +18,9 @@ namespace Koded\Stdlib;
 trait MutatorTrait
 {
 
+    abstract public function has($index): bool;
+    abstract public function get(string $index, $default = null);
+
     public function __set($index, $value)
     {
         return $this->set($index, $value);

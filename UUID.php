@@ -254,7 +254,7 @@ final class UUID
         $hex = str_replace('-', '', $namespace);
         $bits = '';
         for ($i = 0, $len = strlen($hex); $i < $len; $i += 2) {
-            $bits .= chr(hexdec($hex[$i] . $hex[$i + 1]));
+            $bits .= chr((int)hexdec($hex[$i] . $hex[$i + 1]));
         }
 
         $hash = $bits . $name;
