@@ -180,7 +180,7 @@ function xml_unserialize(string $root, string $xml): array
  */
 function error_log(string $function, string $message, $data): void
 {
-    \error_log(sprintf('(%s) [Error] - %s for value: %s',
+    \error_log(sprintf('(%s) [Error] - %s - data: %s',
         $function, $message, var_export($data, true)
     ));
 }
