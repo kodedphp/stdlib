@@ -42,7 +42,7 @@ final class SerializerFactory
 
             case Serializer::IGBINARY:
                 // @codeCoverageIgnoreStart
-                if (false === function_exists('igbinary_serialize')) {
+                if (false === extension_loaded('igbinary')) {
                     throw SerializerException::forMissingModule(Serializer::MSGPACK);
                 }
 
@@ -51,7 +51,7 @@ final class SerializerFactory
 
             case Serializer::MSGPACK:
                 // @codeCoverageIgnoreStart
-                if (false === function_exists('msgpack_pack')) {
+                if (false === extension_loaded('msgpack')) {
                     throw SerializerException::forMissingModule(Serializer::MSGPACK);
                 }
 

@@ -172,7 +172,7 @@ function xml_unserialize(string $root, string $xml): array
 }
 
 /**
- * Send an error message to PHP's system logger.
+ * Send a formatted error message to PHP's system logger.
  *
  * @param string $function The function name where error occured
  * @param string $message  The error message
@@ -183,4 +183,27 @@ function error_log(string $function, string $message, $data): void
     \error_log(sprintf('(%s) [Error] - %s - data: %s',
         $function, $message, var_export($data, true)
     ));
+}
+
+/**
+ * Checks if the array is an associative array.
+ *
+ * Rule: If any key is a string it is considered as associative array,
+ * especially if the key is stringed integer (ex. ["0" => "..."]).
+ * The zero in "0" => "..." is a valid key.
+ *
+ * @param array $array
+ *
+ * @return bool
+ */
+function is_array_assoc(array $array): bool
+{
+    $i = 0;
+    foreach ($array as $k => $v) {
+        if ($k !== $i++) {
+            return true;
+        }
+    }
+
+    return 0 === substr_count(json_encode($array), '"');
 }
