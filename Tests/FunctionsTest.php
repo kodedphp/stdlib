@@ -46,6 +46,14 @@ class FunctionsTest extends TestCase
         $this->assertSame($expected, camel_to_snake_case($string));
     }
 
+    /**
+     * @dataProvider isAssociativeData
+     */
+    public function test_is_array_assoc_function($array, $expected)
+    {
+        $this->assertSame($expected, is_array_assoc($array));
+    }
+
     /*
      *
      * Data providers
@@ -71,6 +79,24 @@ class FunctionsTest extends TestCase
             ['All123Numbers456Are789There', 'all123_numbers456_are789_there'],
             ['Non?AlphaNumeric4*XCharacters#1q"Are"mess', 'non_alpha_numeric4_x_characters1q_are_mess'],
             ['th*1s-is%-ridic&&&&ULous', 'th1s_is_ridic_u_lous'],
+        ];
+    }
+
+    public function isAssociativeData()
+    {
+        return [
+            // All of these are considered associative
+            [[2 => 0, 0 => 1, 1 => 2], true],
+            [[0 => 0, 1 => 1, 2 => 2], true],
+            [['2' => 0, '0' => 1, '1' => 2], true],
+            [['0' => 0, '1' => 1, '2' => 2], true],
+            [[0 => 1, '1' => 1, 1 => 1], true],
+            [['0' => 0], true],
+
+            // These are sequential
+            [['val0', 'val1', 'val2'], false],
+            [['0', '1', '2'], false],
+            [['"val1"'], false],
         ];
     }
 }
