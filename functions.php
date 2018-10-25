@@ -12,6 +12,8 @@
 
 namespace Koded\Stdlib;
 
+use DateTimeImmutable;
+use DateTimeZone;
 use Koded\Stdlib\Interfaces\{Argument, Data};
 use Koded\Stdlib\Serializer\XmlSerializer;
 
@@ -174,7 +176,7 @@ function xml_unserialize(string $root, string $xml): array
 /**
  * Send a formatted error message to PHP's system logger.
  *
- * @param string $function The function name where error occured
+ * @param string $function The function name where error occurred
  * @param string $message  The error message
  * @param mixed  $data     Original data passed into function
  */
@@ -203,4 +205,14 @@ function error_log(string $function, string $message, $data): void
 function is_associative(array $array): bool
 {
     return (bool)array_diff_assoc($array, array_values($array));
+}
+
+/**
+ * Gets an instance of DateTimeImmutable in UTC.
+ *
+ * @return DateTimeImmutable
+ */
+function now(): DateTimeImmutable
+{
+    return new DateTimeImmutable('now', new DateTimeZone('UTC'));
 }
