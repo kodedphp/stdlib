@@ -188,22 +188,19 @@ function error_log(string $function, string $message, $data): void
 /**
  * Checks if the array is an associative array.
  *
- * Rule: If any key is a string it is considered as associative array,
- * especially if the key is stringed integer (ex. ["0" => "..."]).
- * The zero in "0" => "..." is a valid key.
+ * Simple rules:
+ *
+ * - If all keys are sequential starting from 0..n, it is not an associative array
+ * - empty array is not associative
+ *
+ * Unfortunately, the internal typecast to integer on the keys makes
+ * the sane programming an ugly PHP Array Oriented Programming hackery.
  *
  * @param array $array
  *
  * @return bool
  */
-function is_array_assoc(array $array): bool
+function is_associative(array $array): bool
 {
-    $i = 0;
-    foreach ($array as $k => $v) {
-        if ($k !== $i++) {
-            return true;
-        }
-    }
-
-    return 0 === substr_count(json_encode($array), '"');
+    return (bool)array_diff_assoc($array, array_values($array));
 }

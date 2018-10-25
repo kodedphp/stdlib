@@ -1,5 +1,6 @@
 *.php diff=php
 
+/bench     export-ignore
 /Tests     export-ignore
 /phpunit.* export-ignore
 /*.yml     export-ignore
