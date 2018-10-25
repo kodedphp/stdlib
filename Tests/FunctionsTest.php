@@ -47,11 +47,11 @@ class FunctionsTest extends TestCase
     }
 
     /**
-     * @dataProvider isAssociativeData
+     * @dataProvider isAssociativeArrayData
      */
     public function test_is_array_assoc_function($array, $expected)
     {
-        $this->assertSame($expected, is_array_assoc($array));
+        $this->assertSame($expected, is_associative($array));
     }
 
     /*
@@ -82,21 +82,46 @@ class FunctionsTest extends TestCase
         ];
     }
 
-    public function isAssociativeData()
+    public function isAssociativeArrayData()
     {
         return [
             // All of these are considered associative
+
+            [['key' => 'val'], true],
+            [[1 => 'val'], true],
             [[2 => 0, 0 => 1, 1 => 2], true],
-            [[0 => 0, 1 => 1, 2 => 2], true],
             [['2' => 0, '0' => 1, '1' => 2], true],
-            [['0' => 0, '1' => 1, '2' => 2], true],
-            [[0 => 1, '1' => 1, 1 => 1], true],
-            [['0' => 0], true],
+            [[0 => 1, 3 => 3, 4 => 4], true],
 
             // These are sequential
-            [['val0', 'val1', 'val2'], false],
+
+            [[], false],
+            [[''], false],
+            [[0], false],
+            [[1], false],
+            [[0 => 0], false],
+            [[0 => 1], false],
             [['0', '1', '2'], false],
-            [['"val1"'], false],
+            [['0'], false],
+            [[1.0], false],
+            [[0, 3], false],
+            [['val0'], false],
+            [['val0', 'val1', 'val2'], false],
+            [[0 => 0, 1 => 1, 2 => 2], false],
+
+            // The unfortunate  string-to-integer internal convert
+
+            [['0' => false], false],
+            [['0' => 0, '1' => 1, '2' => 2], false],
+            [[0 => 1, '1' => 1, 2 => 1], false],
+
+            // None of the keys are valid and sane, but it "works" because why not
+
+            [[null => 1], true],    // NULL is converted to ''
+            [[false => 1], false],  // FALSE is converted to 0
+            [[true => 1], true],    // TRUE is converted to 1
+
+            [[2.7 => 'yes'], true], // FLOAT is a different level of weird
         ];
     }
 }
