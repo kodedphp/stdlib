@@ -31,18 +31,25 @@ class KodedException extends RuntimeException
      * KodedException constructor.
      *
      * @param int       $code      As defined in the child classes
-     * @param array     $arguments [optional]
+     * @param array     $arguments [optional] If ['message' => ''] exists in $arguments,
+     *                             this will be the error message, meaning the messages
+     *                             defined by $code in the child classes are ignored
      * @param Exception $previous  [optional]
      */
     public function __construct(int $code, array $arguments = [], Exception $previous = null)
     {
-        $message = strtr($this->messages[$code] ?? $this->message, $arguments);
-        parent::__construct($message, $code, $previous);
+        $message = $arguments['message'] ?? $this->messages[$code] ?? $this->message;
+        parent::__construct(strtr($message, $arguments), $code, $previous);
     }
 
     public static function generic(string $message, Exception $previous = null)
     {
         return new static(Data::E_PHP_EXCEPTION, [':message' => $message], $previous);
+    }
+
+    public static function from(Exception $exception)
+    {
+        return new static($exception->getCode(), ['message' => $exception->getMessage()], $exception);
     }
 }
 

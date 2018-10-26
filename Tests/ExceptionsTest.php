@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 class ExceptionsTest extends TestCase
 {
 
-    public function testSerializerExceptionforMissingModule()
+    public function testSerializerExceptionForMissingModule()
     {
         $this->expectException(SerializerException::class);
         $this->expectExceptionMessage('[Dependency error] "fubar" module is not installed on this machine');
@@ -15,7 +15,7 @@ class ExceptionsTest extends TestCase
         throw SerializerException::forMissingModule('fubar');
     }
 
-    public function testSerializerExceptionforCreate()
+    public function testSerializerExceptionForCreate()
     {
         $this->expectException(SerializerException::class);
         $this->expectExceptionMessage('Failed to create a serializer for "fubar"');
@@ -29,5 +29,15 @@ class ExceptionsTest extends TestCase
         $this->expectExceptionMessage('hello');
         $this->expectExceptionCode(1002);
         throw KodedException::generic('hello');
+    }
+
+    public function testCreateExceptionFromOtherException()
+    {
+        $this->expectException(KodedException::class);
+        $this->expectExceptionMessage('test');
+        $this->expectExceptionCode(123);
+
+        $other = new \OutOfBoundsException('test', 123);
+        throw KodedException::from($other);
     }
 }
