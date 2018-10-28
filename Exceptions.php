@@ -50,7 +50,7 @@ class KodedException extends RuntimeException
 
     public static function from(Throwable $exception)
     {
-        return new static($exception->getCode(), ['message' => $exception->getMessage()], $exception);
+        return new static($exception->getCode(), ['message' => $exception->getMessage()]);
     }
 }
 

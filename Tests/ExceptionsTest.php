@@ -40,4 +40,14 @@ class ExceptionsTest extends TestCase
         $other = new \OutOfBoundsException('test', 123);
         throw KodedException::from($other);
     }
+
+    public function testCreateExceptionFromError()
+    {
+        $this->expectException(KodedException::class);
+        $this->expectExceptionMessage('test');
+        $this->expectExceptionCode(1);
+
+        $other = new \Error('test', 1);
+        throw KodedException::from($other);
+    }
 }
