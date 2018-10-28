@@ -24,7 +24,7 @@ class FunctionsTest extends TestCase
         $this->assertSame([1, 2, 3, 'foo' => 'bar'], $value->toArray());
     }
 
-    public function test_clean()
+    public function test_clean_function()
     {
         $value = clean('<script>');
         $this->assertSame('&lt;script&gt;', $value);
@@ -33,7 +33,7 @@ class FunctionsTest extends TestCase
     /**
      * @dataProvider camelCaseData
      */
-    public function test_camel_case($string, $expected)
+    public function test_camel_case_function($string, $expected)
     {
         $this->assertSame($expected, snake_to_camel_case($string));
     }
@@ -41,7 +41,7 @@ class FunctionsTest extends TestCase
     /**
      * @dataProvider snakeCaseData
      */
-    public function test_snake_case($string, $expected)
+    public function test_snake_case_function($string, $expected)
     {
         $this->assertSame($expected, camel_to_snake_case($string));
     }
@@ -52,6 +52,22 @@ class FunctionsTest extends TestCase
     public function test_is_array_assoc_function($array, $expected)
     {
         $this->assertSame($expected, is_associative($array));
+    }
+
+    public function test_now_function()
+    {
+        $now = now();
+        $this->assertSame('UTC', $now->getTimezone()->getName());
+
+        $timestamp = now()->getTimestamp();
+        $duration = new \DateInterval('PT12H');
+
+        $now->add($duration);
+        $this->assertEquals($timestamp, $now->getTimestamp(), 'The DateTime object is not changed');
+
+        $after12hours = $now->add($duration);
+        $this->assertNotSame($now, $after12hours, 'now() is immutable');
+        $this->assertEquals(60 * 60 * 12, $after12hours->getTimestamp() - $timestamp);
     }
 
     /*
