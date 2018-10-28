@@ -15,6 +15,7 @@ namespace Koded\Exceptions;
 use Exception;
 use Koded\Stdlib\Interfaces\{Data, Serializer};
 use RuntimeException;
+use Throwable;
 
 
 class KodedException extends RuntimeException
@@ -47,7 +48,7 @@ class KodedException extends RuntimeException
         return new static(Data::E_PHP_EXCEPTION, [':message' => $message], $previous);
     }
 
-    public static function from(Exception $exception)
+    public static function from(Throwable $exception)
     {
         return new static($exception->getCode(), ['message' => $exception->getMessage()], $exception);
     }
