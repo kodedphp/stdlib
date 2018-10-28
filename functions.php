@@ -214,5 +214,5 @@ function is_associative(array $array): bool
  */
 function now(): DateTimeImmutable
 {
-    return new DateTimeImmutable('now', new DateTimeZone('UTC'));
+    return date_create_immutable('now', timezone_open('UTC'));
 }
