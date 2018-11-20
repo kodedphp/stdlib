@@ -70,7 +70,7 @@ function clean(string $input, string $encoding = 'UTF-8'): string
  * @throws \Exception if it was not possible to gather sufficient entropy
  * @since 1.10.0
  */
-function random_alpha_numeric(int $length = 16, string $prefix = '', string $suffix = ''): string
+function randomstring(int $length = 16, string $prefix = '', string $suffix = ''): string
 {
     $buffer = '';
     for ($x = 0; $x < $length; ++$x) {
