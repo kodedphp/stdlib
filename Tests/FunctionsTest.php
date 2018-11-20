@@ -26,7 +26,7 @@ class FunctionsTest extends TestCase
 
     public function test_clean_function()
     {
-        $value = clean('<script>');
+        $value = htmlescape('<script>');
         $this->assertSame('&lt;script&gt;', $value);
     }
 

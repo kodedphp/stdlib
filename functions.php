@@ -52,7 +52,7 @@ function value(...$values): Data
  *
  * @return string
  */
-function clean(string $input, string $encoding = 'UTF-8'): string
+function htmlescape(string $input, string $encoding = 'UTF-8'): string
 {
     return htmlentities($input, ENT_QUOTES | ENT_HTML5, $encoding);
 }
