@@ -18,6 +18,7 @@ use DOMDocument;
 use DOMElement;
 use Exception;
 use Koded\Stdlib\Interfaces\Serializer;
+use function Koded\Stdlib\htmlescape;
 
 /**
  * Class XmlSerializer is heavily copied from excellent
@@ -100,8 +101,7 @@ final class XmlSerializer implements Serializer
             if (is_array($value)) {
                 $child = $this->parseFromArray($value, $child);
             } elseif (is_string($value)) {
-                $value = htmlentities($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-                $child->appendChild($child->ownerDocument->createCDATASection($value));
+                $child->appendChild($child->ownerDocument->createCDATASection(htmlescape($value)));
             } elseif ($value instanceof DateTimeInterface) {
                 $child->setAttribute('type', 'xsd:dateTime');
                 $child->appendChild($child->ownerDocument->createTextNode($value->format(DateTime::ISO8601)));
