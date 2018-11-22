@@ -21,4 +21,17 @@ class MimeTest extends TestCase
     {
         $this->assertSame('text/csv', Mime::type('csv', 3));
     }
+
+    public function test_mime_list()
+    {
+        $this->assertSame(
+            ['application/x-zip', 'application/zip', 'application/x-zip-compressed'],
+            Mime::types('zip')
+        );
+    }
+
+    public function test_unknown_mime_list()
+    {
+        $this->assertSame([], Mime::types('junk-extension-name'));
+    }
 }
