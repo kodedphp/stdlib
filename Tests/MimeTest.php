@@ -7,9 +7,9 @@ use PHPUnit\Framework\TestCase;
 class MimeTest extends TestCase
 {
 
-    public function test_when_mime_is_not_found_it_should_return_default_value()
+    public function test_when_mime_is_not_found_it_should_return_empty_value()
     {
-        $this->assertSame('text/html', Mime::type('fubar-type'));
+        $this->assertSame('', Mime::type('fubar-type'));
     }
 
     public function test_return_first_known_mime_type()
