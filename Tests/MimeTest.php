@@ -34,4 +34,15 @@ class MimeTest extends TestCase
     {
         $this->assertSame([], Mime::types('junk-extension-name'));
     }
+
+    public function test_supports()
+    {
+        $this->assertTrue(Mime::supports('application/x-msg'));
+        $this->assertFalse(Mime::supports('fubar'));
+    }
+
+    public function test_extensions()
+    {
+        $this->assertEquals(['json'], Mime::extensions('application/json'));
+    }
 }
