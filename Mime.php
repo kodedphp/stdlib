@@ -244,11 +244,12 @@ final class Mime
      * @param string $type  The short mime type name
      * @param int    $index [optional] The index of the full-name mime from the array list
      *
-     * @return string "text/html" if type was not found (by type and index)
+     * @return string The media type, or
+     * empty string if type was not found (by type and index)
      */
     public static function type(string $type, int $index = 0): string
     {
-        return self::$types[$type][$index] ?? self::$types[$type][0] ?? 'text/html';
+        return self::$types[$type][$index] ?? self::$types[$type][0] ?? '';
     }
 
     /**
