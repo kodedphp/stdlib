@@ -2,6 +2,7 @@
 
 namespace Koded\Stdlib;
 
+use DoctrineTest\InstantiatorTestAsset\XMLReaderAsset;
 use PHPUnit\Framework\TestCase;
 
 class FunctionsTest extends TestCase
@@ -24,9 +25,9 @@ class FunctionsTest extends TestCase
         $this->assertSame([1, 2, 3, 'foo' => 'bar'], $value->toArray());
     }
 
-    public function test_clean_function()
+    public function test_htmlescape_function()
     {
-        $value = htmlescape('<script>');
+        $value = htmlencode('<script>');
         $this->assertSame('&lt;script&gt;', $value);
     }
 
@@ -68,6 +69,23 @@ class FunctionsTest extends TestCase
         $after12hours = $now->add($duration);
         $this->assertNotSame($now, $after12hours, 'now() is immutable');
         $this->assertEquals(60 * 60 * 12, $after12hours->getTimestamp() - $timestamp);
+    }
+
+
+    public function test_rmdir_function()
+    {
+        $dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR. randomstring(9);
+        $file = $dir . DIRECTORY_SEPARATOR . randomstring(9) . '.txt';
+
+        $this->assertTrue(mkdir($dir), 'Should create an empty directory');
+        $this->assertSame(4, file_put_contents($file, 'test'), 'Should create the file in the directory');
+        $this->assertFileExists($file, 'Should add file in the directory');
+
+        $this->assertTrue(rmdir($dir));
+        $this->assertFileNotExists($file, 'Directories with files are deleted');
+
+        $this->assertDirectoryNotExists($dir . '/foo');
+        $this->assertTrue(rmdir($dir), 'The non-existent directories are not processed at all');
     }
 
     /*
@@ -125,19 +143,19 @@ class FunctionsTest extends TestCase
             [['val0', 'val1', 'val2'], false],
             [[0 => 0, 1 => 1, 2 => 2], false],
 
-            // The unfortunate  string-to-integer internal convert
+            // The unfortunate string-to-integer internal convert
 
             [['0' => false], false],
             [['0' => 0, '1' => 1, '2' => 2], false],
             [[0 => 1, '1' => 1, 2 => 1], false],
 
-            // None of the keys are valid and sane, but it "works" because why not
+            // None of the keys are valid or sane, but it "works" because PHP
 
             [[null => 1], true],    // NULL is converted to ''
             [[false => 1], false],  // FALSE is converted to 0
             [[true => 1], true],    // TRUE is converted to 1
 
-            [[2.7 => 'yes'], true], // FLOAT is a different level of weird
+            [[2.7 => 'yes'], true], // FLOAT is a different level of weird (float-to_string)
         ];
     }
 }

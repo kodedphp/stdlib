@@ -13,9 +13,11 @@
 namespace Koded\Stdlib;
 
 use DateTimeImmutable;
-use DateTimeZone;
+use FilesystemIterator;
 use Koded\Stdlib\Interfaces\{Argument, Data};
 use Koded\Stdlib\Serializer\XmlSerializer;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 /**
  * Creates a new Argument instance
@@ -44,7 +46,7 @@ function value(...$values): Data
 }
 
 /**
- * Escapes a string.
+ * HTML encodes a string.
  * Useful for escaping the input values in HTML templates.
  *
  * @param string $input    The input string
@@ -52,7 +54,7 @@ function value(...$values): Data
  *
  * @return string
  */
-function htmlescape(string $input, string $encoding = 'UTF-8'): string
+function htmlencode(string $input, string $encoding = 'UTF-8'): string
 {
     return htmlentities($input, ENT_QUOTES | ENT_HTML5, $encoding);
 }
@@ -182,9 +184,7 @@ function xml_unserialize(string $root, string $xml): array
  */
 function error_log(string $function, string $message, $data): void
 {
-    \error_log(sprintf('(%s) [Error] - %s - data: %s',
-        $function, $message, var_export($data, true)
-    ));
+    \error_log(sprintf('(%s) [Error] - %s - data: %s', $function, $message, var_export($data, true)));
 }
 
 /**
@@ -215,4 +215,24 @@ function is_associative(array $array): bool
 function now(): DateTimeImmutable
 {
     return date_create_immutable('now', timezone_open('UTC'));
+}
+
+/**
+ * Removes a directory.
+ *
+ * @param string $dirname The folder name
+ *
+ * @return bool TRUE on success, FALSE otherwise
+ */
+function rmdir(string $dirname): bool
+{
+    $deleted = [];
+
+    /** @var \SplFileInfo $path */
+    foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dirname, FilesystemIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::CHILD_FIRST) as $path) {
+        $deleted[] = ($path->isDir() && false === $path->isLink()) ? \rmdir($path->getPathname()) : \unlink($path->getPathname());
+    }
+
+    return (bool)array_product($deleted);
 }
