@@ -6,12 +6,11 @@ trait ArrayDataFilterTrait
 {
 
     public function filter(
-        array $data,
+        iterable $data,
         string $prefix,
         bool $lowercase = true,
         bool $trim = true
-    ): array
-    {
+    ): array {
         $filtered = [];
 
         foreach ($data as $index => $value) {
