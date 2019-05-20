@@ -109,6 +109,32 @@ function camel_to_snake_case(string $string): string
 }
 
 /**
+ * Converts the string with desired delimiter character.
+ *
+ * @param string $string
+ * @param int    $delimiter chr() of the delimiter character
+ *
+ * @return string The converted string with the provided delimiter
+ */
+function to_delimited_string(string $string, int $delimiter): string
+{
+    $str = preg_split('~[^\p{L}\p{N}\']+~u', trim($string));
+    return join(chr($delimiter), $str);
+}
+
+/**
+ * Converts the string to-kebab-case
+ *
+ * @param string $string
+ *
+ * @return string
+ */
+function to_kebab_string(string $string): string
+{
+    return strtolower(to_delimited_string($string, ord('-')));
+}
+
+/**
  * Returns the JSON representation of a value.
  *
  * @param mixed $value   The data to be serialized
