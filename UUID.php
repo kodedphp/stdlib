@@ -102,7 +102,9 @@ final class UUID
 
                 // Cannot identify host, fallback as in http://tools.ietf.org/html/rfc4122#section-4.5
                 if (empty($node)) {
+                    // @codeCoverageIgnoreStart
                     $node = sprintf('%06x%06x', mt_rand(0, 1 << 24), mt_rand(0, 1 << 24));
+                    // @codeCoverageIgnoreEnd
                 }
             }
 
