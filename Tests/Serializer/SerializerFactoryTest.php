@@ -32,7 +32,7 @@ class SerializerFactoryTest extends TestCase
 
     public function test_msgpack()
     {
-        if (false === function_exists('msgpack_pack')) {
+        if (false === extension_loaded('msgpack')) {
             $this->markTestSkipped('msgpack extension is not loaded');
         }
 
