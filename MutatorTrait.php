@@ -26,7 +26,7 @@ trait MutatorTrait
         return $this->set($index, $value);
     }
 
-    public function set(string $index, $value): self
+    public function set(string $index, $value)
     {
         $this->storage[$index] = $value;
 
@@ -62,7 +62,7 @@ trait MutatorTrait
         return $this;
     }
 
-    public function delete(string $index): self
+    public function delete(string $index)
     {
         unset($this->storage[$index]);
 
