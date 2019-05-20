@@ -19,12 +19,12 @@ final class IgbinarySerializer implements Serializer
 
     public function serialize($value)
     {
-        return igbinary_serialize($value);
+        return \igbinary_serialize($value);
     }
 
     public function unserialize($value)
     {
-        return igbinary_unserialize($value);
+        return \igbinary_unserialize($value);
     }
 
     public function type(): string
