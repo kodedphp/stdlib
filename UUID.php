@@ -17,18 +17,16 @@ use InvalidArgumentException;
 /**
  * Class UUID generates Universally Unique Identifiers following the RFC 4122.
  *
+ * The 5 fields of the UUID v1
+ *  - 32 bit, *time_low*
+ *  - 16 bit, *time_mid*
+ *  - 16 bit, *time_high_and_version*
+ *  - 16 bit, (8 bits for *clock_seq_and_reserved* + 8 bits for *clock_seq_low*)
+ *  - 48 bit, *node*
+ *
  * @link    http://tools.ietf.org/html/rfc4122
  * @link    https://docs.python.org/2/library/uuid.html
  * @link    https://en.wikipedia.org/wiki/Universally_unique_identifier
- *
- *      The 5 fields of the UUID:
- *
- *      - 32 bit, *time_low*
- *      - 16 bit, *time_mid*
- *      - 16 bit, *time_high_and_version*
- *      - 16 bit, (8 bits for *clock_seq_and_reserved* + 8 bits for *clock_seq_low*)
- *      - 48 bit, *node*
- *
  */
 final class UUID
 {
@@ -60,7 +58,7 @@ final class UUID
     /**
      * Regex pattern for UUIDs
      */
-    const PATTERN = '[a-f0-9]{8}\-[a-f0-9]{4}\-[a-f0-9]{4}\-[a-f0-9]{4}\-[a-f0-9]{12}';
+    const PATTERN = '[a-f0-9]{8}\-[a-f0-9]{4}\-[1|3|4|5][a-f0-9]{3}\-[a-f0-9]{4}\-[a-f0-9]{12}';
 
     /**
      * UUID v1 is generated from host (hardware address), clock sequence and
@@ -87,17 +85,12 @@ final class UUID
          * @throws InvalidArgumentException
          */
         $node = function($node = null) use (&$matches) {
-
-            // get MAC address
             if (null === $node) {
                 if (empty($matches[1][0])) {
-                    // @codeCoverageIgnoreStart
-                    $info = ('WIN' === strtoupper(substr(PHP_OS, 0, 3)))
-                        ? `ipconfig /all 2>&1`
-                        : `ifconfig 2>&1`;
-                    // @codeCoverageIgnoreEnd
+                    // Get MAC address (Linux server LAN)
+                    $info = `ifconfig 2>&1` ?: '';
 
-                    // cache the info in $matches
+                    // Cache the info in $matches
                     preg_match_all('~[^:]([a-f0-9]{2}([:-])[a-f0-9]{2}(\2[a-f0-9]{2}){4})[^:]~i',
                         $info,
                         $matches,
@@ -107,7 +100,7 @@ final class UUID
 
                 $node = $matches[1][0] ?? null;
 
-                // cannot identify host, fallback as in http://tools.ietf.org/html/rfc4122#section-4.5
+                // Cannot identify host, fallback as in http://tools.ietf.org/html/rfc4122#section-4.5
                 if (empty($node)) {
                     $node = sprintf('%06x%06x', mt_rand(0, 1 << 24), mt_rand(0, 1 << 24));
                 }
@@ -129,7 +122,7 @@ final class UUID
         }; // end $node
 
         $clockSeq = function() {
-            // random 14-bit sequence number, http://tools.ietf.org/html/rfc4122#section-4.2.1.1
+            // Random 14-bit sequence number, http://tools.ietf.org/html/rfc4122#section-4.2.1.1
             return mt_rand(0, 1 << 14);
         };
 
@@ -147,7 +140,7 @@ final class UUID
         $uuidTime = $uuidTime();
         $clockSeq = $clockSeq();
 
-        // set to version 1
+        // Set to version 1
         $version = hexdec($uuidTime['high']) & 0x0fff;
         $version &= ~(0xf000);
         $version |= 1 << 12;
@@ -218,7 +211,15 @@ final class UUID
      */
     public static function valid(string $uuid): bool
     {
-        return (bool)preg_match('/^' . UUID::PATTERN . '$/i', $uuid);
+        if (false === (bool)preg_match('/^' . UUID::PATTERN . '$/i', $uuid)) {
+            return false;
+        }
+
+        if ('4' === $uuid[14] && false === in_array($uuid[19], ['8', '9', 'a', 'b'])) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
