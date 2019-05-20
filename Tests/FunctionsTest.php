@@ -88,6 +88,23 @@ class FunctionsTest extends TestCase
         $this->assertTrue(rmdir($dir), 'The non-existent directories are not processed at all');
     }
 
+
+    /**
+     * @dataProvider forDelimiterTest
+     */
+    public function test_to_delimited_string($string, $delimiter, $expected)
+    {
+        $this->assertSame($expected, to_delimited_string($string, ord($delimiter)));
+    }
+
+    /**
+     * @dataProvider forKebabTest
+     */
+    public function test_to_kebab_string($string, $expected)
+    {
+        $this->assertSame($expected, to_kebab_string($string));
+    }
+
     /*
      *
      * Data providers
@@ -155,7 +172,26 @@ class FunctionsTest extends TestCase
             [[false => 1], false],  // FALSE is converted to 0
             [[true => 1], true],    // TRUE is converted to 1
 
-            [[2.7 => 'yes'], true], // FLOAT is a different level of weird (float-to_string)
+            [[2.7 => 'yes'], true], // FLOAT is a different level of weird (float-to-string)
         ];
     }
+
+    public function forDelimiterTest()
+    {
+        return [
+            ["Hello fri3nd, you're
+       looking          good today!", '.', "Hello.fri3nd.you're.looking.good.today."],
+            ["Hello fri3nd, you're
+       looking          good today!", '_', "Hello_fri3nd_you're_looking_good_today_"],
+
+        ];
+    }
+
+    public function forKebabTest()
+    {
+        return [
+            ['this_is_converted to kebab_Case', 'this-is-converted-to-kebab-case']
+        ];
+    }
+
 }
