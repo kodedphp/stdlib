@@ -13,7 +13,8 @@
     "exceptions",
     "dto",
     "dot-array",
-    "serializer"
+    "serializer",
+    "config"
   ],
   "authors": [
     {
@@ -59,7 +60,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "4.0-dev"
+      "dev-master": "4.1-dev"
     }
   }
 }
