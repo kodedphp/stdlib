@@ -16,7 +16,7 @@ class MsgpackSerializerTest extends TestCase
 
     public function test_serialize()
     {
-        $this->assertEquals(\msgpack_pack($this->original), $this->SUT->serialize($this->original));
+        $this->assertEquals(\msgpack_pack($this->original), $this->SUT->serialize($this->origiDnal));
     }
 
     public function test_unserialize()
