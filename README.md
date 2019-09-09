@@ -8,7 +8,7 @@ A standard library for shareable classes and functions.
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/f866f314769a4af690f1f084f9a179ab)](https://www.codacy.com/app/kodeart/stdlib)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/f866f314769a4af690f1f084f9a179ab)](https://www.codacy.com/app/kodeart/stdlib)
 [![Packagist Downloads](https://img.shields.io/packagist/dt/koded/stdlib.svg)](https://packagist.org/packages/koded/stdlib)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.1.4-8892BF.svg)](https://php.net/)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.2-8892BF.svg)](https://php.net/)
 [![Software license](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](LICENSE)
 
 

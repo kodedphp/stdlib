@@ -123,7 +123,7 @@ class ImmutableObjectTest extends TestCase
         $this->assertFalse($data->equals('e2', 'non-existent'));
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->SUT = new Immutable(require __DIR__ . '/fixtures/nested-array.php');
     }

@@ -29,7 +29,7 @@ class MsgpackSerializerTest extends TestCase
         $this->assertSame(Serializer::MSGPACK, $this->SUT->type());
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         if (false === extension_loaded('msgpack')) {
             $this->markTestSkipped('msgpack extension is not loaded');
