@@ -29,7 +29,7 @@ class IgbinarySerializerTest extends TestCase
         $this->assertSame(Serializer::IGBINARY, $this->SUT->type());
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         if (false === function_exists('igbinary_serialize')) {
             $this->markTestSkipped('igbinary extension is not loaded');

@@ -29,7 +29,7 @@ class PhpSerializerTest extends TestCase
         $this->assertSame(Serializer::PHP, $this->SUT->type());
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->SUT = new PhpSerializer;
         $this->original = require __DIR__ . '/../fixtures/config-test.php';
