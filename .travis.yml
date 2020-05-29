@@ -1,30 +1,35 @@
 language: php
+os: linux
+dist: xenial
+
+notifications:
+  email: false
 
 php:
   - 7.2
   - 7.3
-
-matrix:
-  fast_finish: true
-
-before_script:
-  - pecl install igbinary
-  - pecl install msgpack
-
-install:
-  - composer update -o --no-interaction --prefer-stable
-
-script:
-  - vendor/bin/phpunit --coverage-clover build/coverage/clover.xml
-
-after_success:
-  - travis_retry vendor/bin/codacycoverage clover build/coverage/clover.xml
-
-sudo: false
+  - 7.4
+  - nightly
 
 cache:
   directories:
     - $HOME/.composer/cache
 
-notifications:
-  email: false
+jobs:
+  fast_finish: true
+  allow_failures:
+    - php: nightly
+
+install:
+  - composer update -o --prefer-source --no-interaction
+
+before_script:
+  - pecl install igbinary
+  - pecl install msgpack
+
+script:
+  - vendor/bin/phpunit --coverage-clover build/clover.xml
+
+after_script:
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover build/clover.xml
