@@ -50,7 +50,6 @@ use Koded\Stdlib\Interfaces\{Configuration, ConfigurationFactory, Data};
  */
 class Config extends Arguments implements ConfigurationFactory
 {
-
     /** @var string */
     public $rootPath = '';
 
@@ -60,10 +59,10 @@ class Config extends Arguments implements ConfigurationFactory
     /**
      * Config constructor.
      *
-     * @param string          $rootPath Path to which files are read relative from.
+     * @param string $rootPath          Path to which files are read relative from.
      *                                  When the config object is created by an application/library
      *                                  this is the application's root path
-     * @param Interfaces\Data $defaults [optional] An Optional config object with default values
+     * @param Data   $defaults          [optional] An Optional config object with default values
      */
     public function __construct(string $rootPath = '', Data $defaults = null)
     {
@@ -138,8 +137,6 @@ class Config extends Arguments implements ConfigurationFactory
             }
 
             foreach ($data as $key => $value) {
-                $_ENV[$key] = $value;
-
                 if (null !== $value) {
                     putenv($key . '=' . $value);
                 }
@@ -182,8 +179,7 @@ class Config extends Arguments implements ConfigurationFactory
         string $namespace = '',
         bool $lowercase = true,
         bool $trim = true
-    ): ConfigurationFactory
-    {
+    ): ConfigurationFactory {
         $data = [];
         foreach ($variableNames as $variable) {
             $value = getenv($variable);
