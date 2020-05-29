@@ -12,7 +12,6 @@
 
 namespace Koded\Exceptions;
 
-use Exception;
 use Koded\Stdlib\Interfaces\{Data, Serializer};
 use RuntimeException;
 use Throwable;
@@ -35,22 +34,22 @@ class KodedException extends RuntimeException
      * @param array     $arguments [optional] If ['message' => ''] exists in $arguments,
      *                             this will be the error message, meaning the messages
      *                             defined by $code in the child classes are ignored
-     * @param Exception $previous  [optional]
+     * @param Throwable $previous  [optional] The previous throwable used for the exception chaining
      */
-    public function __construct(int $code, array $arguments = [], Exception $previous = null)
+    public function __construct(int $code, array $arguments = [], Throwable $previous = null)
     {
         $message = $arguments['message'] ?? $this->messages[$code] ?? $this->message;
         parent::__construct(strtr($message, $arguments), $code, $previous);
     }
 
-    public static function generic(string $message, Exception $previous = null)
+    public static function generic(string $message, Throwable $previous = null)
     {
         return new static(Data::E_PHP_EXCEPTION, [':message' => $message], $previous);
     }
 
     public static function from(Throwable $exception)
     {
-        return new static($exception->getCode(), ['message' => $exception->getMessage()]);
+        return new static($exception->getCode(), ['message' => $exception->getMessage()], $exception);
     }
 }
 
@@ -60,7 +59,7 @@ class ReadOnlyException extends KodedException
 
     protected $messages = [
         Data::E_CLONING_DISALLOWED => 'Cloning the :class instance is not allowed',
-        Data::E_READONLY_INSTANCE => 'Cannot set :index. :class instance is read-only',
+        Data::E_READONLY_INSTANCE  => 'Cannot set :index. :class instance is read-only',
     ];
 
     public static function forInstance(string $index, string $class)
@@ -79,7 +78,7 @@ class SerializerException extends KodedException
 {
     protected $messages = [
         Serializer::E_INVALID_SERIALIZER => 'Failed to create a serializer for ":name"',
-        Serializer::E_MISSING_MODULE => '[Dependency error] ":module" module is not installed on this machine',
+        Serializer::E_MISSING_MODULE     => '[Dependency error] ":module" module is not installed on this machine',
     ];
 
     public static function forMissingModule(string $module)
