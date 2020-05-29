@@ -5,5 +5,4 @@
 /.idea
 composer.lock
 phpunit.phar
-*.yml
-!.travis.yml
+*.cache
