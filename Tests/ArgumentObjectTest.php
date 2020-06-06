@@ -1,8 +1,8 @@
 <?php
 
-namespace Koded\Stdlib;
+namespace Koded\Stdlib\Tests;
 
-use Koded\Stdlib\Interfaces\{Argument, Data};
+use Koded\Stdlib\{Arguments, Data};
 use PHPUnit\Framework\TestCase;
 
 class ArgumentObjectTest extends TestCase

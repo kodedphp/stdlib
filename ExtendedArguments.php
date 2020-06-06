@@ -7,7 +7,6 @@
  *
  * Please view the LICENSE distributed with this source code
  * for the full copyright and license information.
- *
  */
 
 namespace Koded\Stdlib;
@@ -26,7 +25,6 @@ use RecursiveIteratorIterator;
  */
 class ExtendedArguments extends Arguments
 {
-
     public function get(string $index, $default = null)
     {
         return $this->find($index, $default);
@@ -42,7 +40,6 @@ class ExtendedArguments extends Arguments
             $storage = &$storage[$i];
         }
         $storage = $value;
-
         return $this;
     }
 
@@ -62,9 +59,8 @@ class ExtendedArguments extends Arguments
             if (false === is_array($storage) || false === array_key_exists($i, $storage)) {
                 return false;
             }
-            $storage = & $storage[$i];
+            $storage = &$storage[$i];
         }
-
         return true;
     }
 
@@ -81,7 +77,6 @@ class ExtendedArguments extends Arguments
         if (isset($i)) {
             unset($storage[$i]);
         }
-
         return $this;
     }
 
@@ -91,7 +86,6 @@ class ExtendedArguments extends Arguments
         foreach ($indexes as $index) {
             $found[$index] = $this->find($index);
         }
-
         return $found;
     }
 
@@ -112,7 +106,6 @@ class ExtendedArguments extends Arguments
                 $flatten[$_] = $value;
             }
         }
-
         return new self($flatten);
     }
 }

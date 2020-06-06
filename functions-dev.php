@@ -7,7 +7,6 @@
  *
  * Please view the LICENSE distributed with this source code
  * for the full copyright and license information.
- *
  */
 
 namespace Koded\Stdlib;
@@ -22,7 +21,7 @@ namespace Koded\Stdlib;
  */
 function dump($var, $label = null, bool $traceback = false, bool $die = true)
 {
-    $MESSAGE_CLI = "\n>>> %s[info] %s\n[type] %s\n[call] \x1b[1m%s\x1b[0m\n\x1b[2m%s\x1b[0m";
+    $MESSAGE_CLI = "\n>>> %s[type] %s\n[info] %s\n[line] \x1b[1m%s\x1b[0m\n\x1b[2m%s\x1b[0m";
     $MESSAGE_HTM = '<span style="clear:both; color:black; font-size:11px;">[<b>%s</b>] %s (%s) %s</span>';
 
     list($position, $backtrace) = (function(array $backtrace) {
@@ -51,7 +50,7 @@ function dump($var, $label = null, bool $traceback = false, bool $die = true)
     $backtrace = ($traceback ? 'Traceback (most recent call last):' . PHP_EOL . $backtrace . PHP_EOL . str_repeat('-', 80) : date(DATE_COOKIE)) . PHP_EOL;
 
     if ('cli' === php_sapi_name()) {
-        $output = sprintf($MESSAGE_CLI, $backtrace, var_export($label, true), gettype($var), $position, print_r($var, true));
+        $output = sprintf($MESSAGE_CLI, $backtrace, gettype($var), var_export($label, true), $position, print_r($var, true));
     } elseif (strtoupper($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') == 'XMLHTTPREQUEST') {
         $output = json_encode($var, JSON_UNESCAPED_SLASHES);
     } else {
@@ -65,7 +64,7 @@ function dump($var, $label = null, bool $traceback = false, bool $die = true)
             return $dump;
         };
 
-        $output = sprintf($MESSAGE_HTM, $position, var_export($label, true), gettype($var), $format($var));
+        $output = sprintf($MESSAGE_HTM, $position, gettype($var), var_export($label, true), $format($var));
     }
 
     $die and die($output);

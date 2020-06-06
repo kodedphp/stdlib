@@ -1,12 +1,12 @@
 <?php
 
-namespace Koded\Stdlib;
+namespace Koded\Stdlib\Tests;
 
+use Koded\Stdlib\Config;
 use PHPUnit\Framework\TestCase;
 
 class BugConfigFromIniStringTest extends TestCase
 {
-
     public function test_parse_ini_string_expected_same_transformation_as_from_parse_ini_file()
     {
         $config = new Config;

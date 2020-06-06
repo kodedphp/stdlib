@@ -1,10 +1,18 @@
 <?php
 
+/*
+ * This file is part of the Koded package.
+ *
+ * (c) Mihail Binev <mihail@kodeart.com>
+ *
+ * Please view the LICENSE distributed with this source code
+ * for the full copyright and license information.
+ */
+
 namespace Koded\Stdlib;
 
 trait ArrayDataFilterTrait
 {
-
     public function filter(
         iterable $data,
         string $prefix,
@@ -19,7 +27,6 @@ trait ArrayDataFilterTrait
             }
             $filtered[$lowercase ? strtolower($index) : $index] = $value;
         }
-
         return $filtered;
     }
 
@@ -37,7 +44,6 @@ trait ArrayDataFilterTrait
 
             $storage = &$storage[$token];
         }
-
         return $storage;
     }
 
@@ -47,7 +53,6 @@ trait ArrayDataFilterTrait
         foreach ($indexes as $index) {
             $found[$index] = $this->storage[$index] ?? null;
         }
-
         return $found;
     }
 }

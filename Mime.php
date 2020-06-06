@@ -7,7 +7,6 @@
  *
  * Please view the LICENSE distributed with this source code
  * for the full copyright and license information.
- *
  */
 
 namespace Koded\Stdlib;
@@ -18,7 +17,6 @@ namespace Koded\Stdlib;
  */
 final class Mime
 {
-
     private static $extensionsToTypes = [
         '323'        => ['text/h323'],
         '7z'         => ['application/x-7z-compressed'],
@@ -427,27 +425,27 @@ final class Mime
     /**
      * Returns the mime type by file extension name.
      *
-     * @param string $ext   The short mime type name
-     * @param int    $index [optional] The index of the full-name mime from the array list
+     * @param string $extension The short mime type name
+     * @param int    $index     [optional] The index of the full-name mime from the array list
      *
      * @return string The media type, or
      * empty string if type was not found (by type and index)
      */
-    public static function type(string $ext, int $index = 0): string
+    public static function type(string $extension, int $index = 0): string
     {
-        return self::$extensionsToTypes[$ext][$index] ?? self::$extensionsToTypes[$ext][0] ?? '';
+        return self::$extensionsToTypes[$extension][$index] ?? self::$extensionsToTypes[$extension][0] ?? '';
     }
 
     /**
      * Returns the list of mime types associated by the file extension name.
      *
-     * @param string $ext Extension name
+     * @param string $extension Extension name
      *
      * @return array The mime types list
      */
-    public static function types(string $ext): array
+    public static function types(string $extension): array
     {
-        return self::$extensionsToTypes[$ext] ?? [];
+        return self::$extensionsToTypes[$extension] ?? [];
     }
 
     /**

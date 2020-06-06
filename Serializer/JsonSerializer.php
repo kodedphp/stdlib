@@ -7,17 +7,15 @@
  *
  * Please view the LICENSE distributed with this source code
  * for the full copyright and license information.
- *
  */
 
 namespace Koded\Stdlib\Serializer;
 
-use Koded\Stdlib\Interfaces\Serializer;
+use Koded\Stdlib\Serializer;
 use function Koded\Stdlib\{json_serialize, json_unserialize};
 
 final class JsonSerializer implements Serializer
 {
-
     /**
      * @var int JSON encode options. Defaults to (1088):
      *          - JSON_PRESERVE_ZERO_FRACTION

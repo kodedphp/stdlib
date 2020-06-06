@@ -1,8 +1,9 @@
 <?php
 
-namespace Koded\Stdlib;
+namespace Koded\Stdlib\Tests;
 
 use Exception;
+use Koded\Stdlib\Config;
 use PHPUnit\Framework\TestCase;
 
 class ConfigTest extends TestCase
@@ -103,6 +104,23 @@ class ConfigTest extends TestCase
         $config->fromEnvVariable('CONFIG_FILE');
 
         $this->assertSame('found me', $config->find('array.key3.key3-1.key3-1-1'));
+    }
+
+    public function test_should_not_populate_global_env_array()
+    {
+        $_ENV = []; // clear
+        $config = new Config;
+        $config->fromEnvFile(__DIR__ . '/fixtures/.env');
+
+        $this->assertArrayNotHasKey('KEY_1', $_ENV);
+        $this->assertArrayNotHasKey('KEY_3', $_ENV);
+        $this->assertArrayNotHasKey('KEY_4', $_ENV);
+        $this->assertArrayNotHasKey('KEY_5', $_ENV);
+
+        $this->assertSame('42', getenv('KEY_1', true));
+        $this->assertSame('value3', getenv('KEY_3', true));
+        $this->assertSame('1', getenv('KEY_4', true));
+        $this->assertSame('null', getenv('KEY_5', true));
     }
 
     public function test_should_load_ini_file_from_env_variable()

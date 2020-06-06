@@ -1,9 +1,21 @@
 <?php
 
-namespace Koded\Stdlib;
+namespace Koded\Stdlib\Tests;
 
-use DoctrineTest\InstantiatorTestAsset\XMLReaderAsset;
+use Koded\Stdlib\{Arguments, Immutable};
 use PHPUnit\Framework\TestCase;
+use function Koded\Stdlib\{arguments,
+    camel_to_snake_case,
+    htmlencode,
+    is_associative,
+    now,
+    randomstring,
+    snake_to_camel_case,
+    to_delimited_string,
+    to_kebab_string,
+    value,
+    rmdir};
+
 
 class FunctionsTest extends TestCase
 {

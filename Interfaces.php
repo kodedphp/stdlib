@@ -7,16 +7,13 @@
  *
  * Please view the LICENSE distributed with this source code
  * for the full copyright and license information.
- *
  */
 
-namespace Koded\Stdlib\Interfaces;
+namespace Koded\Stdlib;
 
-use Koded\Stdlib\{Arguments, Immutable};
 
 interface ArrayDataFilter
 {
-
     /**
      * Strips the portions of the variable names defined by the namespace value.
      * Returns a filtered array.
@@ -51,7 +48,7 @@ interface ArrayDataFilter
      *
      * @param string $index   The name of the property (dot-notation)
      * @param mixed  $default [optional] Default value if item is not found
-
+     *
      * @return mixed
      */
     public function find(string $index, $default = null);
@@ -70,7 +67,6 @@ interface ArrayDataFilter
 
 interface NamespaceDataFilter
 {
-
     /**
      * Strips the portions of the variable names defined by the prefix value.
      * It can also lowercase the names. Useful to transform the data from ENV variables.
@@ -89,10 +85,9 @@ interface NamespaceDataFilter
 
 interface Data
 {
-
-    const E_CLONING_DISALLOWED = 1000;
-    const E_READONLY_INSTANCE  = 1001;
-    const E_PHP_EXCEPTION      = 1002;
+    const E_CLONING_DISALLOWED = 1001;
+    const E_READONLY_INSTANCE  = 1002;
+    const E_PHP_EXCEPTION      = 1003;
 
     /**
      * Value accessor, gets a value by name.
@@ -153,7 +148,6 @@ interface Data
 
 interface Argument extends Data
 {
-
     /**
      * Value mutator.
      * Sets a value for a property.
@@ -225,19 +219,17 @@ interface Argument extends Data
 
 interface TransformsToArguments
 {
-
     /**
      * Creates a new instance of Arguments object with current data.
      *
      * @return Arguments
      */
-    public function toArgument(): Arguments;
+    public function toArguments(): Arguments;
 }
 
 
 interface TransformsToImmutable
 {
-
     /**
      * Creates a new instance of Immutable object with current data.
      *
@@ -247,17 +239,16 @@ interface TransformsToImmutable
 }
 
 
-interface ConfigurationFactory extends Argument, ArrayDataFilter, NamespaceDataFilter
+interface Configuration extends Argument, ArrayDataFilter, NamespaceDataFilter
 {
-
     /**
      * Imports parameters as they are.
      *
      * @param array $parameters
      *
-     * @return ConfigurationFactory
+     * @return Configuration
      */
-    public function withParameters(array $parameters): ConfigurationFactory;
+    public function withParameters(array $parameters): Configuration;
 
     /**
      * @param array  $variableNames A list of environment variables to be loaded
@@ -265,32 +256,32 @@ interface ConfigurationFactory extends Argument, ArrayDataFilter, NamespaceDataF
      * @param bool   $lowercase     [optional ] Convert the names to lowercase
      * @param bool   $trim          [optional] Remove the namespace/prefix from the variable names
      *
-     * @return ConfigurationFactory
+     * @return Configuration
      */
     public function fromEnvironment(
         array $variableNames,
         string $namespace = '',
         bool $lowercase = true,
         bool $trim = true
-    ): ConfigurationFactory;
+    ): Configuration;
 
     /**
      * Loads the configuration options from JSON file.
      *
      * @param string $file The path to the JSON configuration file
      *
-     * @return ConfigurationFactory
+     * @return Configuration
      */
-    public function fromJsonFile(string $file): ConfigurationFactory;
+    public function fromJsonFile(string $file): Configuration;
 
     /**
      * Loads the configuration options from PHP array stored in a file.
      *
      * @param string $file The path to the PHP configuration file
      *
-     * @return ConfigurationFactory
+     * @return Configuration
      */
-    public function fromPhpFile(string $file): ConfigurationFactory;
+    public function fromPhpFile(string $file): Configuration;
 
     /**
      * Loads the configuration options from `.env` or similar file.
@@ -300,9 +291,9 @@ interface ConfigurationFactory extends Argument, ArrayDataFilter, NamespaceDataF
      * @param string $file      The path to the configuration file
      * @param string $namespace [optional]
      *
-     * @return ConfigurationFactory
+     * @return Configuration
      */
-    public function fromEnvFile(string $file, string $namespace = ''): ConfigurationFactory;
+    public function fromEnvFile(string $file, string $namespace = ''): Configuration;
 
     /**
      * Loads the configuration options from environment variable that holds
@@ -310,9 +301,9 @@ interface ConfigurationFactory extends Argument, ArrayDataFilter, NamespaceDataF
      *
      * @param string $variable Environment variable with path to the configuration file
      *
-     * @return ConfigurationFactory
+     * @return Configuration
      */
-    public function fromEnvVariable(string $variable): ConfigurationFactory;
+    public function fromEnvVariable(string $variable): Configuration;
 
     /**
      * Loads the configuration options from INI file.
@@ -320,27 +311,27 @@ interface ConfigurationFactory extends Argument, ArrayDataFilter, NamespaceDataF
      *
      * @param string $file The path to the INI configuration file
      *
-     * @return ConfigurationFactory
+     * @return Configuration
      */
-    public function fromIniFile(string $file): ConfigurationFactory;
+    public function fromIniFile(string $file): Configuration;
 
     /**
      * Loads the configuration options from other Config instance.
      *
      * @param object|string $object A FQN of the configuration object, or an instance of it
      *
-     * @return ConfigurationFactory
+     * @return Configuration
      */
-    public function fromObject($object): ConfigurationFactory;
+    public function fromObject($object): Configuration;
 
     /**
      * Yell if something bad has happened, or pass quietly.
      *
      * @param bool $silent
      *
-     * @return ConfigurationFactory
+     * @return Configuration
      */
-    public function silent(bool $silent): ConfigurationFactory;
+    public function silent(bool $silent): Configuration;
 
     /**
      * Application specific processing of the configuration data.
@@ -351,11 +342,6 @@ interface ConfigurationFactory extends Argument, ArrayDataFilter, NamespaceDataF
      * @throws \Exception
      */
     public function build(string $context): Configuration;
-}
-
-
-interface Configuration extends Data
-{
 }
 
 

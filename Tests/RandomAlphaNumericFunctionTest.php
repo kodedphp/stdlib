@@ -1,8 +1,9 @@
 <?php
 
-namespace Koded\Stdlib;
+namespace Koded\Stdlib\Tests;
 
 use PHPUnit\Framework\TestCase;
+use function Koded\Stdlib\randomstring;
 
 class RandomAlphaNumericFunctionTest extends TestCase
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Koded\Stdlib;
+namespace Koded\Stdlib\Tests;
 
 use Koded\Exceptions\ReadOnlyException;
-use Koded\Stdlib\Interfaces\Data;
+use Koded\Stdlib\Data;
 use PHPUnit\Framework\TestCase;
 
 class ReadOnlyExceptionTest extends TestCase

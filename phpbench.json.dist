@@ -1,0 +1,11 @@
+{
+  "bootstrap": "./vendor/autoload.php",
+  "path": "Tests/PhpBench",
+  "time_unit": "milliseconds",
+  "php_disable_ini": false,
+  "reports": {
+    "default": {
+      "extends": "aggregate"
+    }
+  }
+}

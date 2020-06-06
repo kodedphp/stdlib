@@ -1,15 +1,14 @@
 <?php
 
-namespace Koded\Stdlib;
+namespace Koded\Stdlib\Tests;
 
+use Koded\Stdlib\Immutable;
 use PHPUnit\Framework\TestCase;
 
 class XmlSerializableTest extends TestCase
 {
-
     public function test_object_to_xml_representation()
     {
-        $this->markTestSkipped();
         $SUT = new Immutable(require __DIR__ .'/fixtures/error-message.php');
         $xml = $SUT->toXML('payload');
 

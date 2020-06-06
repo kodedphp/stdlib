@@ -7,21 +7,19 @@
  *
  * Please view the LICENSE distributed with this source code
  * for the full copyright and license information.
- *
  */
 
 namespace Koded\Stdlib\Serializer;
 
 use Koded\Exceptions\SerializerException;
-use Koded\Stdlib\Interfaces\Serializer;
+use Koded\Stdlib\Serializer;
 
 final class SerializerFactory
 {
-
     /**
      * Factory that creates a new instance of Serializer.
      *
-     * @param string $name The name of the supported serializer
+     * @param string $name The name of the supported serializer.
      *                     Provide a FQCN for custom serializers
      * @param        $args [optional] Optional arguments for the serializer class
      *

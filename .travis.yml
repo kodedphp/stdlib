@@ -21,15 +21,13 @@ jobs:
     - php: nightly
 
 install:
-  - composer update -o --prefer-source --no-interaction
-
-before_script:
   - pecl install igbinary
   - pecl install msgpack
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - composer update -o --prefer-source --no-interaction
 
 script:
   - vendor/bin/phpunit --coverage-clover build/clover.xml
 
 after_script:
-  - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover build/clover.xml

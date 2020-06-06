@@ -1,7 +1,8 @@
 <?php
 
-namespace Koded\Stdlib\Serializer;
+namespace Koded\Stdlib\Tests\Serializer;
 
+use Koded\Stdlib\Serializer\JsonSerializer;
 use PHPUnit\Framework\TestCase;
 
 /**

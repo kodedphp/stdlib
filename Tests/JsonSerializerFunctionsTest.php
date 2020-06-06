@@ -1,9 +1,10 @@
 <?php
 
-namespace Koded\Stdlib;
+namespace Koded\Stdlib\Tests;
 
-use Koded\Stdlib\Serializer\JsonSerializerTest;
+use Koded\Stdlib\Tests\Serializer\JsonSerializerTest;
 use PHPUnit\Framework\TestCase;
+use function Koded\Stdlib\json_unserialize;
 
 class JsonSerializerFunctionsTest extends TestCase
 {

@@ -1,7 +1,8 @@
 <?php
 
-namespace Koded\Exceptions;
+namespace Koded\Stdlib\Tests;
 
+use Koded\Exceptions\{KodedException, SerializerException};
 use PHPUnit\Framework\TestCase;
 
 class ExceptionsTest extends TestCase
@@ -27,7 +28,7 @@ class ExceptionsTest extends TestCase
     {
         $this->expectException(KodedException::class);
         $this->expectExceptionMessage('hello');
-        $this->expectExceptionCode(1002);
+        $this->expectExceptionCode(1003);
         throw KodedException::generic('hello');
     }
 

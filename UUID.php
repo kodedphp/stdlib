@@ -7,7 +7,6 @@
  *
  * Please view the LICENSE distributed with this source code
  * for the full copyright and license information.
- *
  */
 
 namespace Koded\Stdlib;
@@ -30,7 +29,6 @@ use InvalidArgumentException;
  */
 final class UUID
 {
-
     /* @link http://tools.ietf.org/html/rfc4122#appendix-C */
 
     /**
@@ -63,9 +61,6 @@ final class UUID
     /**
      * UUID v1 is generated from host (hardware address), clock sequence and
      * current time. This is very slow method.
-     *
-     * 0x01b21dd213814000 is a 100 nanoseconds interval between
-     * UUID epoch and UNIX epoch datetime (15/10/1582 00:00:01 - 01/01/1970 00:00:01)
      *
      * @param int|string $address [optional] 48 bit number for the hardware address.
      *                            It can be an integer or hexadecimal string
@@ -129,6 +124,8 @@ final class UUID
         };
 
         $uuidTime = function() {
+            // 0x01b21dd213814000 is a 100 nanoseconds interval between UUID epoch
+            // and UNIX epoch datetime (15/10/1582 00:00:01 - 01/01/1970 00:00:01)
             $time = gettimeofday();
             $time = ($time['sec'] * 10000000) + ($time['usec'] * 10) + 0x01b21dd213814000;
 
@@ -170,7 +167,7 @@ final class UUID
      *
      * @return string UUID v3
      */
-    public static function v3($namespace, $name): string
+    public static function v3(string $namespace, string $name): string
     {
         return UUID::fromName($namespace, $name, 3);
     }
@@ -199,7 +196,7 @@ final class UUID
      *
      * @return string UUID v5
      */
-    public static function v5($namespace, string $name): string
+    public static function v5(string $namespace, string $name): string
     {
         return UUID::fromName($namespace, $name, 5);
     }

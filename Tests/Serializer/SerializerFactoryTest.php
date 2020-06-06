@@ -1,9 +1,10 @@
 <?php
 
-namespace Koded\Stdlib\Serializer;
+namespace Koded\Stdlib\Tests\Serializer;
 
 use Koded\Exceptions\SerializerException;
-use Koded\Stdlib\Interfaces\Serializer;
+use Koded\Stdlib\Serializer;
+use Koded\Stdlib\Serializer\SerializerFactory;
 use PHPUnit\Framework\TestCase;
 
 class SerializerFactoryTest extends TestCase

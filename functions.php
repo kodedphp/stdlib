@@ -7,14 +7,12 @@
  *
  * Please view the LICENSE distributed with this source code
  * for the full copyright and license information.
- *
- */
+*/
 
 namespace Koded\Stdlib;
 
 use DateTimeImmutable;
 use FilesystemIterator;
-use Koded\Stdlib\Interfaces\{Argument, Data};
 use Koded\Stdlib\Serializer\XmlSerializer;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -190,15 +188,14 @@ function xml_serialize(string $root, iterable $data): string
  * This function does not deal with magical conversions
  * of complicated XML structures.
  *
- * @param string $root The XML document root name
  * @param string $xml  The XML document to be decoded into array
  *
  * @return array Decoded version of the XML string,
  *               or empty array on malformed XML
  */
-function xml_unserialize(string $root, string $xml): array
+function xml_unserialize(string $xml): array
 {
-    return (new XmlSerializer($root))->unserialize($xml);
+    return (new XmlSerializer(null))->unserialize($xml) ?: [];
 }
 
 /**
@@ -222,7 +219,7 @@ function error_log(string $function, string $message, $data): void
  * - empty array is not associative
  *
  * Unfortunately, the internal typecast to integer on the keys makes
- * the sane programming an ugly PHP Array Oriented Programming hackery.
+ * the sane programming an ugly Array Oriented Programming hackery.
  *
  * @param array $array
  *

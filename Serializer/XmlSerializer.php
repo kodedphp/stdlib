@@ -7,32 +7,39 @@
  *
  * Please view the LICENSE distributed with this source code
  * for the full copyright and license information.
- *
  */
 
 namespace Koded\Stdlib\Serializer;
 
-use DateTime;
+use DateTimeImmutable;
 use DateTimeInterface;
 use DOMDocument;
-use DOMElement;
-use Exception;
-use Koded\Stdlib\Interfaces\Serializer;
-use function Koded\Stdlib\htmlencode;
+use DOMNode;
+use Koded\Stdlib\Serializer;
+use Throwable;
+use function Koded\Stdlib\{json_serialize, json_unserialize};
 
 /**
- * Class XmlSerializer is heavily copied from excellent
- * Propel 3 runtime parser (XmlParser) and modified.
+ * Class XmlSerializer is heavily modified Symfony encoder (XmlEncoder).
  *
+ * @see https://www.w3.org/TR/xmlschema-2/#built-in-datatypes
  */
 final class XmlSerializer implements Serializer
 {
-
+    /** @var string|null */
     private $root;
 
-    public function __construct(string $root)
+    /** @var DOMDocument */
+    private $document;
+
+    public function __construct(?string $root)
     {
         $this->root = $root;
+    }
+
+    public function type(): string
+    {
+        return Serializer::XML;
     }
 
     /**
@@ -42,136 +49,236 @@ final class XmlSerializer implements Serializer
      */
     public function serialize($data)
     {
-        $xml = new DOMDocument('1.0', 'UTF-8');
-        $xml->preserveWhiteSpace = false;
-        $xml->formatOutput = true;
+        try {
+            $this->document = new DOMDocument;
+            $this->document->formatOutput = true;
 
-        $root = $xml->createElement($this->root);
-        $xml->appendChild($root);
-        $this->parseFromArray($data, $root);
+            if (is_iterable($data)) {
+                $root = $this->document->createElement($this->root);
+                $this->document->appendChild($root);
+                $this->document->createAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:' . $this->root);
+                $this->buildXml($root, $data);
+            } else {
+                $this->appendNode($this->document, $data, $this->root);
+            }
 
-        return $xml->saveXML();
+            return $this->document->saveXML();
+
+        } catch (Throwable $e) {
+            error_log(sprintf('[XmlSerializer::serialize] Invalid data: %s', var_export($data, true)));
+            return '';
+        }
     }
 
     /**
-     * @param string $document XML string
+     * Unserialize a proper XML document.
+     * However, it will try to unserialize scalar values.
      *
-     * @return array
+     * @param string $xml XML
+     *
+     * @return array|null|Scalar
      */
-    public function unserialize($document)
+    public function unserialize($xml)
     {
-        $xml = new DOMDocument('1.0', 'UTF-8');
-
         try {
-            $xml->loadXML($document);
-        } catch (Exception $e) {
+            $document = new DOMDocument;
+            $document->preserveWhiteSpace = false;
+
+            // silence some QA tools
+            $entityLoader = libxml_disable_entity_loader(true);
+            $internalErrors = libxml_use_internal_errors(true);
+            libxml_clear_errors();
+            @$document->loadXML($xml);
+            libxml_disable_entity_loader($entityLoader);
+            libxml_use_internal_errors($internalErrors);
+
+            if ($document->documentElement->hasChildNodes()) {
+                $val = $this->parseXml($document->documentElement);
+                return $val['#'] ?? $val;
+            }
+
+            return false === $document->documentElement->getAttributeNode('xmlns:xsi') ? $this->parseXml($document->documentElement) : [];
+
+        } catch (Throwable $e) {
+            error_log(sprintf('[XmlSerializer::unserialize] Invalid XML data: %s', var_export($xml, true)));
+            return null;
+        }
+    }
+
+    private function buildXml(DOMNode $parent, iterable $data)
+    {
+        foreach ($data as $key => $data) {
+            $isKeyNumeric = is_numeric($key);
+            if ($isKeyNumeric) {
+                $this->appendNode($parent, $data, 'item', $key);
+            } elseif (is_array($data)) {
+                if (ctype_digit(join('', array_keys($data)))) {
+                    foreach ($data as $i => $d) {
+                        $this->appendNode($parent, $d, $key);
+                    }
+                } else {
+                    $this->appendNode($parent, $data, $key);
+                }
+            } else {
+                $this->appendNode($parent, $data, $key);
+            }
+        }
+    }
+
+    private function appendNode(DOMNode $parent, $data, string $name, string $key = null): void
+    {
+        $element = $this->document->createElement($name);
+
+        if (null !== $key) {
+            $element->setAttribute('key', $key);
+        }
+
+        if (is_iterable($data)) {
+            $this->buildXml($element, $data);
+        } elseif (is_int($data)) {
+            $element->setAttribute('type', 'xsd:integer');
+            $element->appendChild($this->document->createTextNode($data));
+        } elseif (is_bool($data)) {
+            $element->setAttribute('type', 'xsd:boolean');
+            $element->appendChild($this->document->createTextNode($data));
+        } elseif (is_float($data)) {
+            $element->setAttribute('type', 'xsd:float');
+            $element->appendChild($this->document->createTextNode($data));
+        } elseif (null === $data) {
+            $element->setAttribute('xsi:nil', 'true');
+        } elseif ($data instanceof DateTimeInterface) {
+            $element->setAttribute('type', 'xsd:dateTime');
+            $element->appendChild($this->document->createTextNode($data->format(DateTimeImmutable::ISO8601)));
+        } elseif (is_object($data)) {
+            $element->setAttribute('type', 'xsd:object');
+            $element->appendChild($this->document->createCDATASection(json_serialize($data)));
+        } elseif (preg_match('/[<>&\'"]/', $data) > 0) {
+            $element->appendChild($this->document->createCDATASection($data));
+        } else {
+            $element->appendChild($this->document->createTextNode($data));
+        }
+
+        $parent->appendChild($element);
+    }
+
+    private function parseXml(DOMNode $node)
+    {
+        $attrs = $this->parseXmlAttributes($node);
+        $value = $this->parseXmlValue($node);
+
+        if (0 === count($attrs)) {
+            return $value;
+        }
+
+        if (false === is_array($value)) {
+            $attrs['#'] = $value;
+            return $this->setValueByType($attrs);
+        }
+
+        if (1 === count($value) && key($value)) {
+            $attrs[key($value)] = current($value);
+        }
+
+        return $this->setValueByType($attrs);
+    }
+
+    private function parseXmlAttributes(DOMNode $node): array
+    {
+        if (!$node->hasAttributes()) {
             return [];
         }
 
-        return $this->parseFromElement($xml->documentElement);
-    }
+        $attrs = [];
 
-    public function type(): string
-    {
-        return Serializer::XML;
-    }
-
-    private function parseFromArray(iterable $data, DOMElement $element): DOMElement
-    {
-        foreach ($data as $key => $value) {
-            if (is_numeric($key)) {
-                $key = $element->nodeName;
-                if ('s' === mb_substr($key, -1, 1)) {
-                    $key = mb_substr($key, 0, mb_strlen($key) - 1);
-                }
-            }
-
-            try {
-                $child = $element->ownerDocument->createElement($key);
-            } catch (Exception $e) {
-                error_log(sprintf('[%s] thrown while parsing the data into XML, with message "%s" for the key %s and value %s',
-                    get_class($e),
-                    $e->getMessage(),
-                    var_export($key, true),
-                    var_export($value, true)
-                ));
+        /** @var \DOMAttr $attr */
+        foreach ($node->attributes as $attr) {
+            if (false === is_numeric($attr->nodeValue) || (isset($attr->nodeValue[1]) && '0' === $attr->nodeValue[0])) {
+                $attrs['@' . $attr->nodeName] = $attr->nodeValue;
                 continue;
             }
-
-            if (is_array($value)) {
-                $child = $this->parseFromArray($value, $child);
-            } elseif (is_string($value)) {
-                $child->appendChild($child->ownerDocument->createCDATASection(htmlencode($value)));
-            } elseif ($value instanceof DateTimeInterface) {
-                $child->setAttribute('type', 'xsd:dateTime');
-                $child->appendChild($child->ownerDocument->createTextNode($value->format(DateTime::ISO8601)));
-            } elseif (is_object($value)) {
-                $child->setAttribute('type', 'xsd:token');
-                $child->appendChild($child->ownerDocument->createCDATASection(serialize($value)));
-            } else {
-                $child->appendChild($child->ownerDocument->createTextNode($value));
-            }
-
-            $element->appendChild($child);
+            $attrs['@' . $attr->nodeName] = $attr->nodeValue;
         }
 
-        return $element;
+        return $attrs;
     }
 
-    private function parseFromElement(DOMElement $element): array
+    /**
+     * @param DOMNode $node
+     *
+     * @return array|string|null
+     */
+    private function parseXmlValue(DOMNode $node)
     {
-        $result = [];
-        $names = [];
+        $value = [];
 
-        /** @var DOMElement $node */
-        foreach ($element->childNodes as $node) {
-            if (XML_TEXT_NODE === $node->nodeType) {
-                continue;
+        if ($node->hasChildNodes()) {
+            if ($node->firstChild->nodeType === XML_COMMENT_NODE) {
+                return '';
             }
 
-            $name = $node->nodeName;
+            if ($node->firstChild->nodeType === XML_TEXT_NODE) {
+                return $node->firstChild->nodeValue;
+            }
 
-            if (isset($names[$name])) {
-                if (isset($result[$name])) {
-                    $result[$names[$name]] = $result[$name];
-                    unset($result[$name]);
+            if ($node->firstChild->nodeType === XML_CDATA_SECTION_NODE) {
+                return $node->firstChild->wholeText;
+            }
+
+            /** @var DOMNode $child */
+            foreach ($node->childNodes as $child) {
+                $val = $this->parseXml($child);
+
+                if ('item' === $child->nodeName && isset($val['@key'])) {
+                    $value[$val['@key']] = $val['#'] ?? $val;
+                } elseif ($child->nodeType !== XML_COMMENT_NODE) {
+                    $value[$child->nodeName][] = $val['#'] ?? $val;
                 }
 
-                $names[$name] += 1;
-                $index = $names[$name];
-            } else {
-                $names[$name] = 0;
-                $index = $name;
-            }
-
-            $hasChildNodes = $node->hasChildNodes();
-
-            if (false === $hasChildNodes) {
-                $result[$index] = null;
-            } elseif ('xsd:token' === $node->getAttribute('type')) {
-                $result[$index] = unserialize($node->firstChild->textContent);
-            } elseif ($hasChildNodes && false === $this->hasOnlyTextNodes($node)) {
-                $result[$index] = $this->parseFromElement($node);
-            } elseif ($hasChildNodes && XML_CDATA_SECTION_NODE === $node->firstChild->nodeType) {
-                $result[$index] = html_entity_decode($node->firstChild->textContent, ENT_QUOTES | ENT_HTML5);
-            } elseif ('xsd:dateTime' === $node->getAttribute('type')) {
-                $result[$index] = new DateTime($node->textContent);
-            } else {
-                $result[$index] = $node->textContent;
             }
         }
 
-        return $result;
+        foreach ($value as $key => $val) {
+            if (is_array($val) && 1 === count($val)) {
+                $value[$key] = current($val);
+            }
+        }
+
+        if ($node->hasAttributes()) {
+            return $value;
+        }
+
+        return $value ?: '';
     }
 
-    private function hasOnlyTextNodes(DOMElement $node): bool
+    /**
+     * @param array|string $value
+     *
+     * @return array|string|null
+     * @throws \Exception
+     */
+    private function setValueByType($value)
     {
-        foreach ($node->childNodes as $child) {
-            if (($child->nodeType !== XML_CDATA_SECTION_NODE) && ($child->nodeType !== XML_TEXT_NODE)) {
-                return false;
+        if (isset($value['@type'])) {
+            switch ($value['@type']) {
+                case 'xsd:integer':
+                    $value['#'] = (int)$value['#'];
+                    break;
+                case 'xsd:boolean':
+                    $value['#'] = (bool)$value['#'];
+                    break;
+                case 'xsd:float':
+                    $value['#'] = (float)$value['#'];
+                    break;
+                case 'xsd:dateTime':
+                    $value['#'] = new DateTimeImmutable($value['#']);
+                    break;
+                case 'xsd:object':
+                    $value['#'] = json_unserialize($value['#']);
             }
+        } elseif (isset($value['@xsi:nil'])) {
+            $value = null;
         }
 
-        return true;
+        return $value;
     }
 }

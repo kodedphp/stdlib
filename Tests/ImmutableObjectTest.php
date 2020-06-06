@@ -1,8 +1,9 @@
 <?php
 
-namespace Koded\Stdlib;
+namespace Koded\Stdlib\Tests;
 
 use Koded\Exceptions\ReadOnlyException;
+use Koded\Stdlib\{Arguments, Immutable};
 use PHPUnit\Framework\TestCase;
 
 class ImmutableObjectTest extends TestCase
@@ -34,7 +35,7 @@ class ImmutableObjectTest extends TestCase
 
     public function test_should_transform_immutable_to_argument_object()
     {
-        $this->assertInstanceOf(Arguments::class, $this->SUT->toArgument());
+        $this->assertInstanceOf(Arguments::class, $this->SUT->toArguments());
     }
 
     public function test_should_get_things()

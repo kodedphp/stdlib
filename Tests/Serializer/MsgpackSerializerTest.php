@@ -1,8 +1,9 @@
 <?php
 
-namespace Koded\Stdlib\Serializer;
+namespace Koded\Stdlib\Tests\Serializer;
 
-use Koded\Stdlib\Interfaces\Serializer;
+use Koded\Stdlib\Serializer;
+use Koded\Stdlib\Serializer\MsgpackSerializer;
 use PHPUnit\Framework\TestCase;
 
 class MsgpackSerializerTest extends TestCase

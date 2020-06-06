@@ -7,12 +7,11 @@
  *
  * Please view the LICENSE distributed with this source code
  * for the full copyright and license information.
- *
  */
 
 namespace Koded\Exceptions;
 
-use Koded\Stdlib\Interfaces\{Data, Serializer};
+use Koded\Stdlib\{Data, Serializer};
 use RuntimeException;
 use Throwable;
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace Koded\Stdlib\Serializer;
+namespace Koded\Stdlib\Tests\Serializer;
 
-use Koded\Stdlib\Interfaces\Serializer;
+use Koded\Stdlib\Serializer;
+use Koded\Stdlib\Serializer\PhpSerializer;
 use PHPUnit\Framework\TestCase;
 
 class PhpSerializerTest extends TestCase
 {
-
     /** @var PhpSerializer */
     private $SUT;
 

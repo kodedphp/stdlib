@@ -1,8 +1,9 @@
 <?php
 
-namespace Koded\Stdlib;
+namespace Koded\Stdlib\Tests;
 
 use InvalidArgumentException;
+use Koded\Stdlib\UUID;
 use PHPUnit\Framework\Error\Warning;
 use PHPUnit\Framework\TestCase;
 

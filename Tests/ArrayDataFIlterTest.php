@@ -1,12 +1,12 @@
 <?php
 
-namespace Koded\Stdlib;
+namespace Koded\Stdlib\Tests;
 
+use Koded\Stdlib\Arguments;
 use PHPUnit\Framework\TestCase;
 
 class ArrayDataFIlterTest extends TestCase
 {
-
     /**
      * @dataProvider iterableData
      */

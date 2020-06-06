@@ -19,7 +19,7 @@
   "authors": [
     {
       "name": "Mihail Binev",
-      "homepage": "http://kodeart.com"
+      "homepage": "https://kodeart.com"
     }
   ],
   "require": {
@@ -29,7 +29,8 @@
     "ext-dom": "*",
     "ext-libxml": "*",
     "ext-simplexml": "*",
-    "ext-ctype":  "*"
+    "ext-ctype":  "*",
+    "ext-mbstring": "*"
   },
   "suggest": {
     "msgpack": "msgpack module for de/serialization",
@@ -48,19 +49,14 @@
   },
   "require-dev": {
     "phpunit/phpunit": "~7",
-    "codacy/coverage": "dev-master"
+    "phpbench/phpbench": "@dev"
   },
   "autoload-dev": {
     "psr-4": {
-      "Koded\\": "Tests/"
+      "Koded\\Stdlib\\Tests\\": "Tests/"
     },
     "files": [
       "functions-dev.php"
     ]
-  },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "4.x-dev"
-    }
   }
 }

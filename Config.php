@@ -7,13 +7,11 @@
  *
  * Please view the LICENSE distributed with this source code
  * for the full copyright and license information.
- *
  */
 
 namespace Koded\Stdlib;
 
 use Exception;
-use Koded\Stdlib\Interfaces\{Configuration, ConfigurationFactory, Data};
 
 /**
  * Class Config works as a parameter bag that provides ways to fill it
@@ -48,7 +46,7 @@ use Koded\Stdlib\Interfaces\{Configuration, ConfigurationFactory, Data};
  *     putenv('MY_APP_SETTINGS=/path/to/config/file.php');
  *
  */
-class Config extends Arguments implements ConfigurationFactory
+class Config extends Arguments implements Configuration
 {
     /** @var string */
     public $rootPath = '';
@@ -79,10 +77,10 @@ class Config extends Arguments implements ConfigurationFactory
      * @param string $name      Method name
      * @param array  $arguments [optional]
      *
-     * @return ConfigurationFactory
+     * @return Configuration
      * @throws Exception
      */
-    public function __call($name, $arguments): ConfigurationFactory
+    public function __call($name, $arguments): Configuration
     {
         if (false === $this->silent) {
             throw new Exception('Unable to load the configuration file ' . current($arguments));
@@ -96,12 +94,12 @@ class Config extends Arguments implements ConfigurationFactory
         throw new Exception('Configuration factory should implement the method ' . __METHOD__);
     }
 
-    public function withParameters(array $parameters): ConfigurationFactory
+    public function withParameters(array $parameters): Configuration
     {
         return $this->import($parameters);
     }
 
-    public function fromObject($object): ConfigurationFactory
+    public function fromObject($object): Configuration
     {
         if (is_string($object) && class_exists($object)) {
             $object = new $object;
@@ -112,22 +110,21 @@ class Config extends Arguments implements ConfigurationFactory
         return $this->import(iterator_to_array($object));
     }
 
-    public function fromJsonFile(string $filename): ConfigurationFactory
+    public function fromJsonFile(string $filename): Configuration
     {
         return $this->loadDataFrom($filename, function($filename) {
-            /** @noinspection PhpIncludeInspection */
             return json_decode(file_get_contents($filename), true);
         });
     }
 
-    public function fromIniFile(string $filename): ConfigurationFactory
+    public function fromIniFile(string $filename): Configuration
     {
         return $this->loadDataFrom($filename, function($filename) {
             return parse_ini_file($filename, true, INI_SCANNER_TYPED) ?: [];
         });
     }
 
-    public function fromEnvFile(string $filename, string $namespace = ''): ConfigurationFactory
+    public function fromEnvFile(string $filename, string $namespace = ''): Configuration
     {
         return $this->loadDataFrom($filename, function($filename) use ($namespace) {
             try {
@@ -150,7 +147,7 @@ class Config extends Arguments implements ConfigurationFactory
         });
     }
 
-    public function fromEnvVariable(string $variable): ConfigurationFactory
+    public function fromEnvVariable(string $variable): Configuration
     {
         if (false === empty($filename = getenv($variable))) {
             $extension = ucfirst(pathinfo($filename, PATHINFO_EXTENSION));
@@ -166,10 +163,10 @@ class Config extends Arguments implements ConfigurationFactory
         return $this;
     }
 
-    public function fromPhpFile(string $filename): ConfigurationFactory
+    public function fromPhpFile(string $filename): Configuration
     {
         return $this->loadDataFrom($filename, function($filename) {
-            /** @noinspection PhpIncludeInspection */;
+            /** @noinspection PhpIncludeInspection */
             return include $filename;
         });
     }
@@ -179,7 +176,7 @@ class Config extends Arguments implements ConfigurationFactory
         string $namespace = '',
         bool $lowercase = true,
         bool $trim = true
-    ): ConfigurationFactory {
+    ): Configuration {
         $data = [];
         foreach ($variableNames as $variable) {
             $value = getenv($variable);
@@ -192,7 +189,7 @@ class Config extends Arguments implements ConfigurationFactory
         return $this;
     }
 
-    public function silent(bool $silent): ConfigurationFactory
+    public function silent(bool $silent): Configuration
     {
         $this->silent = $silent;
 
@@ -204,7 +201,7 @@ class Config extends Arguments implements ConfigurationFactory
         return (new static($this->rootPath))->import($this->filter($this->toArray(), $prefix, $lowercase, $trim));
     }
 
-    protected function loadDataFrom(string $filename, callable $loader): ConfigurationFactory
+    protected function loadDataFrom(string $filename, callable $loader): Configuration
     {
         $file = ('/' === $filename[0]) ? $filename : $this->rootPath . '/' . ltrim($filename, '/');
         $this->import($loader($file));
