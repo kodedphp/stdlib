@@ -76,7 +76,7 @@ final class XmlSerializer implements Serializer
      *
      * @param string $xml XML
      *
-     * @return array|null|Scalar
+     * @return array|null|scalar
      */
     public function unserialize($xml)
     {
@@ -97,7 +97,9 @@ final class XmlSerializer implements Serializer
                 return $val['#'] ?? $val;
             }
 
-            return false === $document->documentElement->getAttributeNode('xmlns:xsi') ? $this->parseXml($document->documentElement) : [];
+            return false === $document->documentElement->getAttributeNode('xmlns:xsi')
+                ? $this->parseXml($document->documentElement)
+                : [];
 
         } catch (Throwable $e) {
             error_log(sprintf('[XmlSerializer::unserialize] Invalid XML data: %s', var_export($xml, true)));
@@ -192,10 +194,6 @@ final class XmlSerializer implements Serializer
 
         /** @var \DOMAttr $attr */
         foreach ($node->attributes as $attr) {
-            if (false === is_numeric($attr->nodeValue) || (isset($attr->nodeValue[1]) && '0' === $attr->nodeValue[0])) {
-                $attrs['@' . $attr->nodeName] = $attr->nodeValue;
-                continue;
-            }
             $attrs['@' . $attr->nodeName] = $attr->nodeValue;
         }
 
@@ -212,19 +210,21 @@ final class XmlSerializer implements Serializer
         $value = [];
 
         if ($node->hasChildNodes()) {
-            if ($node->firstChild->nodeType === XML_COMMENT_NODE) {
+            /** @var DOMNode $child */
+            $child = $node->firstChild;
+
+            if ($child->nodeType === XML_COMMENT_NODE) {
                 return '';
             }
 
-            if ($node->firstChild->nodeType === XML_TEXT_NODE) {
-                return $node->firstChild->nodeValue;
+            if ($child->nodeType === XML_TEXT_NODE) {
+                return $child->nodeValue;
             }
 
-            if ($node->firstChild->nodeType === XML_CDATA_SECTION_NODE) {
-                return $node->firstChild->wholeText;
+            if ($child->nodeType === XML_CDATA_SECTION_NODE) {
+                return $child->wholeText;
             }
 
-            /** @var DOMNode $child */
             foreach ($node->childNodes as $child) {
                 $val = $this->parseXml($child);
 
@@ -233,7 +233,6 @@ final class XmlSerializer implements Serializer
                 } elseif ($child->nodeType !== XML_COMMENT_NODE) {
                     $value[$child->nodeName][] = $val['#'] ?? $val;
                 }
-
             }
         }
 
