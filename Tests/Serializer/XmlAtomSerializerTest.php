@@ -28,7 +28,8 @@ class XmlAtomSerializerTest extends TestCase
         $this->assertSame([
             '@rel'  => 'self',
             '@type' => 'application/rss+xml',
-            '@href' => 'http://example.com'
+            '@href' => 'http://example.com',
+            '#' => '',
         ], $channel['atom10:link'], 'XML node attributes are parsed, regardless of the value');
 
         // items list and item structure

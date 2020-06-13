@@ -79,9 +79,8 @@ class XmlSerializerTest extends TestCase
             ['123', '<payload>123</payload>'],
             [123, '<payload type="xsd:integer">123</payload>'],
             [[], '<payload xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>'],
-            [
-                [123],
-                '<payload xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><item key="0" type="xsd:integer">123</item></payload>'
+            [[123], '<payload xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<item key="0" type="xsd:integer">123</item></payload>'
             ],
         ];
     }
