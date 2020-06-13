@@ -8,7 +8,7 @@ A standard library for shareable classes and functions.
 [![Code Coverage](https://scrutinizer-ci.com/g/kodedphp/stdlib/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/kodedphp/stdlib/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kodedphp/stdlib/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/kodedphp/stdlib/?branch=master)
 [![Packagist Downloads](https://img.shields.io/packagist/dt/koded/stdlib.svg)](https://packagist.org/packages/koded/stdlib)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.2-8892BF.svg)](https://php.net/)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.3-8892BF.svg)](https://php.net/)
 
 
 Classes
@@ -149,7 +149,7 @@ function camel_to_snake_case(string $string): string;
 function to_delimited_string(string $string, int $delimiter): string;
 function to_kebab_string(string $string): string;
 function json_serialize($value, int $options = JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES): string;
-function json_unserialize(string $json);
+function json_unserialize(string $json, bool $associative = false);
 function xml_serialize(string $root, iterable $data): string;
 function xml_unserialize(string $xml): array;
 function is_associative(array $array): bool;
