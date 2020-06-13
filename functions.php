@@ -13,7 +13,8 @@ namespace Koded\Stdlib;
 
 use DateTimeImmutable;
 use FilesystemIterator;
-use Koded\Stdlib\Serializer\XmlSerializer;
+use JsonException;
+use Koded\Stdlib\Serializer\{JsonSerializer, XmlSerializer};
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -136,38 +137,40 @@ function to_kebab_string(string $string): string
  * Returns the JSON representation of a value.
  *
  * @param mixed $value   The data to be serialized
- * @param int   $options [optional] JSON bitmask options for JSON encoding
+ * @param int   $options [optional] JSON bitmask options for JSON encoding.
+ *                       Warning: uses {@JsonSerializer::OPTIONS} as defaults;
+ *                       instead of adding, it may remove the option (if set in OPTIONS)
  *
  * @return string JSON encoded string, or EMPTY STRING if encoding failed
  * @see http://php.net/manual/en/function.json-encode.php
  */
-function json_serialize($value, int $options = JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES): string
+function json_serialize($value, int $options = JsonSerializer::OPTIONS): string
 {
-    if (false === $json = json_encode($value, $options)) {
-        error_log(__FUNCTION__, json_last_error_msg(), $value);
+    try {
+        return json_encode($value, $options);
+    } catch (JsonException $e) {
+        error_log(__FUNCTION__, $e->getMessage(), $value);
         return '';
     }
-
-    return $json;
 }
 
 /**
  * Decodes a JSON string into appropriate PHP type.
  *
- * @param string $json A JSON string
+ * @param string $json        A JSON string
+ * @param bool   $associative When TRUE, returned objects will be
+ *                            converted into associative arrays
  *
  * @return mixed The decoded value, or EMPTY STRING on error
  */
-function json_unserialize(string $json)
+function json_unserialize(string $json, bool $associative = false)
 {
-    $data = json_decode($json, false, 512, JSON_BIGINT_AS_STRING);
-
-    if (JSON_ERROR_NONE !== json_last_error()) {
-        error_log(__FUNCTION__, json_last_error_msg(), $json);
+    try {
+        return json_decode($json, $associative, 512, JSON_BIGINT_AS_STRING | JSON_THROW_ON_ERROR);
+    } catch (JsonException $e) {
+        error_log(__FUNCTION__, $e->getMessage(), $json);
         return '';
     }
-
-    return $data;
 }
 
 /**
@@ -188,7 +191,7 @@ function xml_serialize(string $root, iterable $data): string
  * This function does not deal with magical conversions
  * of complicated XML structures.
  *
- * @param string $xml  The XML document to be decoded into array
+ * @param string $xml The XML document to be decoded into array
  *
  * @return array Decoded version of the XML string,
  *               or empty array on malformed XML
@@ -201,13 +204,13 @@ function xml_unserialize(string $xml): array
 /**
  * Send a formatted error message to PHP's system logger.
  *
- * @param string $function The function name where error occurred
- * @param string $message  The error message
- * @param mixed  $data     Original data passed into function
+ * @param string $func    The function name where error occurred
+ * @param string $message The error message
+ * @param mixed  $data    Original data passed into function
  */
-function error_log(string $function, string $message, $data): void
+function error_log(string $func, string $message, $data): void
 {
-    \error_log(sprintf('(%s) [Error] - %s - data: %s', $function, $message, var_export($data, true)));
+    \error_log(sprintf("(%s) %s:\n%s", $func, $message, var_export($data, true)));
 }
 
 /**
