@@ -65,7 +65,7 @@ final class XmlSerializer implements Serializer
             return $this->document->saveXML();
 
         } catch (Throwable $e) {
-            error_log(sprintf('[XmlSerializer::serialize] Invalid data: %s', var_export($data, true)));
+            \error_log(PHP_EOL . "[{$e->getLine()}]: " . $e->getMessage());
             return '';
         }
     }
@@ -84,7 +84,6 @@ final class XmlSerializer implements Serializer
             $document = new DOMDocument;
             $document->preserveWhiteSpace = false;
 
-            // silence some QA tools
             $entityLoader = libxml_disable_entity_loader(true);
             $internalErrors = libxml_use_internal_errors(true);
             libxml_clear_errors();
@@ -92,9 +91,12 @@ final class XmlSerializer implements Serializer
             libxml_disable_entity_loader($entityLoader);
             libxml_use_internal_errors($internalErrors);
 
+            if (!$document->documentElement) {
+                throw new \InvalidArgumentException('Invalid XML');
+            }
+
             if ($document->documentElement->hasChildNodes()) {
-                $val = $this->parseXml($document->documentElement);
-                return $val['#'] ?? $val;
+                return $this->parseXml($document->documentElement);
             }
 
             return false === $document->documentElement->getAttributeNode('xmlns:xsi')
@@ -102,18 +104,23 @@ final class XmlSerializer implements Serializer
                 : [];
 
         } catch (Throwable $e) {
-            error_log(sprintf('[XmlSerializer::unserialize] Invalid XML data: %s', var_export($xml, true)));
+            \error_log(PHP_EOL . "[{$e->getLine()}]: " . $e->getMessage());
             return null;
         }
     }
 
-    private function buildXml(DOMNode $parent, iterable $data)
+    private function buildXml(DOMNode $parent, iterable $data): void
     {
         foreach ($data as $key => $data) {
             $isKeyNumeric = is_numeric($key);
-            if ($isKeyNumeric) {
-                $this->appendNode($parent, $data, 'item', $key);
-            } elseif (is_array($data)) {
+
+            if (0 === strpos($key, '@') && $name = substr($key, 1)) {
+                // attribute
+                $parent->setAttribute($name, $data);
+            } elseif ('#' === $key) {
+                // value
+                $parent->nodeValue = $data;
+            } elseif (false === $isKeyNumeric && is_array($data)) {
                 if (ctype_digit(join('', array_keys($data)))) {
                     foreach ($data as $i => $d) {
                         $this->appendNode($parent, $d, $key);
@@ -121,6 +128,8 @@ final class XmlSerializer implements Serializer
                 } else {
                     $this->appendNode($parent, $data, $key);
                 }
+            } elseif ($isKeyNumeric) {
+                $this->appendNode($parent, $data, 'item', $key);
             } else {
                 $this->appendNode($parent, $data, $key);
             }
@@ -137,14 +146,14 @@ final class XmlSerializer implements Serializer
 
         if (is_iterable($data)) {
             $this->buildXml($element, $data);
-        } elseif (is_int($data)) {
-            $element->setAttribute('type', 'xsd:integer');
-            $element->appendChild($this->document->createTextNode($data));
         } elseif (is_bool($data)) {
             $element->setAttribute('type', 'xsd:boolean');
             $element->appendChild($this->document->createTextNode($data));
         } elseif (is_float($data)) {
             $element->setAttribute('type', 'xsd:float');
+            $element->appendChild($this->document->createTextNode($data));
+        } elseif (is_int($data)) {
+            $element->setAttribute('type', 'xsd:integer');
             $element->appendChild($this->document->createTextNode($data));
         } elseif (null === $data) {
             $element->setAttribute('xsi:nil', 'true');
@@ -174,14 +183,18 @@ final class XmlSerializer implements Serializer
 
         if (false === is_array($value)) {
             $attrs['#'] = $value;
-            return $this->setValueByType($attrs);
+            return $this->getValueByType($attrs);
         }
 
         if (1 === count($value) && key($value)) {
             $attrs[key($value)] = current($value);
         }
 
-        return $this->setValueByType($attrs);
+        foreach ($value as $k => $v) {
+            $attrs[$k] = $v;
+        }
+
+        return $attrs;
     }
 
     private function parseXmlAttributes(DOMNode $node): array
@@ -191,9 +204,8 @@ final class XmlSerializer implements Serializer
         }
 
         $attrs = [];
-
-        /** @var \DOMAttr $attr */
         foreach ($node->attributes as $attr) {
+            /** @var \DOMAttr $attr */
             $attrs['@' . $attr->nodeName] = $attr->nodeValue;
         }
 
@@ -204,6 +216,7 @@ final class XmlSerializer implements Serializer
      * @param DOMNode $node
      *
      * @return array|string|null
+     * @throws \Exception
      */
     private function parseXmlValue(DOMNode $node)
     {
@@ -212,10 +225,6 @@ final class XmlSerializer implements Serializer
         if ($node->hasChildNodes()) {
             /** @var DOMNode $child */
             $child = $node->firstChild;
-
-            if ($child->nodeType === XML_COMMENT_NODE) {
-                return '';
-            }
 
             if ($child->nodeType === XML_TEXT_NODE) {
                 return $child->nodeValue;
@@ -226,24 +235,26 @@ final class XmlSerializer implements Serializer
             }
 
             foreach ($node->childNodes as $child) {
-                $val = $this->parseXml($child);
+                if ($child->nodeType === XML_COMMENT_NODE) {
+                    continue;
+                }
 
-                if ('item' === $child->nodeName && isset($val['@key'])) {
-                    $value[$val['@key']] = $val['#'] ?? $val;
-                } elseif ($child->nodeType !== XML_COMMENT_NODE) {
-                    $value[$child->nodeName][] = $val['#'] ?? $val;
+                $v = $this->parseXml($child);
+
+                if ('item' === $child->nodeName && isset($v['@key'])) {
+                    $k = $v['@key'];
+                    $value[$k] = $this->getValueByType($v);
+                    unset($value[$k]['@key']);
+                } else {
+                    $value[$child->nodeName][] = $this->getValueByType($v);
                 }
             }
         }
 
-        foreach ($value as $key => $val) {
-            if (is_array($val) && 1 === count($val)) {
-                $value[$key] = current($val);
+        foreach ($value as $k => $v) {
+            if (is_array($v) && 1 === count($v)) {
+                $value[$k] = current($v);
             }
-        }
-
-        if ($node->hasAttributes()) {
-            return $value;
         }
 
         return $value ?: '';
@@ -255,29 +266,48 @@ final class XmlSerializer implements Serializer
      * @return array|string|null
      * @throws \Exception
      */
-    private function setValueByType($value)
+    private function getValueByType($value)
     {
-        if (isset($value['@type'])) {
-            switch ($value['@type']) {
-                case 'xsd:integer':
-                    $value['#'] = (int)$value['#'];
-                    break;
-                case 'xsd:boolean':
-                    $value['#'] = (bool)$value['#'];
-                    break;
-                case 'xsd:float':
-                    $value['#'] = (float)$value['#'];
-                    break;
-                case 'xsd:dateTime':
-                    $value['#'] = new DateTimeImmutable($value['#']);
-                    break;
-                case 'xsd:object':
-                    $value['#'] = json_unserialize($value['#']);
-            }
-        } elseif (isset($value['@xsi:nil'])) {
-            $value = null;
+        if (false === is_array($value)) {
+            return $value;
         }
 
-        return $value;
+        if (isset($value['@xsi:nil'])) {
+            unset($value['@xsi:nil']);
+            return null;
+        }
+
+        if (!(isset($value['@type']) && 0 === strpos($value['@type'] ?? '', 'xsd:', 0))) {
+            return $value;
+        }
+
+        switch ($value['@type']) {
+            case 'xsd:integer':
+                $value['#'] = (int)$value['#'];
+                break;
+            case 'xsd:boolean':
+                $value['#'] = (bool)$value['#'];
+                break;
+            case 'xsd:float':
+                $value['#'] = (float)$value['#'];
+                break;
+            case 'xsd:dateTime':
+                if (is_string($value['#'])) {
+                    $value['#'] = new DateTimeImmutable($value['#']);
+                }
+                break;
+            case 'xsd:object':
+                if (is_string($value['#'])) {
+                    $value['#'] = json_unserialize($value['#']);
+                }
+        }
+
+        unset($value['@type']);
+
+        if (count($value) > 1) {
+            return $value;
+        }
+
+        return $value['#'];
     }
 }
