@@ -13,7 +13,7 @@ namespace Koded\Stdlib\Serializer;
 
 use Koded\Stdlib\Serializer;
 
-final class IgbinarySerializer implements Serializer
+class IgbinarySerializer implements Serializer
 {
     public function serialize($value)
     {

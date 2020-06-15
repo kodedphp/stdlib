@@ -13,7 +13,7 @@ namespace Koded\Stdlib\Serializer;
 
 use Koded\Stdlib\Serializer;
 
-final class PhpSerializer implements Serializer
+class PhpSerializer implements Serializer
 {
     public function serialize($value)
     {

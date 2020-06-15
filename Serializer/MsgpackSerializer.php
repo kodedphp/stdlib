@@ -13,7 +13,7 @@ namespace Koded\Stdlib\Serializer;
 
 use Koded\Stdlib\Serializer;
 
-final class MsgpackSerializer implements Serializer
+class MsgpackSerializer implements Serializer
 {
     public function serialize($value)
     {

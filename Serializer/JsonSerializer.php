@@ -14,7 +14,7 @@ namespace Koded\Stdlib\Serializer;
 use Koded\Stdlib\Serializer;
 use function Koded\Stdlib\{json_serialize, json_unserialize};
 
-final class JsonSerializer implements Serializer
+class JsonSerializer implements Serializer
 {
     public const OPTIONS =
         JSON_PRESERVE_ZERO_FRACTION

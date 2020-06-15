@@ -24,7 +24,7 @@ use function Koded\Stdlib\{json_serialize, json_unserialize};
  *
  * @see https://www.w3.org/TR/xmlschema-2/#built-in-datatypes
  */
-final class XmlSerializer implements Serializer
+class XmlSerializer implements Serializer
 {
     /** @var string|null */
     private $root;
