@@ -65,7 +65,10 @@ class Config extends Arguments implements Configuration
     public function __construct(string $rootPath = '', Data $defaults = null)
     {
         parent::__construct($defaults ? $defaults->toArray() : []);
-        $this->rootPath = $rootPath ?: getcwd();
+
+        if (!$this->rootPath = $rootPath) {
+            $this->rootPath = getcwd();
+        }
     }
 
     /**
