@@ -55,11 +55,46 @@ class SerializerFactoryTest extends TestCase
 
         SerializerFactory::new('fubar');
     }
+
+    public function test_json_factory_arguments()
+    {
+        $options = JSON_PRETTY_PRINT | JSON_FORCE_OBJECT ^ JSON_THROW_ON_ERROR;
+        $json = SerializerFactory::new('json', $options, true);
+
+        $this->assertAttributeSame(true, 'associative', $json);
+        $this->assertAttributeSame(
+            JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_FORCE_OBJECT,
+            'options',
+            $json
+        );
+    }
+
+    public function test_xml_factory_arguments()
+    {
+        $xml = SerializerFactory::new('xml', 'fubar');
+        $this->assertAttributeSame('fubar', 'root', $xml);
+    }
+
+    public function test_custom_serializer()
+    {
+        $custom = new TestSerializer('foo', true);
+
+        $this->assertAttributeSame('foo', 'arg1', $custom);
+        $this->assertAttributeSame(true, 'arg2', $custom);
+    }
 }
 
 
 class TestSerializer implements Serializer
 {
+    private $arg1;
+    private $arg2;
+
+    public function __construct(string $arg1 = '', bool $arg2 = false)
+    {
+        $this->arg1 = $arg1;
+        $this->arg2 = $arg2;
+    }
     public function serialize($value): string {}
     public function unserialize($value) {}
     public function type(): string { return self::class; }

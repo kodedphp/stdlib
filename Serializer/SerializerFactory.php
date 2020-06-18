@@ -26,17 +26,17 @@ final class SerializerFactory
      * @return Serializer
      * @throws SerializerException
      */
-    public static function new(string $name, $args = null): Serializer
+    public static function new(string $name, ...$args): Serializer
     {
         switch ($name) {
             case Serializer::JSON:
-                return new JsonSerializer((int)$args);
+                return new JsonSerializer(...$args);
 
             case Serializer::PHP:
                 return new PhpSerializer;
 
             case Serializer::XML:
-                return new XmlSerializer((string)$args);
+                return new XmlSerializer(...$args);
 
             case Serializer::IGBINARY:
                 // @codeCoverageIgnoreStart
@@ -58,7 +58,7 @@ final class SerializerFactory
         }
 
         if (is_a($name, Serializer::class, true)) {
-            return new $name($args);
+            return new $name(...$args);
         }
 
         throw SerializerException::forCreateSerializer($name);
