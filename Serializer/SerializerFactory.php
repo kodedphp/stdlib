@@ -36,6 +36,7 @@ final class SerializerFactory
                 return new PhpSerializer;
 
             case Serializer::XML:
+                empty($args) && $args = [null];
                 return new XmlSerializer(...$args);
 
             case Serializer::IGBINARY:

@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 
 class SerializerFactoryTest extends TestCase
 {
-
     public function test_native()
     {
         $json = SerializerFactory::new(Serializer::JSON);
@@ -43,8 +42,16 @@ class SerializerFactoryTest extends TestCase
 
     public function test_custom()
     {
-        $serializer = SerializerFactory::new(TestSerializer::class);
-        $this->assertSame(TestSerializer::class, $serializer->type());
+        $custom = SerializerFactory::new(TestSerializer::class);
+        $this->assertSame(TestSerializer::class, $custom->type());
+
+        $custom = new TestSerializer('foo', true);
+        $this->assertAttributeSame('foo', 'arg1', $custom);
+        $this->assertAttributeSame(true, 'arg2', $custom);
+
+        $custom = new TestSerializer;
+        $this->assertAttributeSame('', 'arg1', $custom);
+        $this->assertAttributeSame(false, 'arg2', $custom);
     }
 
     public function test_exception()
@@ -73,14 +80,9 @@ class SerializerFactoryTest extends TestCase
     {
         $xml = SerializerFactory::new('xml', 'fubar');
         $this->assertAttributeSame('fubar', 'root', $xml);
-    }
 
-    public function test_custom_serializer()
-    {
-        $custom = new TestSerializer('foo', true);
-
-        $this->assertAttributeSame('foo', 'arg1', $custom);
-        $this->assertAttributeSame(true, 'arg2', $custom);
+        $xml = SerializerFactory::new('xml');
+        $this->assertAttributeSame(null, 'root', $xml);
     }
 }
 
