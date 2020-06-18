@@ -16,10 +16,9 @@ use function Koded\Stdlib\{json_serialize, json_unserialize};
 
 class JsonSerializer implements Serializer
 {
-    public const OPTIONS =
-        JSON_PRESERVE_ZERO_FRACTION
-        | JSON_UNESCAPED_SLASHES
-        | JSON_THROW_ON_ERROR;
+    public const OPTIONS = JSON_PRESERVE_ZERO_FRACTION
+    | JSON_UNESCAPED_SLASHES
+    | JSON_THROW_ON_ERROR;
 
     /**
      * @var int JSON encode options. Defaults to (1088):
@@ -31,21 +30,21 @@ class JsonSerializer implements Serializer
     /**
      * @var bool
      */
-    private $asArray = false;
+    private $associative = false;
 
     /**
      * JsonSerializer constructor.
      *
-     * @param int  $options [optional] JSON encode options.
-     *                      - to add more JSON options use OR "|" bitmask operator
-     *                      - to exclude multiple default options use XOR "^"
-     * @param bool $asArray [optional] When TRUE, returned objects will be
-     *                      converted into associative arrays
+     * @param int  $options     [optional] JSON encode options.
+     *                          - to add more JSON options use OR "|" bitmask operator
+     *                          - to exclude multiple default options use XOR "^"
+     * @param bool $associative [optional] When TRUE, returned objects will be
+     *                          converted into associative arrays
      */
-    public function __construct(int $options = 0, bool $asArray = false)
+    public function __construct(int $options = 0, bool $associative = false)
     {
         $this->options ^= $options;
-        $this->asArray = $asArray;
+        $this->associative = $associative;
     }
 
     public function serialize($value)
@@ -55,7 +54,7 @@ class JsonSerializer implements Serializer
 
     public function unserialize($value)
     {
-        return json_unserialize($value, $this->asArray);
+        return json_unserialize($value, $this->associative);
     }
 
     public function type(): string

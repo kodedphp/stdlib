@@ -166,7 +166,7 @@ function json_serialize($value, int $options = JsonSerializer::OPTIONS): string
 function json_unserialize(string $json, bool $associative = false)
 {
     try {
-        return json_decode($json, $associative, 512, JSON_BIGINT_AS_STRING | JSON_THROW_ON_ERROR);
+        return json_decode($json, $associative, 512, JSON_OBJECT_AS_ARRAY | JSON_BIGINT_AS_STRING | JSON_THROW_ON_ERROR);
     } catch (JsonException $e) {
         error_log(__FUNCTION__, $e->getMessage(), $json);
         return '';

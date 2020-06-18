@@ -12,7 +12,7 @@ use function Koded\Stdlib\{json_serialize, json_unserialize};
 class JsonSerializerTest extends TestCase
 {
 
-    const SERIALIZED_JSON = '{"object":{},"array":[],"str":"php","float":2.5,"int":7,"bool":false}';
+    const SERIALIZED_JSON = '{"object":{},"array":[],"str":"php","float":2.5,"int":7,"bool":false,"null":null}';
 
     /** @var JsonSerializer */
     private $SUT;
