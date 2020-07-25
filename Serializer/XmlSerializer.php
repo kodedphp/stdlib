@@ -26,15 +26,19 @@ use function Koded\Stdlib\{json_serialize, json_unserialize};
  */
 class XmlSerializer implements Serializer
 {
+    /** @var string The key name of the node value */
+    private $val = '#';
+
     /** @var string|null */
     private $root;
 
     /** @var DOMDocument */
     private $document;
 
-    public function __construct(?string $root)
+    public function __construct(?string $root, string $nodeKey = '#')
     {
         $this->root = $root;
+        $this->val = $nodeKey ?: '#';
     }
 
     public function type(): string
@@ -71,8 +75,7 @@ class XmlSerializer implements Serializer
     }
 
     /**
-     * Unserialize a proper XML document.
-     * However, it will try to unserialize scalar values.
+     * Unserialize a proper XML document into array, scalar value or NULL.
      *
      * @param string $xml XML
      *
@@ -115,10 +118,10 @@ class XmlSerializer implements Serializer
             $isKeyNumeric = is_numeric($key);
 
             if (0 === strpos($key, '@') && $name = substr($key, 1)) {
-                // attribute
+                // a node attribute
                 $parent->setAttribute($name, $data);
-            } elseif ('#' === $key) {
-                // value
+            } elseif ($this->val === $key) {
+                // the node value
                 $parent->nodeValue = $data;
             } elseif (false === $isKeyNumeric && is_array($data)) {
                 if (ctype_digit(join('', array_keys($data)))) {
@@ -182,7 +185,7 @@ class XmlSerializer implements Serializer
         }
 
         if (false === is_array($value)) {
-            $attrs['#'] = $value;
+            $attrs[$this->val] = $value;
             return $this->getValueByType($attrs);
         }
 
@@ -283,22 +286,22 @@ class XmlSerializer implements Serializer
 
         switch ($value['@type']) {
             case 'xsd:integer':
-                $value['#'] = (int)$value['#'];
+                $value[$this->val] = (int)$value[$this->val];
                 break;
             case 'xsd:boolean':
-                $value['#'] = (bool)$value['#'];
+                $value[$this->val] = filter_var($value[$this->val], FILTER_VALIDATE_BOOLEAN);
                 break;
             case 'xsd:float':
-                $value['#'] = (float)$value['#'];
+                $value[$this->val] = (float)$value[$this->val];
                 break;
             case 'xsd:dateTime':
-                if (is_string($value['#'])) {
-                    $value['#'] = new DateTimeImmutable($value['#']);
+                if (is_string($value[$this->val])) {
+                    $value[$this->val] = new DateTimeImmutable($value[$this->val]);
                 }
                 break;
             case 'xsd:object':
-                if (is_string($value['#'])) {
-                    $value['#'] = json_unserialize($value['#']);
+                if (is_string($value[$this->val])) {
+                    $value[$this->val] = json_unserialize($value[$this->val]);
                 }
         }
 
@@ -308,6 +311,6 @@ class XmlSerializer implements Serializer
             return $value;
         }
 
-        return $value['#'];
+        return $value[$this->val];
     }
 }
