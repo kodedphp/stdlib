@@ -13,21 +13,28 @@
     "exceptions",
     "dto",
     "dot-array",
-    "serializer"
+    "serializer",
+    "config"
   ],
   "authors": [
     {
       "name": "Mihail Binev",
-      "homepage": "http://kodeart.com"
+      "homepage": "https://kodeart.com"
     }
   ],
   "require": {
-    "php": "^7.1.4",
+    "php": "^7.3",
     "psr/http-message": "~1",
     "ext-json": "*",
     "ext-dom": "*",
     "ext-libxml": "*",
-    "ext-simplexml": "*"
+    "ext-simplexml": "*",
+    "ext-ctype":  "*",
+    "ext-mbstring": "*"
+  },
+  "suggest": {
+    "msgpack": "msgpack module for de/serialization",
+    "igbinary": "igbinary module for de/serialization"
   },
   "autoload": {
     "psr-4": {
@@ -41,10 +48,13 @@
     ]
   },
   "require-dev": {
-    "phpunit/phpunit": "~6",
-    "satooshi/php-coveralls": "~1"
+    "phpunit/phpunit": "~7",
+    "phpbench/phpbench": "@dev"
   },
   "autoload-dev": {
+    "psr-4": {
+      "Koded\\Stdlib\\Tests\\": "Tests/"
+    },
     "files": [
       "functions-dev.php"
     ]
