@@ -1,7 +1,8 @@
-build
-vendor
-.DS_Store
-.idea
+/bench
+/build
+/vendor
+/.DS_Store
+/.idea
 composer.lock
 phpunit.phar
 *.yml

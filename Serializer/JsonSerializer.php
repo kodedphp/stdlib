@@ -1,11 +1,21 @@
 <?php
 
+/*
+ * This file is part of the Koded package.
+ *
+ * (c) Mihail Binev <mihail@kodeart.com>
+ *
+ * Please view the LICENSE distributed with this source code
+ * for the full copyright and license information.
+ *
+ */
+
 namespace Koded\Stdlib\Serializer;
 
-use Koded\Exceptions\KodedException;
-use Koded\Stdlib\Interfaces\StringSerializable;
+use Koded\Stdlib\Interfaces\Serializer;
+use function Koded\Stdlib\{json_serialize, json_unserialize};
 
-final class JsonSerializer implements StringSerializable
+final class JsonSerializer implements Serializer
 {
 
     /**
@@ -27,19 +37,18 @@ final class JsonSerializer implements StringSerializable
         $this->options ^= $options;
     }
 
-    public function serialize($value): string
+    public function serialize($value)
     {
-        return json_encode($value, $this->options);
+        return json_serialize($value, $this->options);
     }
 
-    public function unserialize(string $value)
+    public function unserialize($value)
     {
-        $json = json_decode($value, false, 512, JSON_BIGINT_AS_STRING);
+        return json_unserialize($value);
+    }
 
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            throw KodedException::generic(json_last_error_msg());
-        }
-
-        return $json;
+    public function type(): string
+    {
+        return Serializer::JSON;
     }
 }

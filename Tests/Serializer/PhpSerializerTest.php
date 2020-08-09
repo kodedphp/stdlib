@@ -2,6 +2,7 @@
 
 namespace Koded\Stdlib\Serializer;
 
+use Koded\Stdlib\Interfaces\Serializer;
 use PHPUnit\Framework\TestCase;
 
 class PhpSerializerTest extends TestCase
@@ -10,10 +11,7 @@ class PhpSerializerTest extends TestCase
     /** @var PhpSerializer */
     private $SUT;
 
-    /** @var array */
     private $original;
-
-    /** @var string */
     private $serialized;
 
     public function test_serialize()
@@ -26,9 +24,14 @@ class PhpSerializerTest extends TestCase
         $this->assertEquals($this->original, $this->SUT->unserialize($this->serialized));
     }
 
-    protected function setUp()
+    public function testName()
     {
-        $this->SUT = new PhpSerializer(false);
+        $this->assertSame(Serializer::PHP, $this->SUT->type());
+    }
+
+    protected function setUp(): void
+    {
+        $this->SUT = new PhpSerializer;
         $this->original = require __DIR__ . '/../fixtures/config-test.php';
         $this->serialized = serialize($this->original);
     }

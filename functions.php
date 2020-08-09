@@ -12,11 +12,16 @@
 
 namespace Koded\Stdlib;
 
+use DateTimeImmutable;
+use FilesystemIterator;
 use Koded\Stdlib\Interfaces\{Argument, Data};
-use Koded\Stdlib\Serializer\{JsonSerializer, PhpSerializer, XmlSerializer};
+use Koded\Stdlib\Serializer\XmlSerializer;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 /**
- * Creates a new Argument instance with optional arbitrary number of arguments.
+ * Creates a new Argument instance
+ * with optional arbitrary number of arguments.
  *
  * @param array ...$values
  *
@@ -28,7 +33,8 @@ function arguments(...$values): Argument
 }
 
 /**
- * Creates a new Immutable instance with optional arbitrary number of arguments.
+ * Creates a new Immutable instance
+ * with optional arbitrary number of arguments.
  *
  * @param array ...$values
  *
@@ -40,14 +46,15 @@ function value(...$values): Data
 }
 
 /**
- * Escapes a string. Useful for escaping the input values in HTML templates.
+ * HTML encodes a string.
+ * Useful for escaping the input values in HTML templates.
  *
  * @param string $input    The input string
  * @param string $encoding The encoding
  *
  * @return string
  */
-function clean(string $input, string $encoding = 'UTF-8'): string
+function htmlencode(string $input, string $encoding = 'UTF-8'): string
 {
     return htmlentities($input, ENT_QUOTES | ENT_HTML5, $encoding);
 }
@@ -65,7 +72,7 @@ function clean(string $input, string $encoding = 'UTF-8'): string
  * @throws \Exception if it was not possible to gather sufficient entropy
  * @since 1.10.0
  */
-function random_alpha_numeric(int $length = 16, string $prefix = '', string $suffix = ''): string
+function randomstring(int $length = 16, string $prefix = '', string $suffix = ''): string
 {
     $buffer = '';
     for ($x = 0; $x < $length; ++$x) {
@@ -85,7 +92,6 @@ function random_alpha_numeric(int $length = 16, string $prefix = '', string $suf
 function snake_to_camel_case(string $string): string
 {
     $string = preg_replace('/[\W\_]++/', ' ', $string);
-
     return str_replace(' ', '', ucwords($string));
 }
 
@@ -98,63 +104,72 @@ function snake_to_camel_case(string $string): string
  */
 function camel_to_snake_case(string $string): string
 {
+    $string = snake_to_camel_case($string);
     return strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', trim($string)));
 }
 
 /**
- * Serializes the iterable instance or array into JSON format.
+ * Converts the string with desired delimiter character.
  *
- * @param mixed $data    The data to be serialized, except resource
- * @param int   $options [optional] JSON bitmask options
+ * @param string $string
+ * @param int    $delimiter chr() of the delimiter character
  *
- * @return string JSON encoded string
- * @see http://php.net/manual/en/function.json-encode.php
+ * @return string The converted string with the provided delimiter
  */
-function json_serialize($data, int $options = 0): string
+function to_delimited_string(string $string, int $delimiter): string
 {
-    return (new JsonSerializer($options))->serialize($data);
+    $str = preg_split('~[^\p{L}\p{N}\']+~u', trim($string));
+    return join(chr($delimiter), $str);
 }
 
 /**
- * Decodes the encoded JSON string into appropriate PHP type.
+ * Converts the string to-kebab-case
  *
- * @param string $json The encoded JSON string
+ * @param string $string
  *
- * @return mixed The value encoded in JSON in appropriate PHP type
- * @throws \Koded\Exceptions\KodedException on error
+ * @return string
+ */
+function to_kebab_string(string $string): string
+{
+    return strtolower(to_delimited_string($string, ord('-')));
+}
+
+/**
+ * Returns the JSON representation of a value.
+ *
+ * @param mixed $value   The data to be serialized
+ * @param int   $options [optional] JSON bitmask options for JSON encoding
+ *
+ * @return string JSON encoded string, or EMPTY STRING if encoding failed
+ * @see http://php.net/manual/en/function.json-encode.php
+ */
+function json_serialize($value, int $options = JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES): string
+{
+    if (false === $json = json_encode($value, $options)) {
+        error_log(__FUNCTION__, json_last_error_msg(), $value);
+        return '';
+    }
+
+    return $json;
+}
+
+/**
+ * Decodes a JSON string into appropriate PHP type.
+ *
+ * @param string $json A JSON string
+ *
+ * @return mixed The decoded value, or EMPTY STRING on error
  */
 function json_unserialize(string $json)
 {
-    return (new JsonSerializer)->unserialize($json);
-}
+    $data = json_decode($json, false, 512, JSON_BIGINT_AS_STRING);
 
-/**
- * Serializes the PHP object into string.
- *
- * @param object $object The PHP object to be serialized
- * @param bool   $binary [optional] TRUE for igbinary serialization,
- *                       or standard PHP serialize() function
- *
- * @return string byte-stream representation of the serialized PHP object
- */
-function php_serialize($object, bool $binary = false): string
-{
-    return (new PhpSerializer($binary))->serialize($object);
-}
+    if (JSON_ERROR_NONE !== json_last_error()) {
+        error_log(__FUNCTION__, json_last_error_msg(), $json);
+        return '';
+    }
 
-/**
- * Unserialize the serialized PHP object into it's appropriate type.
- *
- * @param string $serialized The serialized PHP object
- * @param bool   $binary     [optional] TRUE for igbinary serialization,
- *                           or standard PHP serialize() function
- *
- * @return mixed The PHP variant if serialization was successful,
- *               or FALSE if converted object is unserializeable
- */
-function php_unserialize(string $serialized, bool $binary = false)
-{
-    return (new PhpSerializer($binary))->unserialize($serialized);
+    return $data;
 }
 
 /**
@@ -168,12 +183,12 @@ function php_unserialize(string $serialized, bool $binary = false)
 function xml_serialize(string $root, iterable $data): string
 {
     return (new XmlSerializer($root))->serialize($data);
-
 }
 
 /**
- * Unserialize the XML document into PHP array.
- * This function does not deal with magical conversions of complicated XML structures.
+ * Unserialize an XML document into PHP array.
+ * This function does not deal with magical conversions
+ * of complicated XML structures.
  *
  * @param string $root The XML document root name
  * @param string $xml  The XML document to be decoded into array
@@ -184,4 +199,66 @@ function xml_serialize(string $root, iterable $data): string
 function xml_unserialize(string $root, string $xml): array
 {
     return (new XmlSerializer($root))->unserialize($xml);
+}
+
+/**
+ * Send a formatted error message to PHP's system logger.
+ *
+ * @param string $function The function name where error occurred
+ * @param string $message  The error message
+ * @param mixed  $data     Original data passed into function
+ */
+function error_log(string $function, string $message, $data): void
+{
+    \error_log(sprintf('(%s) [Error] - %s - data: %s', $function, $message, var_export($data, true)));
+}
+
+/**
+ * Checks if the array is an associative array.
+ *
+ * Simple rules:
+ *
+ * - If all keys are sequential starting from 0..n, it is not an associative array
+ * - empty array is not associative
+ *
+ * Unfortunately, the internal typecast to integer on the keys makes
+ * the sane programming an ugly PHP Array Oriented Programming hackery.
+ *
+ * @param array $array
+ *
+ * @return bool
+ */
+function is_associative(array $array): bool
+{
+    return (bool)array_diff_assoc($array, array_values($array));
+}
+
+/**
+ * Gets an instance of DateTimeImmutable in UTC.
+ *
+ * @return DateTimeImmutable
+ */
+function now(): DateTimeImmutable
+{
+    return date_create_immutable('now', timezone_open('UTC'));
+}
+
+/**
+ * Removes a directory.
+ *
+ * @param string $dirname The folder name
+ *
+ * @return bool TRUE on success, FALSE otherwise
+ */
+function rmdir(string $dirname): bool
+{
+    $deleted = [];
+
+    /** @var \SplFileInfo $path */
+    foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dirname, FilesystemIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::CHILD_FIRST) as $path) {
+        $deleted[] = ($path->isDir() && false === $path->isLink()) ? \rmdir($path->getPathname()) : \unlink($path->getPathname());
+    }
+
+    return (bool)array_product($deleted);
 }

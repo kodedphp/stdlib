@@ -13,8 +13,10 @@
 namespace Koded\Exceptions;
 
 use Exception;
-use Koded\Stdlib\Interfaces\Data;
+use Koded\Stdlib\Interfaces\{Data, Serializer};
 use RuntimeException;
+use Throwable;
+
 
 class KodedException extends RuntimeException
 {
@@ -30,20 +32,28 @@ class KodedException extends RuntimeException
      * KodedException constructor.
      *
      * @param int       $code      As defined in the child classes
-     * @param array     $arguments [optional]
+     * @param array     $arguments [optional] If ['message' => ''] exists in $arguments,
+     *                             this will be the error message, meaning the messages
+     *                             defined by $code in the child classes are ignored
      * @param Exception $previous  [optional]
      */
     public function __construct(int $code, array $arguments = [], Exception $previous = null)
     {
-        $message = strtr($this->messages[$code] ?? $this->message, $arguments);
-        parent::__construct($message, $code, $previous);
+        $message = $arguments['message'] ?? $this->messages[$code] ?? $this->message;
+        parent::__construct(strtr($message, $arguments), $code, $previous);
     }
 
     public static function generic(string $message, Exception $previous = null)
     {
         return new static(Data::E_PHP_EXCEPTION, [':message' => $message], $previous);
     }
+
+    public static function from(Throwable $exception)
+    {
+        return new static($exception->getCode(), ['message' => $exception->getMessage()]);
+    }
 }
+
 
 class ReadOnlyException extends KodedException
 {
@@ -61,5 +71,24 @@ class ReadOnlyException extends KodedException
     public static function forCloning(string $class)
     {
         return new static(Data::E_CLONING_DISALLOWED, [':class' => $class]);
+    }
+}
+
+
+class SerializerException extends KodedException
+{
+    protected $messages = [
+        Serializer::E_INVALID_SERIALIZER => 'Failed to create a serializer for ":name"',
+        Serializer::E_MISSING_MODULE => '[Dependency error] ":module" module is not installed on this machine',
+    ];
+
+    public static function forMissingModule(string $module)
+    {
+        return new static(Serializer::E_MISSING_MODULE, [':module' => $module]);
+    }
+
+    public static function forCreateSerializer(string $name)
+    {
+        return new static(Serializer::E_INVALID_SERIALIZER, [':name' => $name]);
     }
 }

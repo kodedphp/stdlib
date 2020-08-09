@@ -216,7 +216,7 @@ class ArgumentObjectTest extends TestCase
         $this->assertSame(['indirect' => ['modification' => ['BC' => 'break']]], $args->toArray());
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->SUT = new Arguments([
             'foo' => 1,

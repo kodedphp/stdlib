@@ -1,13 +1,30 @@
 language: php
-sudo: false
+
+php:
+  - 7.2
+  - 7.3
+
 matrix:
-  include:
-    - php: 7.1
   fast_finish: true
+
 before_script:
-  - composer selfupdate
-  - composer update -o --prefer-dist
+  - pecl install igbinary
+  - pecl install msgpack
+
+install:
+  - composer update -o --no-interaction --prefer-stable
+
 script:
-  - vendor/bin/phpunit
+  - vendor/bin/phpunit --coverage-clover build/coverage/clover.xml
+
 after_success:
-  - travis_retry php vendor/bin/coveralls
+  - travis_retry vendor/bin/codacycoverage clover build/coverage/clover.xml
+
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+notifications:
+  email: false

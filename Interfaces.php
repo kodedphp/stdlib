@@ -21,15 +21,15 @@ interface ArrayDataFilter
      * Strips the portions of the variable names defined by the namespace value.
      * Returns a filtered array.
      *
-     * @param array  $data      The data should be filtered
-     * @param string $prefix    The namespace prefix for the indexes
-     * @param bool   $lowercase [optional] Returned indexes should be in lowercase
-     * @param bool   $trim      [optional] To remove the namespace from the index
+     * @param iterable $data      The data should be filtered
+     * @param string   $prefix    The namespace prefix for the indexes
+     * @param bool     $lowercase [optional] Returned indexes should be in lowercase
+     * @param bool     $trim      [optional] To remove the namespace from the index
      *
      * @return array A filtered array
      */
     public function filter(
-        array $data,
+        iterable $data,
         string $prefix,
         bool $lowercase = true,
         bool $trim = true
@@ -49,11 +49,9 @@ interface ArrayDataFilter
      *  $dataObject->find('foo');     // yields 1
      *  $dataObject->find('bar.baz'); // yields 'gir'
      *
-     * @return array
-     *
      * @param string $index   The name of the property (dot-notation)
      * @param mixed  $default [optional] Default value if item is not found
-     *
+
      * @return mixed
      */
     public function find(string $index, $default = null);
@@ -93,8 +91,8 @@ interface Data
 {
 
     const E_CLONING_DISALLOWED = 1000;
-    const E_READONLY_INSTANCE = 1001;
-    const E_PHP_EXCEPTION = 1002;
+    const E_READONLY_INSTANCE  = 1001;
+    const E_PHP_EXCEPTION      = 1002;
 
     /**
      * Value accessor, gets a value by name.
@@ -114,6 +112,16 @@ interface Data
      * @return bool
      */
     public function has($index): bool;
+
+    /**
+     * Checks if two properties has equal values.
+     *
+     * @param string $propertyA Property name
+     * @param string $propertyB Property name
+     *
+     * @return bool
+     */
+    public function equals(string $propertyA, string $propertyB): bool;
 
     /**
      * Returns the object state as array.
@@ -351,24 +359,39 @@ interface Configuration extends Data
 }
 
 
-interface StringSerializable
+interface Serializer
 {
+    const E_INVALID_SERIALIZER = 409;
+    const E_MISSING_MODULE     = 424;
+
+    const IGBINARY = 'igbinary';
+    const MSGPACK  = 'msgpack';
+    const JSON     = 'json';
+    const XML      = 'xml';
+    const PHP      = 'php';
 
     /**
-     * Generates a string representation of a value.
+     * Creates a serialized representation of the data.
      *
      * @param mixed $value
      *
-     * @return string Should return a byte-stream representation of the value
+     * @return string The serialized representation of the data
      */
-    public function serialize($value): string;
+    public function serialize($value);
 
     /**
-     * Recreates the value back from the serialized representation.
+     * Recreates the data back from the serialized representation.
      *
-     * @param string $value The serialized value
+     * @param mixed $value The serialized data
      *
      * @return mixed The converted value
      */
-    public function unserialize(string $value);
+    public function unserialize($value);
+
+    /**
+     * The string identifier for the serializer object.
+     *
+     * @return string
+     */
+    public function type(): string;
 }
