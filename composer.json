@@ -23,7 +23,7 @@
     }
   ],
   "require": {
-    "php": "^7.3",
+    "php": "~7.2",
     "psr/http-message": "~1",
     "ext-json": "*",
     "ext-dom": "*",
@@ -58,10 +58,5 @@
     "files": [
       "functions-dev.php"
     ]
-  },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "5.x-dev"
-    }
   }
 }
