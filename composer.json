@@ -39,7 +39,8 @@
   "autoload": {
     "psr-4": {
       "Koded\\Stdlib\\": "",
-      "Koded\\Exceptions\\": ""
+      "Koded\\Exceptions\\": "",
+      "": ""
     },
     "files": [
       "functions.php"
