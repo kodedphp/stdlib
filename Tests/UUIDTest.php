@@ -1,6 +1,6 @@
 <?php
 
-namespace Koded\Stdlib\Tests;
+namespace Tests\Koded\Stdlib;
 
 use InvalidArgumentException;
 use Koded\Stdlib\UUID;

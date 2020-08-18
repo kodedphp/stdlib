@@ -1,6 +1,6 @@
 <?php
 
-namespace Koded\Stdlib\Tests;
+namespace Tests\Koded\Stdlib;
 
 use Koded\Stdlib\Config;
 use PHPUnit\Framework\TestCase;

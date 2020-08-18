@@ -1,6 +1,6 @@
 <?php
 
-namespace Koded\Stdlib\Tests;
+namespace Tests\Koded\Stdlib;
 
 use Koded\Exceptions\{KodedException, SerializerException};
 use PHPUnit\Framework\TestCase;

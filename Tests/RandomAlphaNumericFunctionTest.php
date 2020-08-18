@@ -1,6 +1,6 @@
 <?php
 
-namespace Koded\Stdlib\Tests;
+namespace Tests\Koded\Stdlib;
 
 use PHPUnit\Framework\TestCase;
 use function Koded\Stdlib\randomstring;
