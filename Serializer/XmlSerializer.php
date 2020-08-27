@@ -46,6 +46,11 @@ class XmlSerializer implements Serializer
         return Serializer::XML;
     }
 
+    public function val(): string
+    {
+        return $this->val;
+    }
+
     /**
      * @param iterable $data
      *
@@ -79,7 +84,7 @@ class XmlSerializer implements Serializer
      *
      * @param string $xml XML
      *
-     * @return array|null|scalar
+     * @return mixed scalar|array|null
      */
     public function unserialize($xml)
     {
