@@ -46,7 +46,7 @@ class XmlSerializer implements Serializer
         return Serializer::XML;
     }
 
-    public function val(): string
+    final public function val(): string
     {
         return $this->val;
     }
