@@ -39,10 +39,10 @@
   "autoload": {
     "psr-4": {
       "Koded\\Stdlib\\": "",
-      "Koded\\Exceptions\\": "",
-      "": ""
+      "Koded\\Exceptions\\": ""
     },
     "files": [
+      "Interfaces.php",
       "functions.php"
     ],
     "exclude-from-classmap": [
