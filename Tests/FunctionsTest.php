@@ -74,7 +74,7 @@ class FunctionsTest extends TestCase
 
     public function test_rmdir_function()
     {
-        $dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR. randomstring(9);
+        $dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . randomstring(9);
         $file = $dir . DIRECTORY_SEPARATOR . randomstring(9) . '.txt';
 
         $this->assertTrue(mkdir($dir), 'Should create an empty directory');
@@ -168,9 +168,9 @@ class FunctionsTest extends TestCase
 
             // None of the keys are valid or sane, but it "works" because PHP
 
-            [[null => 1], true],    // NULL is converted to ''
-            [[false => 1], false],  // FALSE is converted to 0
-            [[true => 1], true],    // TRUE is converted to 1
+            [[null => 1], true], // NULL is converted to ''
+            [[false => 1], false], // FALSE is converted to 0
+            [[true => 1], true], // TRUE is converted to 1
 
             [[2.7 => 'yes'], true], // FLOAT is a different level of weird (float-to-string)
         ];
