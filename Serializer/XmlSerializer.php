@@ -61,7 +61,6 @@ class XmlSerializer implements Serializer
         try {
             $this->document = new DOMDocument;
             $this->document->formatOutput = true;
-
             if (is_iterable($data)) {
                 $root = $this->document->createElement($this->root);
                 $this->document->appendChild($root);
@@ -70,7 +69,6 @@ class XmlSerializer implements Serializer
             } else {
                 $this->appendNode($this->document, $data, $this->root);
             }
-
             return $this->document->saveXML();
 
         } catch (Throwable $e) {
@@ -91,22 +89,13 @@ class XmlSerializer implements Serializer
         try {
             $document = new DOMDocument;
             $document->preserveWhiteSpace = false;
-
-            $entityLoader = libxml_disable_entity_loader(true);
-            $internalErrors = libxml_use_internal_errors(true);
-            libxml_clear_errors();
-            @$document->loadXML($xml);
-            libxml_disable_entity_loader($entityLoader);
-            libxml_use_internal_errors($internalErrors);
-
+            $document->loadXML($xml);
             if (!$document->documentElement) {
                 throw new \InvalidArgumentException('Invalid XML');
             }
-
             if ($document->documentElement->hasChildNodes()) {
                 return $this->parseXml($document->documentElement);
             }
-
             return false === $document->documentElement->getAttributeNode('xmlns:xsi')
                 ? $this->parseXml($document->documentElement)
                 : [];
@@ -121,7 +110,6 @@ class XmlSerializer implements Serializer
     {
         foreach ($data as $key => $data) {
             $isKeyNumeric = is_numeric($key);
-
             if (0 === strpos($key, '@') && $name = substr($key, 1)) {
                 // a node attribute
                 $parent->setAttribute($name, $data);
@@ -147,11 +135,9 @@ class XmlSerializer implements Serializer
     private function appendNode(DOMNode $parent, $data, string $name, string $key = null): void
     {
         $element = $this->document->createElement($name);
-
         if (null !== $key) {
             $element->setAttribute('key', $key);
         }
-
         if (is_iterable($data)) {
             $this->buildXml($element, $data);
         } elseif (is_bool($data)) {
@@ -176,7 +162,6 @@ class XmlSerializer implements Serializer
         } else {
             $element->appendChild($this->document->createTextNode($data));
         }
-
         $parent->appendChild($element);
     }
 
@@ -184,24 +169,19 @@ class XmlSerializer implements Serializer
     {
         $attrs = $this->parseXmlAttributes($node);
         $value = $this->parseXmlValue($node);
-
         if (0 === count($attrs)) {
             return $value;
         }
-
         if (false === is_array($value)) {
             $attrs[$this->val] = $value;
             return $this->getValueByType($attrs);
         }
-
         if (1 === count($value) && key($value)) {
             $attrs[key($value)] = current($value);
         }
-
         foreach ($value as $k => $v) {
             $attrs[$k] = $v;
         }
-
         return $attrs;
     }
 
@@ -210,13 +190,11 @@ class XmlSerializer implements Serializer
         if (!$node->hasAttributes()) {
             return [];
         }
-
         $attrs = [];
         foreach ($node->attributes as $attr) {
             /** @var \DOMAttr $attr */
             $attrs['@' . $attr->nodeName] = $attr->nodeValue;
         }
-
         return $attrs;
     }
 
@@ -229,26 +207,20 @@ class XmlSerializer implements Serializer
     private function parseXmlValue(DOMNode $node)
     {
         $value = [];
-
         if ($node->hasChildNodes()) {
             /** @var DOMNode $child */
             $child = $node->firstChild;
-
             if ($child->nodeType === XML_TEXT_NODE) {
                 return $child->nodeValue;
             }
-
             if ($child->nodeType === XML_CDATA_SECTION_NODE) {
                 return $child->wholeText;
             }
-
             foreach ($node->childNodes as $child) {
                 if ($child->nodeType === XML_COMMENT_NODE) {
                     continue;
                 }
-
                 $v = $this->parseXml($child);
-
                 if ('item' === $child->nodeName && isset($v['@key'])) {
                     $k = $v['@key'];
                     $value[$k] = $this->getValueByType($v);
@@ -258,13 +230,11 @@ class XmlSerializer implements Serializer
                 }
             }
         }
-
         foreach ($value as $k => $v) {
             if (is_array($v) && 1 === count($v)) {
                 $value[$k] = current($v);
             }
         }
-
         return $value ?: '';
     }
 
@@ -279,16 +249,13 @@ class XmlSerializer implements Serializer
         if (false === is_array($value)) {
             return $value;
         }
-
         if (isset($value['@xsi:nil'])) {
             unset($value['@xsi:nil']);
             return null;
         }
-
         if (!(isset($value['@type']) && 0 === strpos($value['@type'] ?? '', 'xsd:', 0))) {
             return $value;
         }
-
         switch ($value['@type']) {
             case 'xsd:integer':
                 $value[$this->val] = (int)$value[$this->val];
@@ -309,13 +276,10 @@ class XmlSerializer implements Serializer
                     $value[$this->val] = json_unserialize($value[$this->val]);
                 }
         }
-
         unset($value['@type']);
-
         if (count($value) > 1) {
             return $value;
         }
-
         return $value[$this->val];
     }
 }
