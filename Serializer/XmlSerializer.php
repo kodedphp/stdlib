@@ -38,7 +38,11 @@ class XmlSerializer implements Serializer
     public function __construct(?string $root, string $nodeKey = '#')
     {
         $this->root = $root;
-        $this->val = $nodeKey ?: '#';
+        $nodeKey = trim($nodeKey);
+        if ('@' === $nodeKey || empty($nodeKey)) {
+            throw new \InvalidArgumentException('Invalid node key identifier', self::E_INVALID_SERIALIZER);
+        }
+        $this->val = $nodeKey;
     }
 
     public function type(): string
@@ -58,23 +62,17 @@ class XmlSerializer implements Serializer
      */
     public function serialize($data)
     {
-        try {
-            $this->document = new DOMDocument;
-            $this->document->formatOutput = true;
-            if (is_iterable($data)) {
-                $root = $this->document->createElement($this->root);
-                $this->document->appendChild($root);
-                $this->document->createAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:' . $this->root);
-                $this->buildXml($root, $data);
-            } else {
-                $this->appendNode($this->document, $data, $this->root);
-            }
-            return $this->document->saveXML();
-
-        } catch (Throwable $e) {
-            \error_log(PHP_EOL . "[{$e->getLine()}]: " . $e->getMessage());
-            return '';
+        $this->document = new DOMDocument('1.0', 'UTF-8');
+        $this->document->formatOutput = false;
+        if (is_iterable($data)) {
+            $root = $this->document->createElement($this->root);
+            $this->document->appendChild($root);
+            $this->document->createAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:' . $this->root);
+            $this->buildXml($root, $data);
+        } else {
+            $this->appendNode($this->document, $data, $this->root);
         }
+        return $this->document->saveXML();
     }
 
     /**
@@ -87,12 +85,9 @@ class XmlSerializer implements Serializer
     public function unserialize($xml)
     {
         try {
-            $document = new DOMDocument;
+            $document = new DOMDocument('1.0', 'UTF-8');
             $document->preserveWhiteSpace = false;
             $document->loadXML($xml);
-            if (!$document->documentElement) {
-                throw new \InvalidArgumentException('Invalid XML');
-            }
             if ($document->documentElement->hasChildNodes()) {
                 return $this->parseXml($document->documentElement);
             }
@@ -130,39 +125,6 @@ class XmlSerializer implements Serializer
                 $this->appendNode($parent, $data, $key);
             }
         }
-    }
-
-    private function appendNode(DOMNode $parent, $data, string $name, string $key = null): void
-    {
-        $element = $this->document->createElement($name);
-        if (null !== $key) {
-            $element->setAttribute('key', $key);
-        }
-        if (is_iterable($data)) {
-            $this->buildXml($element, $data);
-        } elseif (is_bool($data)) {
-            $element->setAttribute('type', 'xsd:boolean');
-            $element->appendChild($this->document->createTextNode($data));
-        } elseif (is_float($data)) {
-            $element->setAttribute('type', 'xsd:float');
-            $element->appendChild($this->document->createTextNode($data));
-        } elseif (is_int($data)) {
-            $element->setAttribute('type', 'xsd:integer');
-            $element->appendChild($this->document->createTextNode($data));
-        } elseif (null === $data) {
-            $element->setAttribute('xsi:nil', 'true');
-        } elseif ($data instanceof DateTimeInterface) {
-            $element->setAttribute('type', 'xsd:dateTime');
-            $element->appendChild($this->document->createTextNode($data->format(DateTimeImmutable::ISO8601)));
-        } elseif (is_object($data)) {
-            $element->setAttribute('type', 'xsd:object');
-            $element->appendChild($this->document->createCDATASection(json_serialize($data)));
-        } elseif (preg_match('/[<>&\'"]/', $data) > 0) {
-            $element->appendChild($this->document->createCDATASection($data));
-        } else {
-            $element->appendChild($this->document->createTextNode($data));
-        }
-        $parent->appendChild($element);
     }
 
     private function parseXml(DOMNode $node)
@@ -239,8 +201,56 @@ class XmlSerializer implements Serializer
     }
 
     /**
-     * @param array|string $value
+     * Creates an XML node in the document from the provided value
+     * according to the PHP type of the value.
      *
+     * @param DOMNode     $parent
+     * @param mixed       $data
+     * @param string      $name
+     * @param string|null $key
+     */
+    private function appendNode(DOMNode $parent, $data, string $name, string $key = null): void
+    {
+        $element = $this->document->createElement($name);
+        if (null !== $key) {
+            $element->setAttribute('key', $key);
+        }
+        if (is_iterable($data)) {
+            $this->buildXml($element, $data);
+        } elseif (is_bool($data)) {
+            $element->setAttribute('type', 'xsd:boolean');
+            $element->appendChild($this->document->createTextNode($data));
+        } elseif (is_float($data)) {
+            $element->setAttribute('type', 'xsd:float');
+            $element->appendChild($this->document->createTextNode($data));
+        } elseif (is_int($data)) {
+            $element->setAttribute('type', 'xsd:integer');
+            $element->appendChild($this->document->createTextNode($data));
+        } elseif (null === $data) {
+            $element->setAttribute('xsi:nil', 'true');
+        } elseif ($data instanceof DateTimeInterface) {
+            $element->setAttribute('type', 'xsd:dateTime');
+            $element->appendChild($this->document->createTextNode($data->format(DateTimeImmutable::ISO8601)));
+        } elseif (is_object($data)) {
+            $element->setAttribute('type', 'xsd:object');
+            $element->appendChild($this->document->createCDATASection(json_serialize($data)));
+        } elseif (preg_match('/[<>&\'"]/', $data) > 0) {
+            $element->appendChild($this->document->createCDATASection($data));
+        } else {
+            $element->appendChild($this->document->createTextNode($data));
+        }
+        $parent->appendChild($element);
+    }
+
+    /**
+     * Deserialize the XML document elements into strict PHP values
+     * in regard to the XSD type defined in the XML element (if any).
+     *
+     * IMPORTANT: When deserializing an XML document into values,
+     * if the XmlSerializer encounters an XML element that specifies xsi:nil="true",
+     * it assigns a NULL to the corresponding element and ignores any other attributes
+     *
+     * @param array|string $value
      * @return array|string|null
      * @throws \Exception
      */
@@ -249,7 +259,11 @@ class XmlSerializer implements Serializer
         if (false === is_array($value)) {
             return $value;
         }
-        if (isset($value['@xsi:nil'])) {
+        /*
+         * if "xsi:nil" is NOT 'true', ignore the xsi:nil and
+         * process the rest of the attributes for this element
+         */
+        if (isset($value['@xsi:nil']) && $value['@xsi:nil'] == 'true') {
             unset($value['@xsi:nil']);
             return null;
         }

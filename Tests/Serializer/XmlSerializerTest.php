@@ -2,6 +2,7 @@
 
 namespace Koded\Stdlib\Tests\Serializer;
 
+use Koded\Stdlib\Serializer;
 use Koded\Stdlib\Serializer\XmlSerializer;
 use PHPUnit\Framework\TestCase;
 
@@ -55,13 +56,44 @@ class XmlSerializerTest extends TestCase
         $this->assertNull($this->serializer->unserialize('123'));
     }
 
-    public function test_non_utf8_file_should_fail_to_serialize()
+    public function test_non_utf8_data_should_fail_to_process_everything()
     {
         $xml = $this->serializer->serialize(require __DIR__ . '/../fixtures/non-utf8-file.php');
-        $this->assertSame('', $xml);
+        $doc = $this->serializer->unserialize($xml);
+
+        $this->assertNotEmpty($xml, 'The data is serialized in a garbage XML document');
+        $this->assertSame(null, $doc, 'Deserialized garbage XML results in NULL output');
     }
 
-    public function testName()
+    public function test_xsi_nil_with_false_value_should_not_assign_null_value()
+    {
+        $xml = <<<'XML'
+        <payload xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <id xsi:nil="false">123</id>
+        </payload>
+        XML;
+
+        $data = $this->serializer->unserialize($xml);
+        $doc = $this->serializer->serialize($data);
+
+        $this->assertEquals(['id' => ['@xsi:nil' => 'false', '#' => '123']], $data, 'xsi:nil is ignored');
+        $this->assertXmlStringEqualsXmlString($xml, $doc, 'xsi:nil is treated as a common attribute');
+    }
+
+    public function test_val_method()
+    {
+        $serializer = new XmlSerializer(null);
+        $this->assertSame('#', $serializer->val(), 'Default name is "#"');
+
+        $serializer = new XmlSerializer(null, '$val');
+        $this->assertSame('$val', $serializer->val(), 'val name is now custom');
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionCode(Serializer::E_INVALID_SERIALIZER);
+        new XmlSerializer('', '@');
+    }
+
+    public function test_name()
     {
         $this->assertSame('xml', $this->serializer->type());
     }
