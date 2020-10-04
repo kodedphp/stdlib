@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'foo.bar' => 'baz',
     'section1' =>
         [
             'keys' =>
