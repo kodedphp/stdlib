@@ -177,7 +177,7 @@ class Config extends Arguments implements Configuration
             $value = getenv($variable);
             $data[] = $variable . '=' . (false === $value ? 'null' : $value);
         }
-        $data = parse_ini_string(join(PHP_EOL, $data), false, INI_SCANNER_TYPED) ?: [];
+        $data = parse_ini_string(join(PHP_EOL, $data), true, INI_SCANNER_TYPED) ?: [];
         $this->import($this->filter($data, $namespace, $lowercase, $trim));
         return $this;
     }
