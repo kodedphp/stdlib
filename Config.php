@@ -65,7 +65,6 @@ class Config extends Arguments implements Configuration
     public function __construct(string $rootPath = '', Data $defaults = null)
     {
         parent::__construct($defaults ? $defaults->toArray() : []);
-
         if (!$this->rootPath = $rootPath) {
             $this->rootPath = getcwd();
         }
@@ -107,9 +106,7 @@ class Config extends Arguments implements Configuration
         if (is_string($object) && class_exists($object)) {
             $object = new $object;
         }
-
         $this->rootPath = $object->rootPath ?: $this->rootPath;
-
         return $this->import(iterator_to_array($object));
     }
 
@@ -131,21 +128,18 @@ class Config extends Arguments implements Configuration
     {
         return $this->loadDataFrom($filename, function($filename) use ($namespace) {
             try {
-                $data = parse_ini_file($filename, false, INI_SCANNER_TYPED) ?: [];
+                $data = parse_ini_file($filename, true, INI_SCANNER_TYPED) ?: [];
             } catch (Exception $e) {
                 return [];
             }
-
             foreach ($data as $key => $value) {
                 if (null !== $value) {
                     putenv($key . '=' . $value);
                 }
             }
-
             if (empty($namespace)) {
                 return $data;
             }
-
             return $this->filter($data, $namespace);
         });
     }
@@ -156,13 +150,11 @@ class Config extends Arguments implements Configuration
             $extension = ucfirst(pathinfo($filename, PATHINFO_EXTENSION));
             return call_user_func([$this, "from{$extension}File"], $filename);
         }
-
         if (false === $this->silent) {
             throw new Exception(strtr('The environment variable ":variable" is not set
             and as such configuration could not be loaded. Set this variable and
             make it point to a configuration file', [':variable' => $variable]));
         }
-
         return $this;
     }
 
@@ -185,17 +177,14 @@ class Config extends Arguments implements Configuration
             $value = getenv($variable);
             $data[] = $variable . '=' . (false === $value ? 'null' : $value);
         }
-
         $data = parse_ini_string(join(PHP_EOL, $data), false, INI_SCANNER_TYPED) ?: [];
         $this->import($this->filter($data, $namespace, $lowercase, $trim));
-
         return $this;
     }
 
     public function silent(bool $silent): Configuration
     {
         $this->silent = $silent;
-
         return $this;
     }
 
@@ -208,7 +197,6 @@ class Config extends Arguments implements Configuration
     {
         $file = ('/' === $filename[0]) ? $filename : $this->rootPath . '/' . ltrim($filename, '/');
         $this->import($loader($file));
-
         return $this;
     }
 }

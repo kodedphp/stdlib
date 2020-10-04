@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 class ConfigTest extends TestCase
 {
-
     public function test_should_load_defaults_from_other_instance()
     {
         $config = new Config('', new MockOtherConfigInstance);
@@ -213,6 +212,13 @@ class ConfigTest extends TestCase
 
         $this->assertInstanceOf(Config::class, $arguments);
         $this->assertSame(include __DIR__ . '/fixtures/expected-data-lowercase.php', $arguments->toArray());
+    }
+
+    public function test_ini_sections_parsing()
+    {
+        $config = new Config;
+        $config->fromIniFile(__DIR__ . '/fixtures/config-sections.ini');
+        $this->assertSame(include_once __DIR__ . '/fixtures/config-sections.php', $config->toArray());
     }
 }
 
