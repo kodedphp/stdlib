@@ -87,7 +87,6 @@ class Config extends Arguments implements Configuration
         if (false === $this->silent) {
             throw new Exception('Unable to load the configuration file ' . current($arguments));
         }
-
         return $this;
     }
 
@@ -130,6 +129,7 @@ class Config extends Arguments implements Configuration
             try {
                 $data = parse_ini_file($filename, true, INI_SCANNER_TYPED) ?: [];
             } catch (Exception $e) {
+                \error_log('[Configuration error]: ' . $e->getMessage());
                 return [];
             }
             foreach ($data as $key => $value) {
@@ -155,6 +155,7 @@ class Config extends Arguments implements Configuration
             and as such configuration could not be loaded. Set this variable and
             make it point to a configuration file', [':variable' => $variable]));
         }
+        \error_log('[Configuration error]: ' . (error_get_last()['message'] ?? "env var: ${variable}"));
         return $this;
     }
 
