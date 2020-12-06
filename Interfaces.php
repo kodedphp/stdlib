@@ -51,7 +51,6 @@ interface ArrayDataFilter
      *
      * @param string $index   The name of the property (dot-notation)
      * @param mixed  $default [optional] Default value if item is not found
-
      * @return mixed
      */
     public function find(string $index, $default = null);
