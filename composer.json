@@ -23,13 +23,13 @@
     }
   ],
   "require": {
-    "php": "~7.2",
+    "php": "^7.2",
     "psr/http-message": "~1",
     "ext-json": "*",
     "ext-dom": "*",
     "ext-libxml": "*",
     "ext-simplexml": "*",
-    "ext-ctype":  "*",
+    "ext-ctype": "*",
     "ext-mbstring": "*"
   },
   "suggest": {
@@ -37,16 +37,17 @@
     "igbinary": "igbinary module for de/serialization"
   },
   "autoload": {
-    "psr-4": {
-      "Koded\\Stdlib\\": "",
-      "Koded\\Exceptions\\": "",
-      "": ""
-    },
+    "classmap": [
+      "",
+      "Serializer/"
+    ],
     "files": [
+      "Exceptions.php",
+      "Interfaces.php",
       "functions.php"
     ],
     "exclude-from-classmap": [
-      "/Tests/"
+      "Tests/"
     ]
   },
   "require-dev": {
@@ -65,5 +66,8 @@
     "branch-alias": {
       "dev-master": "4.x-dev"
     }
+  },
+  "config": {
+    "optimize-autoloader": true
   }
 }
