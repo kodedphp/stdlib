@@ -1,0 +1,25 @@
+build:
+  nodes:
+    analysis:
+      tests:
+        stop_on_failure: true
+        override:
+          - php-scrutinizer-run
+      environment:
+        php:
+          version: '7.3'
+
+before_commands:
+  - 'composer update -o --prefer-source --no-interaction'
+
+filter:
+  excluded_paths:
+    - 'build/*'
+    - 'bench/*'
+    - 'Tests/*'
+    - 'vendor/*'
+
+tools:
+  external_code_coverage: true
+  php_analyzer: true
+  php_code_sniffer: true
