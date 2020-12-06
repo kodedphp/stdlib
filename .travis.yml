@@ -1,4 +1,6 @@
 language: php
+dist: xenial
+os: linux
 
 php:
   - 7.2
@@ -6,26 +8,25 @@ php:
   - 7.4
   - nightly
 
-matrix:
+jobs:
   fast_finish: true
   allow_failures:
     - php: nightly
 
-before_script:
+install:
   - pecl install igbinary
   - pecl install msgpack
-
-install:
   - composer update -o --no-interaction --prefer-source
   - wget https://scrutinizer-ci.com/ocular.phar
+
+before_script:
+  - phpenv config-rm xdebug.ini
 
 script:
   - vendor/bin/phpunit --coverage-clover build/coverage/clover.xml
 
 after_script:
   - php ocular.phar code-coverage:upload --format=php-clover build/coverage/clover.xml
-
-sudo: false
 
 cache:
   directories:
