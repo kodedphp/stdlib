@@ -29,12 +29,11 @@ class Arguments implements Argument,
                            Countable,
                            JsonSerializable
 {
-
     use AccessorTrait, MutatorTrait, ArrayDataFilterTrait {
         MutatorTrait::__set insteadof AccessorTrait;
     }
 
-    protected $storage = [];
+    protected array $storage = [];
 
     public function __construct(array $values = [])
     {
@@ -45,7 +44,10 @@ class Arguments implements Argument,
     {
     }
 
-    public function namespace(string $prefix, bool $lowercase = true, bool $trim = true)
+    public function namespace(
+        string $prefix,
+        bool $lowercase = true,
+        bool $trim = true): static
     {
         return new static($this->filter($this->toArray(), $prefix, $lowercase, $trim));
     }

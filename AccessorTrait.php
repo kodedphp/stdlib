@@ -19,24 +19,22 @@ use Traversable;
  */
 trait AccessorTrait
 {
-
     public function & __get($index)
     {
-        if (false === array_key_exists($index, $this->storage)) {
+        if (false === \array_key_exists($index, $this->storage)) {
             $this->storage[$index] = null;
         }
-
         return $this->storage[$index];
     }
 
     public function __set($index, $value)
     {
-        throw ReadOnlyException::forInstance($index, get_class($this));
+        throw ReadOnlyException::forInstance($index, \get_class($this));
     }
 
     public function __clone()
     {
-        throw ReadOnlyException::forCloning(get_class($this));
+        throw ReadOnlyException::forCloning(\get_class($this));
     }
 
     public function __isset($index)
@@ -44,14 +42,14 @@ trait AccessorTrait
         return $this->has($index);
     }
 
-    public function get(string $index, $default = null)
+    public function get(string $index, mixed $default = null): mixed
     {
         return $this->storage[$index] ?? $default;
     }
 
-    public function has($index): bool
+    public function has(mixed $index): bool
     {
-        return array_key_exists($index, $this->storage);
+        return \array_key_exists($index, $this->storage);
     }
 
     public function equals(string $propertyA, string $propertyB): bool
@@ -59,9 +57,9 @@ trait AccessorTrait
         return $this->get($propertyA) === $this->get($propertyB);
     }
 
-    public function count()
+    public function count(): int
     {
-        return count($this->storage);
+        return \count($this->storage);
     }
 
     public function toArray(): array

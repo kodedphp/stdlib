@@ -29,7 +29,7 @@ class Immutable implements Data,
 
     use AccessorTrait, ArrayDataFilterTrait;
 
-    protected $storage = [];
+    protected array $storage = [];
 
     public function __construct(array $values)
     {

@@ -48,25 +48,22 @@ use Exception;
  */
 class Config extends Arguments implements Configuration
 {
-    /** @var string */
-    public $rootPath = '';
-
-    /** @var bool */
-    private $silent = false;
+    public string $rootPath = '';
+    private bool $silent = false;
 
     /**
      * Config constructor.
      *
-     * @param string $rootPath          Path to which files are read relative from.
+     * @param string    $rootPath       Path to which files are read relative from.
      *                                  When the config object is created by an application/library
      *                                  this is the application's root path
-     * @param Data   $defaults          [optional] An Optional config object with default values
+     * @param Data|null $defaults       [optional] An Optional config object with default values
      */
     public function __construct(string $rootPath = '', Data $defaults = null)
     {
         parent::__construct($defaults ? $defaults->toArray() : []);
         if (!$this->rootPath = $rootPath) {
-            $this->rootPath = getcwd();
+            $this->rootPath = \getcwd();
         }
     }
 
@@ -76,16 +73,16 @@ class Config extends Arguments implements Configuration
      *
      * The calling app should handle their configuration appropriately.
      *
-     * @param string $name      Method name
-     * @param array  $arguments [optional]
+     * @param string     $name      Method name
+     * @param array|null $arguments [optional]
      *
      * @return Configuration
      * @throws Exception
      */
-    public function __call($name, $arguments): Configuration
+    public function __call(string $name, array|null $arguments): Configuration
     {
         if (false === $this->silent) {
-            throw new Exception('Unable to load the configuration file ' . current($arguments));
+            throw new Exception('Unable to load the configuration file ' . \current($arguments));
         }
         return $this;
     }
@@ -100,62 +97,54 @@ class Config extends Arguments implements Configuration
         return $this->import($parameters);
     }
 
-    public function fromObject($object): Configuration
+    public function fromObject(object|string $object): Configuration
     {
-        if (is_string($object) && class_exists($object)) {
+        if (\is_string($object) && \class_exists($object)) {
             $object = new $object;
         }
         $this->rootPath = $object->rootPath ?: $this->rootPath;
-        return $this->import(iterator_to_array($object));
+        return $this->import(\iterator_to_array($object));
     }
 
     public function fromJsonFile(string $filename): Configuration
     {
         return $this->loadDataFrom($filename, function($filename) {
-            return json_decode(file_get_contents($filename), true);
+            return \json_decode(\file_get_contents($filename), true);
         });
     }
 
     public function fromIniFile(string $filename): Configuration
     {
         return $this->loadDataFrom($filename, function($filename) {
-            return parse_ini_file($filename, true, INI_SCANNER_TYPED) ?: [];
+            return \parse_ini_file($filename, true, INI_SCANNER_TYPED) ?: [];
         });
     }
 
     public function fromEnvFile(string $filename, string $namespace = ''): Configuration
     {
-        return $this->loadDataFrom($filename, function($filename) use ($namespace) {
-            try {
-                $data = parse_ini_file($filename, true, INI_SCANNER_TYPED) ?: [];
-            } catch (Exception $e) {
-                \error_log('[Configuration error]: ' . $e->getMessage());
-                return [];
-            }
-            foreach ($data as $key => $value) {
-                if (null !== $value) {
-                    putenv($key . '=' . $value);
-                }
-            }
-            if (empty($namespace)) {
-                return $data;
-            }
-            return $this->filter($data, $namespace);
-        });
+        try {
+            $data = \parse_ini_file($this->filename($filename), true, INI_SCANNER_TYPED) ?: [];
+            env('', null, $this->filter($data, $namespace, false));
+        } catch (Exception $e) {
+            \error_log('[Configuration error]: ' . $e->getMessage());
+            env('', null, []);
+        } finally {
+            return $this;
+        }
     }
 
     public function fromEnvVariable(string $variable): Configuration
     {
-        if (false === empty($filename = getenv($variable))) {
-            $extension = ucfirst(pathinfo($filename, PATHINFO_EXTENSION));
-            return call_user_func([$this, "from{$extension}File"], $filename);
+        if (false === empty($filename = \getenv($variable))) {
+            $extension = \ucfirst(\pathinfo($filename, PATHINFO_EXTENSION));
+            return \call_user_func([$this, "from{$extension}File"], $filename);
         }
         if (false === $this->silent) {
-            throw new Exception(strtr('The environment variable ":variable" is not set
+            throw new Exception(\strtr('The environment variable ":variable" is not set
             and as such configuration could not be loaded. Set this variable and
             make it point to a configuration file', [':variable' => $variable]));
         }
-        \error_log('[Configuration error]: ' . (error_get_last()['message'] ?? "env var: ${variable}"));
+        \error_log('[Configuration error]: ' . (\error_get_last()['message'] ?? "env var: ${variable}"));
         return $this;
     }
 
@@ -175,10 +164,10 @@ class Config extends Arguments implements Configuration
     ): Configuration {
         $data = [];
         foreach ($variableNames as $variable) {
-            $value = getenv($variable);
+            $value = \getenv($variable);
             $data[] = $variable . '=' . (false === $value ? 'null' : $value);
         }
-        $data = parse_ini_string(join(PHP_EOL, $data), true, INI_SCANNER_TYPED) ?: [];
+        $data = \parse_ini_string(\join(PHP_EOL, $data), true, INI_SCANNER_TYPED) ?: [];
         $this->import($this->filter($data, $namespace, $lowercase, $trim));
         return $this;
     }
@@ -189,15 +178,24 @@ class Config extends Arguments implements Configuration
         return $this;
     }
 
-    public function namespace(string $prefix, bool $lowercase = true, bool $trim = true)
+    public function namespace(
+        string $prefix,
+        bool $lowercase = true,
+        bool $trim = true): static
     {
-        return (new static($this->rootPath))->import($this->filter($this->toArray(), $prefix, $lowercase, $trim));
+        return (new static($this->rootPath))
+            ->import($this->filter($this->toArray(), $prefix, $lowercase, $trim));
     }
 
     protected function loadDataFrom(string $filename, callable $loader): Configuration
     {
-        $file = ('/' === $filename[0]) ? $filename : $this->rootPath . '/' . ltrim($filename, '/');
-        $this->import($loader($file));
-        return $this;
+        return $this->import($loader($this->filename($filename)));
+    }
+
+    private function filename(string $filename):  string
+    {
+        return ('/' === $filename[0])
+            ? $filename
+            : $this->rootPath . '/' . \ltrim($filename, '/');
     }
 }

@@ -27,7 +27,7 @@ function dump($var, $label = null, bool $traceback = false, bool $die = true)
     list($position, $backtrace) = (function(array $backtrace) {
         if (isset($backtrace[1]) && '__invoke' === $backtrace[1]['function']) {
             $p = $backtrace[1]['class'] . $backtrace[1]['type'] . $backtrace[1]['function'] . ':' . $backtrace[0]['line'];
-        } else if ('dump' === $backtrace[0]['function'] && count($backtrace) > 1) {
+        } else if ('dump' === $backtrace[0]['function'] && \count($backtrace) > 1) {
             $p = $backtrace[1]['class'] ?? $backtrace[0]['file'] ?? __FILE__;
             $p .= $backtrace[1]['type'] ?? ' *';
             $p .= $backtrace[1]['function'] . ':' . $backtrace[0]['line'] ?? $backtrace[1]['line'];
@@ -38,33 +38,33 @@ function dump($var, $label = null, bool $traceback = false, bool $die = true)
         }
 
         // backtrace
-        $b = array_map(function($l) {
+        $b = \array_map(function($l) {
             $MESSAGE_BACKTRACE = "  File \"\x1b[36;2m%s\x1b[0m\", line \x1b[36;2m%d\x1b[0m\n    from %s\x1b[1m%s()\x1b[0m";
             return sprintf($MESSAGE_BACKTRACE, $l['file'] ?? '?', $l['line'] ?? -1, (($l['class'] ?? '') ? $l['class'] . '::' : ''), $l['function']);
-        }, array_slice(array_reverse($backtrace), 0, -1));
+        }, \array_slice(\array_reverse($backtrace), 0, -1));
 
-        return [$p, join(PHP_EOL, $b)];
+        return [$p, \join(PHP_EOL, $b)];
 
-    })(debug_backtrace());
+    })(\debug_backtrace());
 
-    $backtrace = ($traceback ? 'Traceback (most recent call last):' . PHP_EOL . $backtrace . PHP_EOL . str_repeat('-', 80) : date(DATE_COOKIE)) . PHP_EOL;
+    $backtrace = ($traceback ? 'Traceback (most recent call last):' . PHP_EOL . $backtrace . PHP_EOL . \str_repeat('-', 80) : \date(DATE_COOKIE)) . PHP_EOL;
 
-    if ('cli' === php_sapi_name()) {
-        $output = sprintf($MESSAGE_CLI, $backtrace, gettype($var), var_export($label, true), $position, print_r($var, true));
-    } elseif (strtoupper($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') == 'XMLHTTPREQUEST') {
-        $output = json_encode($var, JSON_UNESCAPED_SLASHES);
+    if ('cli' === \php_sapi_name()) {
+        $output = \sprintf($MESSAGE_CLI, $backtrace, \gettype($var), \var_export($label, true), $position, \print_r($var, true));
+    } elseif (\strtoupper($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') == 'XMLHTTPREQUEST') {
+        $output = \json_encode($var, JSON_UNESCAPED_SLASHES);
     } else {
         $format = function($var) {
-            ob_start();
-            var_dump($var);
-            $dump = ob_get_contents();
-            $dump = preg_replace('/<small>\/.*<\/small>/', '\\1', $dump);
-            ob_end_clean();
+            \ob_start();
+            \var_dump($var);
+            $dump = \ob_get_contents();
+            $dump = \preg_replace('/<small>\/.*<\/small>/', '\\1', $dump);
+            \ob_end_clean();
 
             return $dump;
         };
 
-        $output = sprintf($MESSAGE_HTM, $position, gettype($var), var_export($label, true), $format($var));
+        $output = \sprintf($MESSAGE_HTM, $position, \gettype($var), \var_export($label, true), $format($var));
     }
 
     $die and die($output);

@@ -20,28 +20,27 @@ trait ArrayDataFilterTrait
         bool $trim = true
     ): array {
         $filtered = [];
-
         foreach ($data as $index => $value) {
-            if ($trim && '' !== $prefix && 0 === strpos($index, $prefix, 0)) {
-                $index = str_replace($prefix, '', $index);
+            if ($trim && '' !== $prefix && \str_starts_with($index, $prefix)) {
+                $index = \str_replace($prefix, '', $index);
             }
-            $filtered[$lowercase ? strtolower($index) : $index] = $value;
+            $filtered[$lowercase ? \strtolower($index) : $index] = $value;
         }
         return $filtered;
     }
 
-    public function find(string $index, $default = null)
+    public function find(string $index, mixed $default = null): mixed
     {
         if (isset($this->storage[$index])) {
             return $this->storage[$index];
         }
-
         $storage = $this->storage;
-        foreach (explode('.', $index) as $token) {
-            if (false === is_array($storage) || false === array_key_exists($token, $storage)) {
+        foreach (\explode('.', $index) as $token) {
+            if (false === \is_array($storage) ||
+                false === \array_key_exists($token, $storage)
+            ) {
                 return $default;
             }
-
             $storage = &$storage[$token];
         }
         return $storage;
