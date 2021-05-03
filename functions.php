@@ -19,7 +19,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
 /**
- * Creates a new Argument instance
+ * Creates a new Arguments instance
  * with optional arbitrary number of arguments.
  *
  * @param array ...$values
@@ -32,7 +32,7 @@ function arguments(...$values): Argument
 }
 
 /**
- * Creates a new Immutable instance
+ * Creates a new Data instance (Immutable)
  * with optional arbitrary number of arguments.
  *
  * @param array ...$values
@@ -42,6 +42,35 @@ function arguments(...$values): Argument
 function value(...$values): Data
 {
     return new Immutable(...$values);
+}
+
+/**
+ * Gets or sets environment variables.
+ *
+ * @param string [optional] $name The name of the env variable
+ * @param mixed [optional]  $default Default value if not set
+ * @param array [optional]  $initialState To set all variables at once
+ * @return mixed The value for the env variable,
+ *               or all variables if $name is not provided
+ */
+function env(
+    string $name = null,
+    mixed $default = null,
+    array $initialState = null): mixed
+{
+    static $state = [];
+    if (null !== $initialState) {
+        foreach ($initialState as $k => $v) {
+            null === $v || \putenv($k . '=' . $v);
+        }
+        return $state = $initialState;
+    }
+    if (null === $name) {
+        return $state;
+    }
+    return \array_key_exists($name, $state)
+        ? $state[$name]
+        : (\getenv($name) ?: $default);
 }
 
 /**
@@ -55,7 +84,7 @@ function value(...$values): Data
  */
 function htmlencode(string $input, string $encoding = 'UTF-8'): string
 {
-    return htmlentities($input, ENT_QUOTES | ENT_HTML5, $encoding);
+    return \htmlentities($input, ENT_QUOTES | ENT_HTML5, $encoding);
 }
 
 /**
@@ -71,13 +100,15 @@ function htmlencode(string $input, string $encoding = 'UTF-8'): string
  * @throws \Exception if it was not possible to gather sufficient entropy
  * @since 1.10.0
  */
-function randomstring(int $length = 16, string $prefix = '', string $suffix = ''): string
+function randomstring(
+    int $length = 16,
+    string $prefix = '',
+    string $suffix = ''): string
 {
     $buffer = '';
     for ($x = 0; $x < $length; ++$x) {
-        $buffer .= '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'[random_int(0, 61)];
+        $buffer .= '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'[\random_int(0, 61)];
     }
-
     return $prefix . $buffer . $suffix;
 }
 
@@ -90,8 +121,8 @@ function randomstring(int $length = 16, string $prefix = '', string $suffix = ''
  */
 function snake_to_camel_case(string $string): string
 {
-    $string = preg_replace('/[\W\_]++/', ' ', $string);
-    return str_replace(' ', '', ucwords($string));
+    $string = \preg_replace('/[\W\_]++/', ' ', $string);
+    return \str_replace(' ', '', \ucwords($string));
 }
 
 /**
@@ -104,7 +135,7 @@ function snake_to_camel_case(string $string): string
 function camel_to_snake_case(string $string): string
 {
     $string = snake_to_camel_case($string);
-    return strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', trim($string)));
+    return \strtolower(\preg_replace('/(?<=\\w)([A-Z])/', '_\\1', \trim($string)));
 }
 
 /**
@@ -117,8 +148,8 @@ function camel_to_snake_case(string $string): string
  */
 function to_delimited_string(string $string, int $delimiter): string
 {
-    $str = preg_split('~[^\p{L}\p{N}\']+~u', trim($string));
-    return join(chr($delimiter), $str);
+    $str = \preg_split('~[^\p{L}\p{N}\']+~u', \trim($string));
+    return \join(\chr($delimiter), $str);
 }
 
 /**
@@ -130,7 +161,7 @@ function to_delimited_string(string $string, int $delimiter): string
  */
 function to_kebab_string(string $string): string
 {
-    return strtolower(to_delimited_string($string, ord('-')));
+    return \strtolower(to_delimited_string($string, \ord('-')));
 }
 
 /**
@@ -147,7 +178,7 @@ function to_kebab_string(string $string): string
 function json_serialize($value, int $options = JsonSerializer::OPTIONS): string
 {
     try {
-        return json_encode($value, $options);
+        return \json_encode($value, $options);
     } catch (JsonException $e) {
         error_log(__FUNCTION__, $e->getMessage(), $value);
         return '';
@@ -163,10 +194,13 @@ function json_serialize($value, int $options = JsonSerializer::OPTIONS): string
  *
  * @return mixed The decoded value, or EMPTY STRING on error
  */
-function json_unserialize(string $json, bool $associative = false)
+function json_unserialize(string $json, bool $associative = false): mixed
 {
     try {
-        return json_decode($json, $associative, 512, JSON_OBJECT_AS_ARRAY | JSON_BIGINT_AS_STRING | JSON_THROW_ON_ERROR);
+        return \json_decode($json, $associative, 512,
+                            JSON_OBJECT_AS_ARRAY
+                            | JSON_BIGINT_AS_STRING
+                            | JSON_THROW_ON_ERROR);
     } catch (JsonException $e) {
         error_log(__FUNCTION__, $e->getMessage(), $json);
         return '';
@@ -208,9 +242,9 @@ function xml_unserialize(string $xml): array
  * @param string $message The error message
  * @param mixed  $data    Original data passed into function
  */
-function error_log(string $func, string $message, $data): void
+function error_log(string $func, string $message, mixed $data): void
 {
-    \error_log(sprintf("(%s) %s:\n%s", $func, $message, var_export($data, true)));
+    \error_log(\sprintf("(%s) %s:\n%s", $func, $message, \var_export($data, true)));
 }
 
 /**
@@ -230,7 +264,7 @@ function error_log(string $func, string $message, $data): void
  */
 function is_associative(array $array): bool
 {
-    return (bool)array_diff_assoc($array, array_values($array));
+    return (bool)\array_diff_assoc($array, \array_values($array));
 }
 
 /**
@@ -240,7 +274,7 @@ function is_associative(array $array): bool
  */
 function now(): DateTimeImmutable
 {
-    return date_create_immutable('now', timezone_open('UTC'));
+    return \date_create_immutable('now', \timezone_open('UTC'));
 }
 
 /**
@@ -257,8 +291,9 @@ function rmdir(string $dirname): bool
     /** @var \SplFileInfo $path */
     foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dirname, FilesystemIterator::SKIP_DOTS),
         RecursiveIteratorIterator::CHILD_FIRST) as $path) {
-        $deleted[] = ($path->isDir() && false === $path->isLink()) ? \rmdir($path->getPathname()) : \unlink($path->getPathname());
+        $deleted[] = ($path->isDir() && false === $path->isLink())
+            ? \rmdir($path->getPathname())
+            : \unlink($path->getPathname());
     }
-
-    return (bool)array_product($deleted);
+    return (bool)\array_product($deleted);
 }
