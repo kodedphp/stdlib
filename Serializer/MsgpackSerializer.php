@@ -7,22 +7,20 @@
  *
  * Please view the LICENSE distributed with this source code
  * for the full copyright and license information.
- *
  */
 
 namespace Koded\Stdlib\Serializer;
 
-use Koded\Stdlib\Interfaces\Serializer;
+use Koded\Stdlib\Serializer;
 
-final class MsgpackSerializer implements Serializer
+class MsgpackSerializer implements Serializer
 {
-
-    public function serialize($value)
+    public function serialize(mixed $value): ?string
     {
         return \msgpack_pack($value);
     }
 
-    public function unserialize($value)
+    public function unserialize(string $value): mixed
     {
         return \msgpack_unpack($value);
     }

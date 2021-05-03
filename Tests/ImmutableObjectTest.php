@@ -1,17 +1,14 @@
 <?php
 
-namespace Koded\Stdlib;
+namespace Tests\Koded\Stdlib;
 
 use Koded\Exceptions\ReadOnlyException;
+use Koded\Stdlib\{Arguments, Immutable};
 use PHPUnit\Framework\TestCase;
 
 class ImmutableObjectTest extends TestCase
 {
-
-    /**
-     * @var Immutable
-     */
-    private $SUT;
+    private Immutable $SUT;
 
     public function test_should_load_the_array()
     {
@@ -34,7 +31,7 @@ class ImmutableObjectTest extends TestCase
 
     public function test_should_transform_immutable_to_argument_object()
     {
-        $this->assertInstanceOf(Arguments::class, $this->SUT->toArgument());
+        $this->assertInstanceOf(Arguments::class, $this->SUT->toArguments());
     }
 
     public function test_should_get_things()
@@ -96,7 +93,34 @@ class ImmutableObjectTest extends TestCase
         ]));
     }
 
-    protected function setUp()
+    public function test_equals_method()
+    {
+        $data = new Immutable([
+            'e1' => null,
+            'e2' => '',
+            '01' => 0,
+            '02' => '0',
+            'foo1' => 'Foo',
+            'foo2' => 'foo',
+            'obj1' => new \stdClass,
+            'obj2' => new \stdClass,
+            'false' => false,
+        ]);
+
+        $this->assertFalse($data->equals('e1', 'e2'));
+        $this->assertFalse($data->equals('01', '02'));
+        $this->assertFalse($data->equals('foo1', 'foo2'));
+        $this->assertFalse($data->equals('obj1', 'obj2'));
+        $this->assertFalse($data->equals('false', '01'));
+        $this->assertFalse($data->equals('false', '02'));
+
+        // NULL checks
+        $this->assertTrue($data->equals('e1', 'non-existent'));
+        $this->assertTrue($data->equals('non-existent-1', 'non-existent-2'));
+        $this->assertFalse($data->equals('e2', 'non-existent'));
+    }
+
+    protected function setUp(): void
     {
         $this->SUT = new Immutable(require __DIR__ . '/fixtures/nested-array.php');
     }

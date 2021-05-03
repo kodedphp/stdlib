@@ -1,12 +1,17 @@
 language: php
-dist: xenial
 os: linux
+dist: bionic
+
+notifications:
+  email: false
 
 php:
-  - 7.2
-  - 7.3
-  - 7.4
+  - 8.0
   - nightly
+
+cache:
+  directories:
+    - $HOME/.composer/cache
 
 jobs:
   fast_finish: true
@@ -16,21 +21,11 @@ jobs:
 install:
   - pecl install igbinary
   - pecl install msgpack
-  - composer update -o --no-interaction --prefer-source
   - wget https://scrutinizer-ci.com/ocular.phar
-
-before_script:
-  - phpenv config-rm xdebug.ini
+  - composer update -o --prefer-source --no-interaction
 
 script:
-  - vendor/bin/phpunit --coverage-clover build/coverage/clover.xml
+  - vendor/bin/phpunit --coverage-clover build/clover.xml
 
 after_script:
-  - php ocular.phar code-coverage:upload --format=php-clover build/coverage/clover.xml
-
-cache:
-  directories:
-    - $HOME/.composer/cache
-
-notifications:
-  email: false
+  - php ocular.phar code-coverage:upload --format=php-clover build/clover.xml

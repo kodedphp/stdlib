@@ -7,4 +7,5 @@ return [
     'float' => 2.50,
     'int' => 7,
     'bool' => false,
+    'null' => null,
 ];

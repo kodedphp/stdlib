@@ -1,14 +1,14 @@
 <?php
 
-namespace Koded\Stdlib;
+namespace Tests\Koded\Stdlib;
 
+use AssertionError;
 use InvalidArgumentException;
-use PHPUnit\Framework\Error\Warning;
+use Koded\Stdlib\UUID;
 use PHPUnit\Framework\TestCase;
 
 class UUIDTest extends TestCase
 {
-
     const NS3_1 = '4d436f52-5707-3cc3-b69d-ec060ccdbcba';
     const NS3_2 = 'b7890c8d-f62d-3048-ab4e-9cff3ab590d2';
 
@@ -21,61 +21,6 @@ class UUIDTest extends TestCase
     public function validates_the_uuid_format()
     {
         $this->assertTrue(UUID::valid(UUID::v4()));
-    }
-
-    /**
-     * @test
-     */
-    public function v1_with_node()
-    {
-        $uuid = UUID::v1('08:60:6e:11:c0:8e');
-        $this->assertTrue(UUID::matches($uuid, 1));
-        $this->assertSame('1', $uuid[14]);
-    }
-
-    /**
-     * @test
-     */
-    public function v1_with_integer_node()
-    {
-        $uuid = UUID::v1(0x7fffffff);
-        $this->assertTrue(UUID::matches($uuid, 1));
-    }
-
-    /**
-     * @test
-     */
-    public function v1_with_invalid_node()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        UUID::v1('127.0.0.1');
-    }
-
-    /**
-     * @test
-     */
-    public function v1_with_invalid_integer_node()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        UUID::v1(2987918954764484727721);
-    }
-
-    /**
-     * @test
-     */
-    public function v1_with_invalid_hexadecimal_node()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        UUID::v1('z7ba3e221');
-    }
-
-    /**
-     * @test
-     */
-    public function v1_created_without_node()
-    {
-        $uuid = UUID::v1();
-        $this->assertTrue(UUID::matches($uuid, 1));
     }
 
     /**
@@ -184,8 +129,10 @@ class UUIDTest extends TestCase
      */
     public function method_matches_fails_on_unsupported_uuid_version()
     {
-        $this->expectException(Warning::class);
-        $this->expectExceptionMessage('assert(): Expected UUID version 1, 3, 4 or 5 failed');
+        $this->markTestSkipped('WIP: UUID1');
+
+        $this->expectException(AssertionError::class);
+        $this->expectExceptionMessage('Expected UUID version 1, 3, 4 or 5, got 011');
         UUID::matches(UUID::NAMESPACE_OID, 0);
     }
 

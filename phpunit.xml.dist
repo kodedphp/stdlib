@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/5.7/phpunit.xsd"
-         bootstrap="vendor/autoload.php"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/8.5/phpunit.xsd"
+         bootstrap="Tests/autoload.php"
          verbose="true"
          colors="true">
     <testsuites>
         <testsuite name="Koded Standard Library Test Suite">
-            <directory>Tests</directory>
+            <directory>./Tests</directory>
         </testsuite>
     </testsuites>
 
@@ -15,6 +15,8 @@
         <whitelist>
             <directory suffix=".php">./</directory>
             <exclude>
+                <directory>bench</directory>
+                <directory>build</directory>
                 <directory>vendor</directory>
                 <directory>Tests</directory>
                 <file>functions-dev.php</file>
@@ -30,8 +32,4 @@
         <env name="KEY_4" value="true"/>
         <env name="KEY_5" value="null"/>
     </php>
-
-    <logging>
-        <log type="coverage-clover" target="build/logs/clover.xml"/>
-    </logging>
 </phpunit>

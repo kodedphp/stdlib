@@ -1,7 +1,8 @@
 <?php
 
-namespace Koded\Stdlib;
+namespace Tests\Koded\Stdlib;
 
+use Koded\Stdlib\Mime;
 use PHPUnit\Framework\TestCase;
 
 class MimeTest extends TestCase

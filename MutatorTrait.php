@@ -7,7 +7,6 @@
  *
  * Please view the LICENSE distributed with this source code
  * for the full copyright and license information.
- *
  */
 
 namespace Koded\Stdlib;
@@ -17,62 +16,52 @@ namespace Koded\Stdlib;
  */
 trait MutatorTrait
 {
-
-    abstract public function has($index): bool;
-    abstract public function get(string $index, $default = null);
-
     public function __set($index, $value)
     {
         return $this->set($index, $value);
     }
 
-    public function set(string $index, $value)
+    public function set(string $index, mixed $value): static
     {
         $this->storage[$index] = $value;
-
         return $this;
     }
 
-    public function bind(string $index, &$variable): self
+    public function bind(string $index, mixed &$variable): static
     {
         $this->storage[$index] = &$variable;
-
         return $this;
     }
 
-    public function upsert(string $index, $value)
+    public function upsert(string $index, mixed $value): static
     {
         return $this->has($index) ? $this : $this->set($index, $value);
     }
 
-    public function pull(string $index, $default = null)
+    public function pull(string $index, mixed $default = null): mixed
     {
         $value = $this->get($index, $default);
         unset($this->storage[$index]);
-
         return $value;
     }
 
-    public function import(array $array): self
+    public function import(array $array): static
     {
         foreach ($array as $index => $value) {
             $this->storage[$index] = $value;
         }
-
         return $this;
     }
 
-    public function delete(string $index)
+    public function delete(string $index): static
     {
         unset($this->storage[$index]);
-
         return $this;
     }
 
-    public function clear(): self
+    public function clear(): static
     {
         $this->storage = [];
-
         return $this;
     }
 }

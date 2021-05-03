@@ -1,12 +1,12 @@
 <?php
 
-namespace Koded\Stdlib\Serializer;
+namespace Tests\Koded\Stdlib\Serializer;
 
+use Koded\Stdlib\Serializer\JsonSerializer;
 use PHPUnit\Framework\TestCase;
 
 class JsonSerializerEncodingTest extends TestCase
 {
-
     public function test_serialize_without_unicode_option()
     {
         $this->assertEquals(

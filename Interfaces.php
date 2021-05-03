@@ -7,16 +7,13 @@
  *
  * Please view the LICENSE distributed with this source code
  * for the full copyright and license information.
- *
  */
 
-namespace Koded\Stdlib\Interfaces;
+namespace Koded\Stdlib;
 
-use Koded\Stdlib\{Arguments, Immutable};
 
 interface ArrayDataFilter
 {
-
     /**
      * Strips the portions of the variable names defined by the namespace value.
      * Returns a filtered array.
@@ -51,9 +48,10 @@ interface ArrayDataFilter
      *
      * @param string $index   The name of the property (dot-notation)
      * @param mixed  $default [optional] Default value if item is not found
+     *
      * @return mixed
      */
-    public function find(string $index, $default = null);
+    public function find(string $index, mixed $default = null): mixed;
 
     /**
      * Extract only the required indexes from the data.
@@ -69,7 +67,6 @@ interface ArrayDataFilter
 
 interface NamespaceDataFilter
 {
-
     /**
      * Strips the portions of the variable names defined by the prefix value.
      * It can also lowercase the names. Useful to transform the data from ENV variables.
@@ -82,16 +79,15 @@ interface NamespaceDataFilter
      *
      * @return static A new instance of the original object
      */
-    public function namespace(string $prefix, bool $lowercase = true, bool $trim = true);
+    public function namespace(string $prefix, bool $lowercase = true, bool $trim = true): static;
 }
 
 
 interface Data
 {
-
-    const E_CLONING_DISALLOWED = 1000;
-    const E_READONLY_INSTANCE  = 1001;
-    const E_PHP_EXCEPTION      = 1002;
+    const E_CLONING_DISALLOWED = 1001;
+    const E_READONLY_INSTANCE  = 1002;
+    const E_PHP_EXCEPTION      = 1003;
 
     /**
      * Value accessor, gets a value by name.
@@ -101,7 +97,7 @@ interface Data
      *
      * @return mixed
      */
-    public function get(string $index, $default = null);
+    public function get(string $index, mixed $default = null): mixed;
 
     /**
      * Checks if the key exist.
@@ -110,7 +106,7 @@ interface Data
      *
      * @return bool
      */
-    public function has($index): bool;
+    public function has(mixed $index): bool;
 
     /**
      * Checks if two properties has equal values.
@@ -152,7 +148,6 @@ interface Data
 
 interface Argument extends Data
 {
-
     /**
      * Value mutator.
      * Sets a value for a property.
@@ -162,7 +157,7 @@ interface Argument extends Data
      *
      * @return static
      */
-    public function set(string $index, $value);
+    public function set(string $index, mixed $value): static;
 
     /**
      * Imports multiple values. The existing are overridden.
@@ -171,7 +166,7 @@ interface Argument extends Data
      *
      * @return static
      */
-    public function import(array $values);
+    public function import(array $values): static;
 
     /**
      * "Set once". Add the value(s) for the key if that key does not exists,
@@ -182,7 +177,7 @@ interface Argument extends Data
      *
      * @return static
      */
-    public function upsert(string $index, $value);
+    public function upsert(string $index, mixed $value): static;
 
     /**
      * Sets a variable value by reference.
@@ -192,7 +187,7 @@ interface Argument extends Data
      *
      * @return static
      */
-    public function bind(string $index, &$variable);
+    public function bind(string $index, mixed &$variable): static;
 
     /**
      * Gets a value by name and unset it from the storage.
@@ -200,9 +195,9 @@ interface Argument extends Data
      * @param string $index
      * @param mixed  $default [optional]
      *
-     * @return static
+     * @return mixed
      */
-    public function pull(string $index, $default = null);
+    public function pull(string $index, mixed $default = null): mixed;
 
     /**
      * Remove a property from the storage array.
@@ -211,32 +206,30 @@ interface Argument extends Data
      *
      * @return static
      */
-    public function delete(string $index);
+    public function delete(string $index): static;
 
     /**
      * Clears the internal storage.
      *
      * @return static
      */
-    public function clear();
+    public function clear(): static;
 }
 
 
 interface TransformsToArguments
 {
-
     /**
      * Creates a new instance of Arguments object with current data.
      *
      * @return Arguments
      */
-    public function toArgument(): Arguments;
+    public function toArguments(): Arguments;
 }
 
 
 interface TransformsToImmutable
 {
-
     /**
      * Creates a new instance of Immutable object with current data.
      *
@@ -246,17 +239,16 @@ interface TransformsToImmutable
 }
 
 
-interface ConfigurationFactory extends Argument, ArrayDataFilter, NamespaceDataFilter
+interface Configuration extends Argument, ArrayDataFilter, NamespaceDataFilter
 {
-
     /**
      * Imports parameters as they are.
      *
      * @param array $parameters
      *
-     * @return ConfigurationFactory
+     * @return Configuration
      */
-    public function withParameters(array $parameters): ConfigurationFactory;
+    public function withParameters(array $parameters): Configuration;
 
     /**
      * @param array  $variableNames A list of environment variables to be loaded
@@ -264,44 +256,44 @@ interface ConfigurationFactory extends Argument, ArrayDataFilter, NamespaceDataF
      * @param bool   $lowercase     [optional ] Convert the names to lowercase
      * @param bool   $trim          [optional] Remove the namespace/prefix from the variable names
      *
-     * @return ConfigurationFactory
+     * @return Configuration
      */
     public function fromEnvironment(
         array $variableNames,
         string $namespace = '',
         bool $lowercase = true,
         bool $trim = true
-    ): ConfigurationFactory;
+    ): Configuration;
 
     /**
      * Loads the configuration options from JSON file.
      *
-     * @param string $file The path to the JSON configuration file
+     * @param string $filename The path to the JSON configuration file
      *
-     * @return ConfigurationFactory
+     * @return Configuration
      */
-    public function fromJsonFile(string $file): ConfigurationFactory;
+    public function fromJsonFile(string $filename): Configuration;
 
     /**
      * Loads the configuration options from PHP array stored in a file.
      *
-     * @param string $file The path to the PHP configuration file
+     * @param string $filename The path to the PHP configuration file
      *
-     * @return ConfigurationFactory
+     * @return Configuration
      */
-    public function fromPhpFile(string $file): ConfigurationFactory;
+    public function fromPhpFile(string $filename): Configuration;
 
     /**
      * Loads the configuration options from `.env` or similar file.
      * The syntax should be the same as the INI file, without sections.
      * Some value types are preserved when possible (null, int and bool)
      *
-     * @param string $file      The path to the configuration file
+     * @param string $filename  The path to the configuration file
      * @param string $namespace [optional]
      *
-     * @return ConfigurationFactory
+     * @return Configuration
      */
-    public function fromEnvFile(string $file, string $namespace = ''): ConfigurationFactory;
+    public function fromEnvFile(string $filename, string $namespace = ''): Configuration;
 
     /**
      * Loads the configuration options from environment variable that holds
@@ -309,37 +301,37 @@ interface ConfigurationFactory extends Argument, ArrayDataFilter, NamespaceDataF
      *
      * @param string $variable Environment variable with path to the configuration file
      *
-     * @return ConfigurationFactory
+     * @return Configuration
      */
-    public function fromEnvVariable(string $variable): ConfigurationFactory;
+    public function fromEnvVariable(string $variable): Configuration;
 
     /**
      * Loads the configuration options from INI file.
      * The sections are processed and some value types are preserved when possible (null, int and bool)
      *
-     * @param string $file The path to the INI configuration file
+     * @param string $filename The path to the INI configuration file
      *
-     * @return ConfigurationFactory
+     * @return Configuration
      */
-    public function fromIniFile(string $file): ConfigurationFactory;
+    public function fromIniFile(string $filename): Configuration;
 
     /**
      * Loads the configuration options from other Config instance.
      *
      * @param object|string $object A FQN of the configuration object, or an instance of it
      *
-     * @return ConfigurationFactory
+     * @return Configuration
      */
-    public function fromObject($object): ConfigurationFactory;
+    public function fromObject(object|string $object): Configuration;
 
     /**
      * Yell if something bad has happened, or pass quietly.
      *
      * @param bool $silent
      *
-     * @return ConfigurationFactory
+     * @return Configuration
      */
-    public function silent(bool $silent): ConfigurationFactory;
+    public function silent(bool $silent): Configuration;
 
     /**
      * Application specific processing of the configuration data.
@@ -353,30 +345,27 @@ interface ConfigurationFactory extends Argument, ArrayDataFilter, NamespaceDataF
 }
 
 
-interface Configuration extends Data
-{
-}
-
-
 interface Serializer
 {
-    const E_INVALID_SERIALIZER = 409;
-    const E_MISSING_MODULE     = 424;
+    const
+        E_INVALID_SERIALIZER = 409,
+        E_MISSING_MODULE     = 424;
 
-    const IGBINARY = 'igbinary';
-    const MSGPACK  = 'msgpack';
-    const JSON     = 'json';
-    const XML      = 'xml';
-    const PHP      = 'php';
+    const
+        IGBINARY = 'igbinary',
+        MSGPACK  = 'msgpack',
+        JSON     = 'json',
+        XML      = 'xml',
+        PHP      = 'php';
 
     /**
      * Creates a serialized representation of the data.
      *
      * @param mixed $value
      *
-     * @return string The serialized representation of the data
+     * @return string|null The serialized representation of the data
      */
-    public function serialize($value);
+    public function serialize(mixed $value): ?string;
 
     /**
      * Recreates the data back from the serialized representation.
@@ -385,7 +374,7 @@ interface Serializer
      *
      * @return mixed The converted value
      */
-    public function unserialize($value);
+    public function unserialize(string $value): mixed;
 
     /**
      * The string identifier for the serializer object.

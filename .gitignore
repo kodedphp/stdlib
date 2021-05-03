@@ -5,6 +5,4 @@
 /.idea
 composer.lock
 phpunit.phar
-*.yml
-!.travis.yml
-!.scrutinizer.yml
+*.cache

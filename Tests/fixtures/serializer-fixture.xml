@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<serializer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            defaultNormalizers="true"
+            runtime="debug">
+  <generator>
+    <namespace>Generated\Class</namespace>
+    <!-- skipped -->
+    <directory>./build/generators</directory>
+  </generator>
+  <bindings>
+    <class name="Koded\App\Some\AbstractClass">
+      <bind property="foo" type="bool">Koded\App\Concrete\Implementation\Foo</bind>
+      <bind property="bar" type="class">Koded\App\Concrete\Implementation\Bar</bind>
+    </class>
+    <class name="Koded\App\Some\Interface">
+      <bind property="qux">Koded\App\Concrete\Implementation\Qux</bind>
+      <bind property="zim" type="int">Koded\App\Concrete\Implementation\Zim</bind>
+    </class>
+  </bindings>
+  <normalizer class="Koded\Serializer\Normalizer\ObjectNormalizer"/>
+  <normalizer class="Koded\Serializer\Normalizer\CollectionNormalizer"/>
+  <normalizer class="Koded\Serializer\Normalizer\DateTimeNormalizer">
+    <argument name="format">d/m/Y H:i:s</argument>
+    <argument name="timezone">UTC</argument>
+  </normalizer>
+  <caching client="file" ttl="1200" serializer="php">
+    <arguments>
+      <dir>/tmp/koded/serializer</dir>
+      <ttl>3000</ttl>
+    </arguments>
+  </caching>
+</serializer>

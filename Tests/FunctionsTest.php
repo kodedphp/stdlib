@@ -1,9 +1,20 @@
 <?php
 
-namespace Koded\Stdlib;
+namespace Tests\Koded\Stdlib;
 
-use DoctrineTest\InstantiatorTestAsset\XMLReaderAsset;
+use Koded\Stdlib\{Arguments, Immutable};
 use PHPUnit\Framework\TestCase;
+use function Koded\Stdlib\{arguments,
+    camel_to_snake_case,
+    htmlencode,
+    is_associative,
+    now,
+    randomstring,
+    snake_to_camel_case,
+    to_delimited_string,
+    to_kebab_string,
+    value,
+    rmdir};
 
 class FunctionsTest extends TestCase
 {
@@ -74,11 +85,11 @@ class FunctionsTest extends TestCase
 
     public function test_rmdir_function()
     {
-        $dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . randomstring(9);
+        $dir = \sys_get_temp_dir() . DIRECTORY_SEPARATOR. randomstring(9);
         $file = $dir . DIRECTORY_SEPARATOR . randomstring(9) . '.txt';
 
         $this->assertTrue(mkdir($dir), 'Should create an empty directory');
-        $this->assertSame(4, file_put_contents($file, 'test'), 'Should create the file in the directory');
+        $this->assertSame(4, \file_put_contents($file, 'test'), 'Should create the file in the directory');
         $this->assertFileExists($file, 'Should add file in the directory');
 
         $this->assertTrue(rmdir($dir));
@@ -168,9 +179,9 @@ class FunctionsTest extends TestCase
 
             // None of the keys are valid or sane, but it "works" because PHP
 
-            [[null => 1], true], // NULL is converted to ''
-            [[false => 1], false], // FALSE is converted to 0
-            [[true => 1], true], // TRUE is converted to 1
+            [[null => 1], true],    // NULL is converted to ''
+            [[false => 1], false],  // FALSE is converted to 0
+            [[true => 1], true],    // TRUE is converted to 1
 
             [[2.7 => 'yes'], true], // FLOAT is a different level of weird (float-to-string)
         ];

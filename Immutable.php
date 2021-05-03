@@ -7,7 +7,6 @@
  *
  * Please view the LICENSE distributed with this source code
  * for the full copyright and license information.
- *
  */
 
 namespace Koded\Stdlib;
@@ -15,7 +14,6 @@ namespace Koded\Stdlib;
 use Countable;
 use IteratorAggregate;
 use JsonSerializable;
-use Koded\Stdlib\Interfaces\{ArrayDataFilter, Data, TransformsToArguments};
 
 /**
  * An IMMUTABLE, multi purpose class that encapsulates a read-only data.
@@ -31,14 +29,14 @@ class Immutable implements Data,
 
     use AccessorTrait, ArrayDataFilterTrait;
 
-    protected $storage = [];
+    protected array $storage = [];
 
     public function __construct(array $values)
     {
         $this->storage = $values;
     }
 
-    public function toArgument(): Arguments
+    public function toArguments(): Arguments
     {
         return new Arguments($this->storage);
     }

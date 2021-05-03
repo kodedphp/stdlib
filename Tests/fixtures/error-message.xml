@@ -1,20 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<payload>
-    <message><![CDATA[The error message &amp; it&apos;s &quot;details&quot;]]></message>
-    <code>400</code>
-    <errors>
-        <field-one>
-            <explain><![CDATA[Field one]]></explain>
-            <reason><![CDATA[The Reason]]></reason>
-        </field-one>
-        <field-two><![CDATA[Field two]]></field-two>
-    </errors>
-    <arguments>
-        <argument><![CDATA[it]]></argument>
-        <argument><![CDATA[equals]]></argument>
-        <argument>42</argument>
-    </arguments>
-    <datetime type="xsd:dateTime">2167-04-30T09:16:15+0000</datetime>
-    <nothing></nothing>
-    <instance type="xsd:token"><![CDATA[O:8:"stdClass":1:{s:3:"key";s:5:"value";}]]></instance>
+<payload xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <message><![CDATA[The error message & it's "details"]]></message>
+  <code type="xsd:integer">400</code>
+  <error>
+    <field-one>
+      <explain>Field one</explain>
+      <!-- comment -->
+      <reason><![CDATA[The <b>Reason</b>]]></reason>
+    </field-one>
+    <field-two><![CDATA[Field]]> two/2</field-two>
+    <de>Straße</de>
+  </error>
+  <argument>it</argument>
+  <argument>equals</argument>
+  <argument type="xsd:float">42</argument>
+  <extras>
+    <item key="0">foo</item>
+    <item key="1">bar</item>
+    <bar type="xsd:integer">1</bar>
+    <bar type="xsd:integer">2</bar>
+    <bar type="xsd:integer">3</bar>
+    <!--  <bar type="xsd:integer">4</bar>-->
+  </extras>
+  <item>
+    <title>lorem</title>
+  </item>
+  <item>
+    <title>ipsum</title>
+  </item>
+  <item>
+    <title>dolor</title>
+  </item>
+  <handled type="xsd:boolean">1</handled>
+  <nothing xsi:nil="true"/>
+  <empty></empty>
+  <datetime type="xsd:dateTime">2167-04-30T09:16:15+0000</datetime>
+  <object type="xsd:object"><![CDATA[{"key":"val"}]]></object>
 </payload>

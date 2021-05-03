@@ -1,17 +1,13 @@
 <?php
 
-namespace Koded\Stdlib;
+namespace Tests\Koded\Stdlib;
 
-use Koded\Stdlib\Interfaces\{Argument, Data};
+use Koded\Stdlib\{Arguments, Data};
 use PHPUnit\Framework\TestCase;
 
 class ArgumentObjectTest extends TestCase
 {
-
-    /**
-     * @var Argument
-     */
-    private $SUT;
+    private Arguments $SUT;
 
     public function test_set()
     {

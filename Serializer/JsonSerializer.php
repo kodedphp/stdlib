@@ -1,49 +1,61 @@
 <?php
 
+/*
+ * This file is part of the Koded package.
+ *
+ * (c) Mihail Binev <mihail@kodeart.com>
+ *
+ * Please view the LICENSE distributed with this source code
+ * for the full copyright and license information.
+ */
+
 namespace Koded\Stdlib\Serializer;
 
-use Koded\Exceptions\KodedException;
-use Koded\Stdlib\Interfaces\StringSerializable;
+use Koded\Stdlib\Serializer;
+use function Koded\Stdlib\{json_serialize, json_unserialize};
 
-final class JsonSerializer implements StringSerializable
+class JsonSerializer implements Serializer
 {
+    public const OPTIONS = JSON_PRESERVE_ZERO_FRACTION
+    | JSON_UNESCAPED_SLASHES
+    | JSON_THROW_ON_ERROR;
 
     /**
-     * @var int JSON encode options. Defaults to (1376):
+     * @var int JSON encode options. Defaults to (1088):
      *          - JSON_PRESERVE_ZERO_FRACTION
-     *          - JSON_NUMERIC_CHECK
      *          - JSON_UNESCAPED_SLASHES
-     *          - JSON_UNESCAPED_UNICODE
      */
-    private $options;
+    private int $options = self::OPTIONS;
+
+    private bool $associative;
 
     /**
      * JsonSerializer constructor.
      *
-     * @param int $options [optional] JSON encode options
+     * @param int  $options     [optional] JSON encode options.
+     *                          - to add more JSON options use OR "|" bitmask operator
+     *                          - to exclude multiple default options use XOR "^"
+     * @param bool $associative [optional] When TRUE, returned objects will be
+     *                          converted into associative arrays
      */
-    public function __construct(int $options = null)
+    public function __construct(int $options = 0, bool $associative = false)
     {
-        $this->options = $options ??
-            JSON_PRESERVE_ZERO_FRACTION
-            | JSON_NUMERIC_CHECK
-            | JSON_UNESCAPED_SLASHES
-            | JSON_UNESCAPED_UNICODE;
+        $this->options ^= $options;
+        $this->associative = $associative;
     }
 
-    public function serialize($value): string
+    public function serialize(mixed $value): ?string
     {
-        return json_encode($value, $this->options);
+        return json_serialize($value, $this->options);
     }
 
-    public function unserialize(string $value)
+    public function unserialize(string $value): mixed
     {
-        $json = json_decode(utf8_encode($value), true, 512, JSON_BIGINT_AS_STRING);
+        return json_unserialize($value, $this->associative);
+    }
 
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            throw KodedException::generic(json_last_error_msg());
-        }
-
-        return $json;
+    public function type(): string
+    {
+        return Serializer::JSON;
     }
 }

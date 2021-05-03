@@ -1,14 +1,14 @@
 <?php
 
-namespace Koded\Stdlib\Serializer;
+namespace Tests\Koded\Stdlib\Serializer;
 
 use Koded\Exceptions\SerializerException;
-use Koded\Stdlib\Interfaces\Serializer;
+use Koded\Stdlib\Serializer;
+use Koded\Stdlib\Serializer\SerializerFactory;
 use PHPUnit\Framework\TestCase;
 
 class SerializerFactoryTest extends TestCase
 {
-
     public function test_native()
     {
         $json = SerializerFactory::new(Serializer::JSON);
@@ -22,7 +22,7 @@ class SerializerFactoryTest extends TestCase
 
     public function test_igbinary()
     {
-        if (false === function_exists('igbinary_serialize')) {
+        if (false === \function_exists('igbinary_serialize')) {
             $this->markTestSkipped('igbinary extension is not loaded');
         }
 
@@ -32,7 +32,7 @@ class SerializerFactoryTest extends TestCase
 
     public function test_msgpack()
     {
-        if (false === extension_loaded('msgpack')) {
+        if (false === \extension_loaded('msgpack')) {
             $this->markTestSkipped('msgpack extension is not loaded');
         }
 
@@ -42,8 +42,16 @@ class SerializerFactoryTest extends TestCase
 
     public function test_custom()
     {
-        $serializer = SerializerFactory::new(TestSerializer::class);
-        $this->assertSame(TestSerializer::class, $serializer->type());
+        $custom = SerializerFactory::new(TestSerializer::class);
+        $this->assertSame(TestSerializer::class, $custom->type());
+
+        $custom = new TestSerializer('foo', true);
+        $this->assertAttributeSame('foo', 'arg1', $custom);
+        $this->assertAttributeSame(true, 'arg2', $custom);
+
+        $custom = new TestSerializer;
+        $this->assertAttributeSame('', 'arg1', $custom);
+        $this->assertAttributeSame(false, 'arg2', $custom);
     }
 
     public function test_exception()
@@ -54,12 +62,42 @@ class SerializerFactoryTest extends TestCase
 
         SerializerFactory::new('fubar');
     }
+
+    public function test_json_factory_arguments()
+    {
+        $options = JSON_PRETTY_PRINT | JSON_FORCE_OBJECT ^ JSON_THROW_ON_ERROR;
+        $json = SerializerFactory::new('json', $options, true);
+
+        $this->assertAttributeSame(true, 'associative', $json);
+        $this->assertAttributeSame(
+            JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_FORCE_OBJECT,
+            'options',
+            $json
+        );
+    }
+
+    public function test_xml_factory_arguments()
+    {
+        $xml = SerializerFactory::new('xml', 'fubar');
+        $this->assertAttributeSame('fubar', 'root', $xml);
+
+        $xml = SerializerFactory::new('xml');
+        $this->assertAttributeSame(null, 'root', $xml);
+    }
 }
 
 
 class TestSerializer implements Serializer
 {
-    public function serialize($value): string {}
-    public function unserialize($value) {}
+    private $arg1;
+    private $arg2;
+
+    public function __construct(string $arg1 = '', bool $arg2 = false)
+    {
+        $this->arg1 = $arg1;
+        $this->arg2 = $arg2;
+    }
+    public function serialize(mixed $value): ?string {}
+    public function unserialize(string $value): mixed {}
     public function type(): string { return self::class; }
 }

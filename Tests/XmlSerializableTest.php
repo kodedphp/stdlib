@@ -1,12 +1,12 @@
 <?php
 
-namespace Koded\Stdlib;
+namespace Tests\Koded\Stdlib;
 
+use Koded\Stdlib\Immutable;
 use PHPUnit\Framework\TestCase;
 
 class XmlSerializableTest extends TestCase
 {
-
     public function test_object_to_xml_representation()
     {
         $this->markTestSkipped();

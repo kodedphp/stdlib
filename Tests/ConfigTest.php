@@ -1,13 +1,14 @@
 <?php
 
-namespace Koded\Stdlib;
+namespace Tests\Koded\Stdlib;
 
 use Exception;
+use Koded\Stdlib\Config;
 use PHPUnit\Framework\TestCase;
+use function Koded\Stdlib\env;
 
 class ConfigTest extends TestCase
 {
-
     public function test_should_load_defaults_from_other_instance()
     {
         $config = new Config('', new MockOtherConfigInstance);
@@ -79,35 +80,65 @@ class ConfigTest extends TestCase
     {
         $config = new Config;
         $config->fromEnvFile(__DIR__ . '/fixtures/.env');
-        $this->assertSame(include __DIR__ . '/fixtures/expected-env-data.php', $config->toArray());
+
+
+        // Scalar type values are preserved
+        $this->assertSame(include __DIR__ . '/fixtures/expected-env-data.php', env());
+        $this->assertSame(42, env('KEY_1'));
+        $this->assertSame('value3', env('KEY_3'));
+        $this->assertSame(true, env('KEY_4'));
+        $this->assertSame(null, env('KEY_5'));
+
+        // ENV variable values are mutated to strings
+        $this->assertSame('42', \getenv('KEY_1'));
+        $this->assertSame('value3', \getenv('KEY_3'));
+        $this->assertSame('1', \getenv('KEY_4'));
+        $this->assertSame('null', \getenv('KEY_5'));
     }
 
     public function test_should_return_empty_if_env_file_was_not_found()
     {
         $config = new Config;
         $config->fromEnvFile(__DIR__ . '/fixtures/non-existing.env');
-        $this->assertSame([], $config->toArray());
+        $this->assertSame([], env());
     }
 
     public function test_should_load_env_file_and_trim_the_namespace()
     {
         $config = new Config(getcwd());
         $config->fromEnvFile('Tests/fixtures/.env', 'KEY_');
-        $this->assertSame(include __DIR__ . '/fixtures/expected-env-trim-ns.php', $config->toArray());
+        $this->assertSame(include __DIR__ . '/fixtures/expected-env-trim-ns.php', env());
     }
 
     public function test_should_load_from_env_variable()
     {
-        putenv('CONFIG_FILE=Tests/fixtures/nested-array.php');
+        \putenv('CONFIG_FILE=Tests/fixtures/nested-array.php');
         $config = new Config;
         $config->fromEnvVariable('CONFIG_FILE');
 
         $this->assertSame('found me', $config->find('array.key3.key3-1.key3-1-1'));
     }
 
+    public function test_should_not_populate_global_env_array()
+    {
+        $_ENV = []; // clear
+        $config = new Config;
+        $config->fromEnvFile(__DIR__ . '/fixtures/.env');
+
+        $this->assertArrayNotHasKey('KEY_1', $_ENV);
+        $this->assertArrayNotHasKey('KEY_3', $_ENV);
+        $this->assertArrayNotHasKey('KEY_4', $_ENV);
+        $this->assertArrayNotHasKey('KEY_5', $_ENV);
+
+        $this->assertSame('42', \getenv('KEY_1', true));
+        $this->assertSame('value3', \getenv('KEY_3', true));
+        $this->assertSame('1', \getenv('KEY_4', true));
+        $this->assertSame('null', \getenv('KEY_5', true));
+    }
+
     public function test_should_load_ini_file_from_env_variable()
     {
-        putenv('CONFIG_FILE=Tests/fixtures/config-test.ini');
+        \putenv('CONFIG_FILE=Tests/fixtures/config-test.ini');
         $config = new Config;
         $config->fromEnvVariable('CONFIG_FILE');
 
@@ -136,7 +167,7 @@ class ConfigTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Unable to load the configuration file');
 
-        putenv('CONFIG_FILE=non-existent.conf');
+        \putenv('CONFIG_FILE=non-existent.conf');
 
         (new Config)->fromEnvVariable('CONFIG_FILE');
     }
@@ -146,7 +177,7 @@ class ConfigTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('The environment variable "CONFIG_FILE" is not set');
 
-        putenv('CONFIG_FILE=');
+        \putenv('CONFIG_FILE=');
 
         (new Config)->fromEnvVariable('CONFIG_FILE');
     }
@@ -170,7 +201,7 @@ class ConfigTest extends TestCase
 
     public function test_should_trim_names_from_environment_variables()
     {
-        putenv('KEY_4=true');
+        \putenv('KEY_4=true');
         $config = (new Config)->fromEnvironment(['KEY_1', 'KEY_3', 'KEY_4', 'KEY_5'], 'KEY_');
 
         $this->assertSame(include __DIR__ . '/fixtures/expected-env-trim-ns.php', $config->toArray());
@@ -178,7 +209,7 @@ class ConfigTest extends TestCase
 
     public function test_should_not_alter_the_keys_from_environment_variables()
     {
-        putenv('KEY_4=true');
+        \putenv('KEY_4=true');
         $config = new Config;
         $config->fromEnvironment(['KEY_1', 'KEY_3', 'KEY_4', 'KEY_5'], '', false);
 
@@ -187,7 +218,7 @@ class ConfigTest extends TestCase
 
     public function test_should_create_arguments_object_using_a_namespace()
     {
-        putenv('KEY_4=true');
+        \putenv('KEY_4=true');
         $config = new Config;
         $config->fromEnvironment(['KEY_1', 'KEY_3', 'KEY_4', 'KEY_5']);
 
@@ -195,6 +226,13 @@ class ConfigTest extends TestCase
 
         $this->assertInstanceOf(Config::class, $arguments);
         $this->assertSame(include __DIR__ . '/fixtures/expected-data-lowercase.php', $arguments->toArray());
+    }
+
+    public function test_ini_sections_parsing()
+    {
+        $config = new Config;
+        $config->fromIniFile(__DIR__ . '/fixtures/config-sections.ini');
+        $this->assertSame(include_once __DIR__ . '/fixtures/config-sections.php', $config->toArray());
     }
 }
 

@@ -1,18 +1,19 @@
 <?php
 
-namespace Koded\Stdlib\Serializer;
+namespace Tests\Koded\Stdlib\Serializer;
 
-use Koded\Stdlib\Interfaces\Serializer;
+use ArrayIterator;
+use Koded\Stdlib\Serializer;
+use Koded\Stdlib\Serializer\JsonSerializer;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use function Koded\Stdlib\{json_serialize, json_unserialize};
 
 class JsonSerializerTest extends TestCase
 {
+    const SERIALIZED_JSON = '{"object":{},"array":[],"str":"php","float":2.5,"int":7,"bool":false,"null":null}';
 
-    const SERIALIZED_JSON = '{"object":{},"array":[],"str":"php","float":2.5,"int":7,"bool":false}';
-
-    /** @var JsonSerializer */
-    private $SUT;
+    private JsonSerializer $SUT;
 
     /** @dataProvider data */
     public function test_serialize($data)
@@ -23,7 +24,7 @@ class JsonSerializerTest extends TestCase
     public function test_serialize_iterable()
     {
         $data = json_unserialize(self::SERIALIZED_JSON);
-        $iter = new \ArrayIterator($data);
+        $iter = new ArrayIterator($data);
 
         $this->assertEquals(self::SERIALIZED_JSON, $this->SUT->serialize($iter));
     }
@@ -35,7 +36,7 @@ class JsonSerializerTest extends TestCase
 
     public function test_expects_stdClass_if_data_is_object()
     {
-        $this->assertSame('{}', json_serialize(new \stdClass));
+        $this->assertSame('{}', json_serialize(new stdClass));
     }
 
     public function test_expects_trailing_zero_to_be_removed()
@@ -45,7 +46,7 @@ class JsonSerializerTest extends TestCase
 
     public function test_unserialize()
     {
-        $this->assertEquals(json_decode(self::SERIALIZED_JSON, false), $this->SUT->unserialize(self::SERIALIZED_JSON));
+        $this->assertEquals(\json_decode(self::SERIALIZED_JSON, false), $this->SUT->unserialize(self::SERIALIZED_JSON));
     }
 
     public function test_unserialize_error()

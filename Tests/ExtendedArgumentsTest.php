@@ -1,12 +1,12 @@
 <?php
 
-namespace Koded\Stdlib;
+namespace Tests\Koded\Stdlib;
 
+use Koded\Stdlib\ExtendedArguments;
 use PHPUnit\Framework\TestCase;
 
 class ExtendedArgumentsTest extends TestCase
 {
-
     /**
      * @dataProvider data
      */
@@ -102,7 +102,7 @@ class ExtendedArgumentsTest extends TestCase
 
         // But, the keys are messed up now...
         $this->assertSame(true, $arguments->get('array.1'), "The key is TRUE and now juggled into string 1");
-        $this->assertSame('null', $arguments->get(''), "The key is NULL but fucked into empty string");
+        $this->assertSame('null', $arguments->get(''), "The key is NULL but frakked up as empty string");
     }
 
     /** @dataProvider data */
