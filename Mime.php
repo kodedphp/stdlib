@@ -457,7 +457,7 @@ final class Mime
      */
     public static function supports(string $type): bool
     {
-        return array_key_exists($type, self::$typesToExtensions);
+        return \array_key_exists($type, self::$typesToExtensions);
     }
 
     /**
