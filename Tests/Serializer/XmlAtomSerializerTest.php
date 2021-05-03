@@ -1,6 +1,6 @@
 <?php
 
-namespace Koded\Stdlib\Tests\Serializer;
+namespace Tests\Koded\Stdlib\Serializer;
 
 use Koded\Stdlib\Serializer\XmlSerializer;
 use PHPUnit\Framework\TestCase;
@@ -9,12 +9,11 @@ class XmlAtomSerializerTest extends TestCase
 {
     private const ATOM_EXAMPLE = __DIR__ . '/../fixtures/atom-example.xml';
 
-    /** @var XmlSerializer */
-    private $serializer;
+    private XmlSerializer $serializer;
 
     public function test_unserialize_atom_file()
     {
-        $atom = $this->serializer->unserialize(file_get_contents(self::ATOM_EXAMPLE));
+        $atom = $this->serializer->unserialize(\file_get_contents(self::ATOM_EXAMPLE));
         $channel = $atom['channel'] ?? [];
 
         $this->assertArrayHasKey('title', $channel);

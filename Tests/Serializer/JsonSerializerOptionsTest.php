@@ -1,6 +1,6 @@
 <?php
 
-namespace Koded\Stdlib\Tests\Serializer;
+namespace Tests\Koded\Stdlib\Serializer;
 
 use Koded\Stdlib\Serializer\JsonSerializer;
 use PHPUnit\Framework\TestCase;
@@ -10,7 +10,6 @@ use PHPUnit\Framework\TestCase;
  */
 class JsonSerializerOptionsTest extends TestCase
 {
-
     public function test_default_options()
     {
         $expected = JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR;

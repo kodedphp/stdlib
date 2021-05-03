@@ -2,13 +2,12 @@
 
 namespace Tests\Koded\Stdlib;
 
-use Koded\Stdlib\Tests\Serializer\JsonSerializerTest;
 use PHPUnit\Framework\TestCase;
+use Tests\Koded\Stdlib\Serializer\JsonSerializerTest;
 use function Koded\Stdlib\json_unserialize;
 
 class JsonSerializerFunctionsTest extends TestCase
 {
-
     /** @dataProvider data */
     public function test_serialize_to_json($data)
     {

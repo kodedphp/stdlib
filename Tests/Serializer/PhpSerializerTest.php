@@ -1,6 +1,6 @@
 <?php
 
-namespace Koded\Stdlib\Tests\Serializer;
+namespace Tests\Koded\Stdlib\Serializer;
 
 use Koded\Stdlib\Serializer;
 use Koded\Stdlib\Serializer\PhpSerializer;
@@ -8,11 +8,10 @@ use PHPUnit\Framework\TestCase;
 
 class PhpSerializerTest extends TestCase
 {
-    /** @var PhpSerializer */
-    private $SUT;
+    private PhpSerializer $SUT;
 
-    private $original;
-    private $serialized;
+    private mixed $original;
+    private string $serialized;
 
     public function test_serialize()
     {
@@ -33,6 +32,6 @@ class PhpSerializerTest extends TestCase
     {
         $this->SUT = new PhpSerializer;
         $this->original = require __DIR__ . '/../fixtures/config-test.php';
-        $this->serialized = serialize($this->original);
+        $this->serialized = \serialize($this->original);
     }
 }

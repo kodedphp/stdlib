@@ -8,11 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class ImmutableObjectTest extends TestCase
 {
-
-    /**
-     * @var Immutable
-     */
-    private $SUT;
+    private Immutable $SUT;
 
     public function test_should_load_the_array()
     {

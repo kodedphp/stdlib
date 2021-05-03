@@ -1,6 +1,6 @@
 <?php
 
-namespace Koded\Stdlib\Tests\Serializer;
+namespace Tests\Koded\Stdlib\Serializer;
 
 use ArrayIterator;
 use Koded\Stdlib\Serializer;
@@ -11,11 +11,9 @@ use function Koded\Stdlib\{json_serialize, json_unserialize};
 
 class JsonSerializerTest extends TestCase
 {
-
     const SERIALIZED_JSON = '{"object":{},"array":[],"str":"php","float":2.5,"int":7,"bool":false,"null":null}';
 
-    /** @var JsonSerializer */
-    private $SUT;
+    private JsonSerializer $SUT;
 
     /** @dataProvider data */
     public function test_serialize($data)
@@ -48,7 +46,7 @@ class JsonSerializerTest extends TestCase
 
     public function test_unserialize()
     {
-        $this->assertEquals(json_decode(self::SERIALIZED_JSON, false), $this->SUT->unserialize(self::SERIALIZED_JSON));
+        $this->assertEquals(\json_decode(self::SERIALIZED_JSON, false), $this->SUT->unserialize(self::SERIALIZED_JSON));
     }
 
     public function test_unserialize_error()

@@ -1,6 +1,6 @@
 <?php
 
-namespace Koded\Stdlib\Tests\Serializer;
+namespace Tests\Koded\Stdlib\Serializer;
 
 use Koded\Stdlib\Serializer;
 use Koded\Stdlib\Serializer\MsgpackSerializer;
@@ -8,11 +8,9 @@ use PHPUnit\Framework\TestCase;
 
 class MsgpackSerializerTest extends TestCase
 {
+    private MsgpackSerializer $SUT;
 
-    /** @var MsgpackSerializer */
-    private $SUT;
-
-    private $original;
+    private mixed $original;
     private $msg;
 
     public function test_serialize()
@@ -32,7 +30,7 @@ class MsgpackSerializerTest extends TestCase
 
     protected function setUp(): void
     {
-        if (false === extension_loaded('msgpack')) {
+        if (false === \extension_loaded('msgpack')) {
             $this->markTestSkipped('msgpack extension is not loaded');
         }
 

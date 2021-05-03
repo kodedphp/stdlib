@@ -1,6 +1,6 @@
 <?php
 
-namespace Koded\Stdlib\Tests\PhpBench;
+namespace Tests\Koded\Stdlib\PhpBench;
 
 use Koded\Stdlib\Serializer\MsgpackSerializer;
 

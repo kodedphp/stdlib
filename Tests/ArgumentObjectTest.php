@@ -7,11 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class ArgumentObjectTest extends TestCase
 {
-
-    /**
-     * @var Argument
-     */
-    private $SUT;
+    private Arguments $SUT;
 
     public function test_set()
     {

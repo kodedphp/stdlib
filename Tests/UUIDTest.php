@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 
 class UUIDTest extends TestCase
 {
-
     const NS3_1 = '4d436f52-5707-3cc3-b69d-ec060ccdbcba';
     const NS3_2 = 'b7890c8d-f62d-3048-ab4e-9cff3ab590d2';
 

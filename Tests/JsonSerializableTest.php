@@ -7,7 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class JsonSerializableTest extends TestCase
 {
-
     public function test_json_serializable_interface_implementation()
     {
         $SUT = new Arguments(['foo' => new Arguments(['bar' => 'gir'])]);
@@ -37,11 +36,11 @@ class JsonSerializableTest extends TestCase
 
         $expected = $args;
         $expected['array'] = (object)['foo' => 'bar'];
-        $this->assertEquals((object)$expected, json_decode($json), 'The arrays are lost after json_decode($, false)');
+        $this->assertEquals((object)$expected, \json_decode($json), 'The arrays are lost after json_decode($, false)');
 
         $expected['array'] = $args['array'];
         $expected['stdClass'] = (array)$args['stdClass'];
 
-        $this->assertEquals($expected, json_decode($json, true), 'The objects are lost after json_decode($, true)');
+        $this->assertEquals($expected, \json_decode($json, true), 'The objects are lost after json_decode($, true)');
     }
 }

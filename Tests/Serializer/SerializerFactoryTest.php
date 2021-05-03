@@ -1,6 +1,6 @@
 <?php
 
-namespace Koded\Stdlib\Tests\Serializer;
+namespace Tests\Koded\Stdlib\Serializer;
 
 use Koded\Exceptions\SerializerException;
 use Koded\Stdlib\Serializer;
@@ -22,7 +22,7 @@ class SerializerFactoryTest extends TestCase
 
     public function test_igbinary()
     {
-        if (false === function_exists('igbinary_serialize')) {
+        if (false === \function_exists('igbinary_serialize')) {
             $this->markTestSkipped('igbinary extension is not loaded');
         }
 
@@ -32,7 +32,7 @@ class SerializerFactoryTest extends TestCase
 
     public function test_msgpack()
     {
-        if (false === extension_loaded('msgpack')) {
+        if (false === \extension_loaded('msgpack')) {
             $this->markTestSkipped('msgpack extension is not loaded');
         }
 
@@ -97,7 +97,7 @@ class TestSerializer implements Serializer
         $this->arg1 = $arg1;
         $this->arg2 = $arg2;
     }
-    public function serialize($value): string {}
-    public function unserialize($value) {}
+    public function serialize(mixed $value): ?string {}
+    public function unserialize(string $value): mixed {}
     public function type(): string { return self::class; }
 }

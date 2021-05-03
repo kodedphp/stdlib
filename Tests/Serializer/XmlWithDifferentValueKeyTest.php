@@ -1,6 +1,6 @@
 <?php
 
-namespace Koded\Stdlib\Tests\Serializer;
+namespace Tests\Koded\Stdlib\Serializer;
 
 use Koded\Stdlib\Serializer\XmlSerializer;
 use PHPUnit\Framework\TestCase;
@@ -10,7 +10,7 @@ class XmlWithDifferentValueKeyTest extends TestCase
     public function test_unserialize_atom_file()
     {
         $serializer = new XmlSerializer('payload', '$val');
-        $atom = $serializer->unserialize(file_get_contents(__DIR__ . '/../fixtures/atom-example.xml'));
+        $atom = $serializer->unserialize(\file_get_contents(__DIR__ . '/../fixtures/atom-example.xml'));
         $channel = $atom['channel'] ?? [];
 
         $this->assertSame([

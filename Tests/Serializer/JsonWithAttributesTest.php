@@ -1,10 +1,9 @@
 <?php
 
-namespace Koded\Stdlib\Tests\Serializer;
+namespace Tests\Koded\Stdlib\Serializer;
 
 use Koded\Stdlib\Serializer\JsonSerializer;
 use PHPUnit\Framework\TestCase;
-
 
 class JsonWithAttributesTest extends TestCase
 {
@@ -21,7 +20,7 @@ class JsonWithAttributesTest extends TestCase
 
     public function test_xml_with_attributes_unserialize()
     {
-        $array = (new JsonSerializer(0, true))->unserialize(file_get_contents(self::JSON_FILE));
+        $array = (new JsonSerializer(0, true))->unserialize(\file_get_contents(self::JSON_FILE));
         $this->assertSame($array, require self::PHP_FILE);
     }
 }

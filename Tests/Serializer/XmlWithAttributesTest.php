@@ -1,10 +1,9 @@
 <?php
 
-namespace Koded\Stdlib\Tests\Serializer;
+namespace Tests\Koded\Stdlib\Serializer;
 
 use Koded\Stdlib\Serializer\XmlSerializer;
 use PHPUnit\Framework\TestCase;
-
 
 class XmlWithAttributesTest extends TestCase
 {
@@ -21,7 +20,7 @@ class XmlWithAttributesTest extends TestCase
     {
         $serializer = new XmlSerializer(null);
 
-        $arr = $serializer->unserialize(file_get_contents(__DIR__ . '/../fixtures/serializer-fixture.xml'));
+        $arr = $serializer->unserialize(\file_get_contents(__DIR__ . '/../fixtures/serializer-fixture.xml'));
 
         $this->assertSame(require __DIR__ . '/../fixtures/serializer-fixture.php', $arr);
     }

@@ -16,7 +16,6 @@ use function Koded\Stdlib\{arguments,
     value,
     rmdir};
 
-
 class FunctionsTest extends TestCase
 {
 
@@ -86,11 +85,11 @@ class FunctionsTest extends TestCase
 
     public function test_rmdir_function()
     {
-        $dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR. randomstring(9);
+        $dir = \sys_get_temp_dir() . DIRECTORY_SEPARATOR. randomstring(9);
         $file = $dir . DIRECTORY_SEPARATOR . randomstring(9) . '.txt';
 
         $this->assertTrue(mkdir($dir), 'Should create an empty directory');
-        $this->assertSame(4, file_put_contents($file, 'test'), 'Should create the file in the directory');
+        $this->assertSame(4, \file_put_contents($file, 'test'), 'Should create the file in the directory');
         $this->assertFileExists($file, 'Should add file in the directory');
 
         $this->assertTrue(rmdir($dir));

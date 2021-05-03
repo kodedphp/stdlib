@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 class ReadOnlyExceptionTest extends TestCase
 {
-
     public function test_message_and_code()
     {
         $ex1 = ReadOnlyException::forCloning('Foo');
