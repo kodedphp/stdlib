@@ -13,61 +13,40 @@
     "exceptions",
     "dto",
     "dot-array",
-    "serializer",
-    "config"
+    "serializer"
   ],
   "authors": [
     {
       "name": "Mihail Binev",
-      "homepage": "https://kodeart.com"
+      "homepage": "http://kodeart.com"
     }
   ],
   "require": {
-    "php": "^7.2",
+    "php": "^7.1.4",
     "psr/http-message": "~1",
     "ext-json": "*",
     "ext-dom": "*",
     "ext-libxml": "*",
-    "ext-simplexml": "*",
-    "ext-ctype": "*",
-    "ext-mbstring": "*"
-  },
-  "suggest": {
-    "msgpack": "msgpack module for de/serialization",
-    "igbinary": "igbinary module for de/serialization"
+    "ext-simplexml": "*"
   },
   "autoload": {
-    "classmap": [
-      "",
-      "Serializer/"
-    ],
+    "psr-4": {
+      "Koded\\": ""
+    },
     "files": [
-      "Exceptions.php",
-      "Interfaces.php",
       "functions.php"
     ],
     "exclude-from-classmap": [
-      "Tests/"
+      "/Tests/"
     ]
   },
   "require-dev": {
-    "phpunit/phpunit": "~7",
-    "phpbench/phpbench": "@dev"
+    "phpunit/phpunit": "~6",
+    "satooshi/php-coveralls": "~1"
   },
   "autoload-dev": {
-    "psr-4": {
-      "Tests\\Koded\\Stdlib\\": "Tests/"
-    },
     "files": [
       "functions-dev.php"
     ]
-  },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "4.x-dev"
-    }
-  },
-  "config": {
-    "optimize-autoloader": true
   }
 }

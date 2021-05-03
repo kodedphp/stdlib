@@ -96,34 +96,7 @@ class ImmutableObjectTest extends TestCase
         ]));
     }
 
-    public function test_equals_method()
-    {
-        $data = new Immutable([
-            'e1' => null,
-            'e2' => '',
-            '01' => 0,
-            '02' => '0',
-            'foo1' => 'Foo',
-            'foo2' => 'foo',
-            'obj1' => new \stdClass,
-            'obj2' => new \stdClass,
-            'false' => false,
-        ]);
-
-        $this->assertFalse($data->equals('e1', 'e2'));
-        $this->assertFalse($data->equals('01', '02'));
-        $this->assertFalse($data->equals('foo1', 'foo2'));
-        $this->assertFalse($data->equals('obj1', 'obj2'));
-        $this->assertFalse($data->equals('false', '01'));
-        $this->assertFalse($data->equals('false', '02'));
-
-        // NULL checks
-        $this->assertTrue($data->equals('e1', 'non-existent'));
-        $this->assertTrue($data->equals('non-existent-1', 'non-existent-2'));
-        $this->assertFalse($data->equals('e2', 'non-existent'));
-    }
-
-    protected function setUp(): void
+    protected function setUp()
     {
         $this->SUT = new Immutable(require __DIR__ . '/fixtures/nested-array.php');
     }

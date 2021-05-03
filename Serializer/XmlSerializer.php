@@ -17,15 +17,14 @@ use DateTimeInterface;
 use DOMDocument;
 use DOMElement;
 use Exception;
-use Koded\Stdlib\Interfaces\Serializer;
-use function Koded\Stdlib\htmlencode;
+use Koded\Stdlib\Interfaces\StringSerializable;
 
 /**
  * Class XmlSerializer is heavily copied from excellent
  * Propel 3 runtime parser (XmlParser) and modified.
  *
  */
-final class XmlSerializer implements Serializer
+final class XmlSerializer implements StringSerializable
 {
 
     private $root;
@@ -40,7 +39,7 @@ final class XmlSerializer implements Serializer
      *
      * @return string XML
      */
-    public function serialize($data)
+    public function serialize($data): string
     {
         $xml = new DOMDocument('1.0', 'UTF-8');
         $xml->preserveWhiteSpace = false;
@@ -58,22 +57,17 @@ final class XmlSerializer implements Serializer
      *
      * @return array
      */
-    public function unserialize($document)
+    public function unserialize(string $document)
     {
         $xml = new DOMDocument('1.0', 'UTF-8');
 
         try {
-            $xml->loadXML($document);
+            $xml->loadXML(utf8_encode($document));
         } catch (Exception $e) {
             return [];
         }
 
         return $this->parseFromElement($xml->documentElement);
-    }
-
-    public function type(): string
-    {
-        return Serializer::XML;
     }
 
     private function parseFromArray(iterable $data, DOMElement $element): DOMElement
@@ -101,7 +95,8 @@ final class XmlSerializer implements Serializer
             if (is_array($value)) {
                 $child = $this->parseFromArray($value, $child);
             } elseif (is_string($value)) {
-                $child->appendChild($child->ownerDocument->createCDATASection(htmlencode($value)));
+                $value = htmlentities($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                $child->appendChild($child->ownerDocument->createCDATASection($value));
             } elseif ($value instanceof DateTimeInterface) {
                 $child->setAttribute('type', 'xsd:dateTime');
                 $child->appendChild($child->ownerDocument->createTextNode($value->format(DateTime::ISO8601)));

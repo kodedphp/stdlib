@@ -2,7 +2,6 @@
 
 namespace Koded\Stdlib\Serializer;
 
-use Koded\Stdlib\Interfaces\Serializer;
 use PHPUnit\Framework\TestCase;
 
 class XmlSerializerTest extends TestCase
@@ -38,27 +37,8 @@ class XmlSerializerTest extends TestCase
         $this->assertEquals(require __DIR__ . '/../fixtures/nested-array.php', $array);
     }
 
-    public function test_non_utf8_file_should_fail_to_serialize()
+    protected function setUp()
     {
-        $xml = $this->SUT->serialize(require __DIR__ . '/../fixtures/non-utf8-file.php');
-        $this->assertEquals(<<<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<payload>
-  <diva><![CDATA[]]></diva>
-</payload>
-
-XML
-            , $xml);
-    }
-
-    public function testName()
-    {
-        $this->assertSame(Serializer::XML, $this->SUT->type());
-    }
-
-    protected function setUp(): void
-    {
-        $this->markTestSkipped();
         $this->SUT = new XmlSerializer('payload');
     }
 }

@@ -1,54 +1,49 @@
 <?php
 
-/*
- * This file is part of the Koded package.
- *
- * (c) Mihail Binev <mihail@kodeart.com>
- *
- * Please view the LICENSE distributed with this source code
- * for the full copyright and license information.
- *
- */
-
 namespace Koded\Stdlib\Serializer;
 
-use Koded\Stdlib\Interfaces\Serializer;
-use function Koded\Stdlib\{json_serialize, json_unserialize};
+use Koded\Exceptions\KodedException;
+use Koded\Stdlib\Interfaces\StringSerializable;
 
-final class JsonSerializer implements Serializer
+final class JsonSerializer implements StringSerializable
 {
 
     /**
-     * @var int JSON encode options. Defaults to (1088):
+     * @var int JSON encode options. Defaults to (1376):
      *          - JSON_PRESERVE_ZERO_FRACTION
+     *          - JSON_NUMERIC_CHECK
      *          - JSON_UNESCAPED_SLASHES
+     *          - JSON_UNESCAPED_UNICODE
      */
-    private $options = JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES;
+    private $options;
 
     /**
      * JsonSerializer constructor.
      *
-     * @param int $options [optional] JSON encode options.
-     *                     - to add more JSON options use OR "|" bitmask operator
-     *                     - to exclude multiple default options use XOR "^"
+     * @param int $options [optional] JSON encode options
      */
-    public function __construct(int $options = 0)
+    public function __construct(int $options = null)
     {
-        $this->options ^= $options;
+        $this->options = $options ??
+            JSON_PRESERVE_ZERO_FRACTION
+            | JSON_NUMERIC_CHECK
+            | JSON_UNESCAPED_SLASHES
+            | JSON_UNESCAPED_UNICODE;
     }
 
-    public function serialize($value)
+    public function serialize($value): string
     {
-        return json_serialize($value, $this->options);
+        return json_encode($value, $this->options);
     }
 
-    public function unserialize($value)
+    public function unserialize(string $value)
     {
-        return json_unserialize($value);
-    }
+        $json = json_decode(utf8_encode($value), true, 512, JSON_BIGINT_AS_STRING);
 
-    public function type(): string
-    {
-        return Serializer::JSON;
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            throw KodedException::generic(json_last_error_msg());
+        }
+
+        return $json;
     }
 }

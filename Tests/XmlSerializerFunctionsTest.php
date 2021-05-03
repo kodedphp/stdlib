@@ -10,8 +10,6 @@ class XmlSerializerFunctionsTest extends TestCase
 
     public function test_serialize_to_xml()
     {
-        $this->markTestSkipped();
-
         $this->assertXmlStringEqualsXmlFile(
             XmlSerializerTest::XML_FILE,
             xml_serialize('payload', require XmlSerializerTest::PHP_FILE)
@@ -20,8 +18,6 @@ class XmlSerializerFunctionsTest extends TestCase
 
     public function test_unserialize()
     {
-        $this->markTestSkipped();
-
         $this->assertEquals(
             require XmlSerializerTest::PHP_FILE,
             xml_unserialize('payload', file_get_contents(XmlSerializerTest::XML_FILE))
