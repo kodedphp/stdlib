@@ -41,24 +41,22 @@ final class SerializerFactory
 
             case Serializer::IGBINARY:
                 // @codeCoverageIgnoreStart
-                if (false === extension_loaded('igbinary')) {
+                if (false === \extension_loaded('igbinary')) {
                     throw SerializerException::forMissingModule(Serializer::MSGPACK);
                 }
-
                 return new IgbinarySerializer;
             // @codeCoverageIgnoreEnd
 
             case Serializer::MSGPACK:
                 // @codeCoverageIgnoreStart
-                if (false === extension_loaded('msgpack')) {
+                if (false === \extension_loaded('msgpack')) {
                     throw SerializerException::forMissingModule(Serializer::MSGPACK);
                 }
-
                 return new MsgpackSerializer;
             // @codeCoverageIgnoreEnd
         }
 
-        if (is_a($name, Serializer::class, true)) {
+        if (\is_a($name, Serializer::class, true)) {
             return new $name(...$args);
         }
 

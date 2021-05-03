@@ -15,12 +15,12 @@ use Koded\Stdlib\Serializer;
 
 class IgbinarySerializer implements Serializer
 {
-    public function serialize($value)
+    public function serialize(mixed $value): ?string
     {
         return \igbinary_serialize($value);
     }
 
-    public function unserialize($value)
+    public function unserialize(string $value): mixed
     {
         return \igbinary_unserialize($value);
     }

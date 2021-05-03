@@ -15,12 +15,12 @@ use Koded\Stdlib\Serializer;
 
 class MsgpackSerializer implements Serializer
 {
-    public function serialize($value)
+    public function serialize(mixed $value): ?string
     {
         return \msgpack_pack($value);
     }
 
-    public function unserialize($value)
+    public function unserialize(string $value): mixed
     {
         return \msgpack_unpack($value);
     }

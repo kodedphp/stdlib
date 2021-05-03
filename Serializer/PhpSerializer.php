@@ -15,14 +15,14 @@ use Koded\Stdlib\Serializer;
 
 class PhpSerializer implements Serializer
 {
-    public function serialize($value)
+    public function serialize(mixed $value): ?string
     {
-        return serialize($value);
+        return \serialize($value);
     }
 
-    public function unserialize($value)
+    public function unserialize(string $value): mixed
     {
-        return unserialize($value);
+        return \unserialize($value);
     }
 
     public function type(): string

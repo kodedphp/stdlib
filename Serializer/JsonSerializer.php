@@ -25,12 +25,9 @@ class JsonSerializer implements Serializer
      *          - JSON_PRESERVE_ZERO_FRACTION
      *          - JSON_UNESCAPED_SLASHES
      */
-    private $options = self::OPTIONS;
+    private int $options = self::OPTIONS;
 
-    /**
-     * @var bool
-     */
-    private $associative = false;
+    private bool $associative;
 
     /**
      * JsonSerializer constructor.
@@ -47,12 +44,12 @@ class JsonSerializer implements Serializer
         $this->associative = $associative;
     }
 
-    public function serialize($value)
+    public function serialize(mixed $value): ?string
     {
         return json_serialize($value, $this->options);
     }
 
-    public function unserialize($value)
+    public function unserialize(string $value): mixed
     {
         return json_unserialize($value, $this->associative);
     }
