@@ -26,11 +26,9 @@ use function Koded\Stdlib\{json_serialize, json_unserialize};
  */
 class XmlSerializer implements Serializer
 {
-    /** @var string The key name of the node value */
+    /** @var string The key name for the node value */
     private string $val = '#';
-
     private string|null $root;
-    private DOMDocument $document;
 
     public function __construct(?string $root, string $nodeKey = '#')
     {
@@ -55,21 +53,21 @@ class XmlSerializer implements Serializer
     /**
      * @param iterable $data
      *
-     * @return string XML
+     * @return string|null XML
      */
-    public function serialize(mixed $data): ?string
+    public function serialize(mixed $data): string|null
     {
-        $this->document = new DOMDocument('1.0', 'UTF-8');
-        $this->document->formatOutput = false;
+        $document = new DOMDocument('1.0', 'UTF-8');
+        $document->formatOutput = false;
         if (\is_iterable($data)) {
-            $root = $this->document->createElement($this->root);
-            $this->document->appendChild($root);
-            $this->document->createAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:' . $this->root);
-            $this->buildXml($root, $data);
+            $root = $document->createElement($this->root);
+            $document->appendChild($root);
+            $document->createAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:' . $this->root);
+            $this->buildXml($document, $root, $data);
         } else {
-            $this->appendNode($this->document, $data, $this->root);
+            $this->appendNode($document, $document, $data, $this->root);
         }
-        return $this->document->saveXML();
+        return $document->saveXML();
     }
 
     /**
@@ -88,7 +86,7 @@ class XmlSerializer implements Serializer
             if ($document->documentElement->hasChildNodes()) {
                 return $this->parseXml($document->documentElement);
             }
-            return false === $document->documentElement->getAttributeNode('xmlns:xsi')
+            return !$document->documentElement->getAttributeNode('xmlns:xsi')
                 ? $this->parseXml($document->documentElement)
                 : [];
 
@@ -98,33 +96,36 @@ class XmlSerializer implements Serializer
         }
     }
 
-    private function buildXml(DOMNode $parent, iterable $data): void
+    private function buildXml(
+        DOMDocument $document,
+        DOMNode $parent,
+        iterable $data): void
     {
         foreach ($data as $key => $data) {
             $isKeyNumeric = \is_numeric($key);
-            if (0 === \strpos($key, '@') && $name = \substr($key, 1)) {
-                // a node attribute
+            if (\str_starts_with($key, '@') && $name = \substr($key, 1)) {
+                // node attribute
                 $parent->setAttribute($name, $data);
             } elseif ($this->val === $key) {
-                // the node value
+                // node value
                 $parent->nodeValue = $data;
             } elseif (false === $isKeyNumeric && \is_array($data)) {
                 if (\ctype_digit(\join('', \array_keys($data)))) {
                     foreach ($data as $d) {
-                        $this->appendNode($parent, $d, $key);
+                        $this->appendNode($document, $parent, $d, $key);
                     }
                 } else {
-                    $this->appendNode($parent, $data, $key);
+                    $this->appendNode($document, $parent, $data, $key);
                 }
             } elseif ($isKeyNumeric) {
-                $this->appendNode($parent, $data, 'item', $key);
+                $this->appendNode($document, $parent, $data, 'item', $key);
             } else {
-                $this->appendNode($parent, $data, $key);
+                $this->appendNode($document, $parent, $data, $key);
             }
         }
     }
 
-    private function parseXml(DOMNode $node)
+    private function parseXml(DOMNode $node): mixed
     {
         $attrs = $this->parseXmlAttributes($node);
         $value = $this->parseXmlValue($node);
@@ -163,7 +164,7 @@ class XmlSerializer implements Serializer
      * @return array|string|null
      * @throws \Exception
      */
-    private function parseXmlValue(DOMNode $node)
+    private function parseXmlValue(DOMNode $node): mixed
     {
         $value = [];
         if ($node->hasChildNodes()) {
@@ -206,35 +207,40 @@ class XmlSerializer implements Serializer
      * @param string      $name
      * @param string|null $key
      */
-    private function appendNode(DOMNode $parent, $data, string $name, string $key = null): void
+    private function appendNode(
+        DOMDocument $document,
+        DOMNode $parent,
+        mixed $data,
+        string $name,
+        string $key = null): void
     {
-        $element = $this->document->createElement($name);
+        $element = $document->createElement($name);
         if (null !== $key) {
             $element->setAttribute('key', $key);
         }
         if (\is_iterable($data)) {
-            $this->buildXml($element, $data);
+            $this->buildXml($document, $element, $data);
         } elseif (\is_bool($data)) {
             $element->setAttribute('type', 'xsd:boolean');
-            $element->appendChild($this->document->createTextNode($data));
+            $element->appendChild($document->createTextNode($data));
         } elseif (\is_float($data)) {
             $element->setAttribute('type', 'xsd:float');
-            $element->appendChild($this->document->createTextNode($data));
+            $element->appendChild($document->createTextNode($data));
         } elseif (\is_int($data)) {
             $element->setAttribute('type', 'xsd:integer');
-            $element->appendChild($this->document->createTextNode($data));
+            $element->appendChild($document->createTextNode($data));
         } elseif (null === $data) {
             $element->setAttribute('xsi:nil', 'true');
         } elseif ($data instanceof DateTimeInterface) {
             $element->setAttribute('type', 'xsd:dateTime');
-            $element->appendChild($this->document->createTextNode($data->format(DateTimeImmutable::ISO8601)));
+            $element->appendChild($document->createTextNode($data->format(DateTimeImmutable::ISO8601)));
         } elseif (\is_object($data)) {
             $element->setAttribute('type', 'xsd:object');
-            $element->appendChild($this->document->createCDATASection(json_serialize($data)));
+            $element->appendChild($document->createCDATASection(json_serialize($data)));
         } elseif (\preg_match('/[<>&\'"]/', $data) > 0) {
-            $element->appendChild($this->document->createCDATASection($data));
+            $element->appendChild($document->createCDATASection($data));
         } else {
-            $element->appendChild($this->document->createTextNode($data));
+            $element->appendChild($document->createTextNode($data));
         }
         $parent->appendChild($element);
     }
@@ -243,50 +249,37 @@ class XmlSerializer implements Serializer
      * Deserialize the XML document elements into strict PHP values
      * in regard to the XSD type defined in the XML element (if any).
      *
-     * IMPORTANT: When deserializing an XML document into values,
+     * [IMPORTANT]: When deserializing an XML document into values,
      * if the XmlSerializer encounters an XML element that specifies xsi:nil="true",
      * it assigns a NULL to the corresponding element and ignores any other attributes
      *
      * @param array|string $value
-     * @return array|string|null
+     * @return mixed array|string|null
      * @throws \Exception
      */
-    private function getValueByType($value)
+    private function getValueByType(mixed $value): mixed
     {
         if (false === \is_array($value)) {
             return $value;
         }
         /*
-         * if "xsi:nil" is NOT 'true', ignore the xsi:nil and
-         * process the rest of the attributes for this element
+         * [NOTE] if "xsi:nil" is NOT 'true', ignore the xsi:nil
+         * and process the rest of the attributes for this element
          */
         if (isset($value['@xsi:nil']) && $value['@xsi:nil'] == 'true') {
             unset($value['@xsi:nil']);
             return null;
         }
-        if (!(isset($value['@type']) && 0 === \strpos($value['@type'] ?? '', 'xsd:', 0))) {
+        if (!(isset($value['@type']) && \str_starts_with($value['@type'] ?? '', 'xsd:'))) {
             return $value;
         }
-        switch ($value['@type']) {
-            case 'xsd:integer':
-                $value[$this->val] = (int)$value[$this->val];
-                break;
-            case 'xsd:boolean':
-                $value[$this->val] = \filter_var($value[$this->val], FILTER_VALIDATE_BOOLEAN);
-                break;
-            case 'xsd:float':
-                $value[$this->val] = (float)$value[$this->val];
-                break;
-            case 'xsd:dateTime':
-                if (\is_string($value[$this->val])) {
-                    $value[$this->val] = new DateTimeImmutable($value[$this->val]);
-                }
-                break;
-            case 'xsd:object':
-                if (\is_string($value[$this->val])) {
-                    $value[$this->val] = json_unserialize($value[$this->val]);
-                }
-        }
+        $value[$this->val] = match ($value['@type']) {
+            'xsd:integer' => (int)$value[$this->val],
+            'xsd:boolean' => \filter_var($value[$this->val], FILTER_VALIDATE_BOOL),
+            'xsd:float' => (float)$value[$this->val],
+            'xsd:dateTime' => new DateTimeImmutable($value[$this->val]),
+            'xsd:object' => json_unserialize($value[$this->val]),
+        };
         unset($value['@type']);
         if (\count($value) > 1) {
             return $value;
