@@ -6,9 +6,12 @@ use Koded\Exceptions\SerializerException;
 use Koded\Stdlib\Serializer;
 use Koded\Stdlib\Serializer\SerializerFactory;
 use PHPUnit\Framework\TestCase;
+use Tests\Koded\Stdlib\ObjectPropertyTrait;
 
 class SerializerFactoryTest extends TestCase
 {
+    use ObjectPropertyTrait;
+
     public function test_native()
     {
         $json = SerializerFactory::new(Serializer::JSON);
@@ -46,12 +49,12 @@ class SerializerFactoryTest extends TestCase
         $this->assertSame(TestSerializer::class, $custom->type());
 
         $custom = new TestSerializer('foo', true);
-        $this->assertAttributeSame('foo', 'arg1', $custom);
-        $this->assertAttributeSame(true, 'arg2', $custom);
+        $this->assertSame('foo', $this->property($custom, 'arg1'));
+        $this->assertSame(true, $this->property($custom, 'arg2'));
 
         $custom = new TestSerializer;
-        $this->assertAttributeSame('', 'arg1', $custom);
-        $this->assertAttributeSame(false, 'arg2', $custom);
+        $this->assertSame('', $this->property($custom, 'arg1'));
+        $this->assertSame(false, $this->property($custom, 'arg2'));
     }
 
     public function test_exception()
@@ -68,21 +71,25 @@ class SerializerFactoryTest extends TestCase
         $options = JSON_PRETTY_PRINT | JSON_FORCE_OBJECT ^ JSON_THROW_ON_ERROR;
         $json = SerializerFactory::new('json', $options, true);
 
-        $this->assertAttributeSame(true, 'associative', $json);
-        $this->assertAttributeSame(
-            JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_FORCE_OBJECT,
-            'options',
-            $json
+        $this->assertSame(true, $this->property($json, 'associative'));
+        $this->assertSame(
+            JSON_PRESERVE_ZERO_FRACTION
+            | JSON_UNESCAPED_SLASHES
+            | JSON_UNESCAPED_UNICODE
+            | JSON_PRETTY_PRINT
+            | JSON_FORCE_OBJECT,
+            $this->property($json, 'options')
         );
     }
 
     public function test_xml_factory_arguments()
     {
         $xml = SerializerFactory::new('xml', 'fubar');
-        $this->assertAttributeSame('fubar', 'root', $xml);
+        $this->assertSame('fubar', $this->property($xml, 'root'));
 
         $xml = SerializerFactory::new('xml');
-        $this->assertAttributeSame(null, 'root', $xml);
+        $this->assertSame(null, $this->property($xml, 'root'));
+
     }
 }
 
