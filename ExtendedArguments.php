@@ -13,6 +13,12 @@ namespace Koded\Stdlib;
 
 use RecursiveArrayIterator;
 use RecursiveIteratorIterator;
+use function array_key_exists;
+use function array_push;
+use function array_slice;
+use function explode;
+use function is_array;
+use function join;
 
 /**
  * Class ExtendedArguments
@@ -32,9 +38,9 @@ class ExtendedArguments extends Arguments
     public function set(string $index, mixed $value): static
     {
         $storage = &$this->storage;
-        foreach (\explode('.', $index) as $i) {
-            if (false === \is_array($storage[$i]) ||
-                false === \array_key_exists($i, $storage)
+        foreach (explode('.', $index) as $i) {
+            if (false === is_array($storage[$i]) ||
+                false === array_key_exists($i, $storage)
             ) {
                 $storage[$i] = [];
             }
@@ -47,7 +53,7 @@ class ExtendedArguments extends Arguments
     public function append(string $index, mixed $value): static
     {
         $partial = (array)$this->get($index);
-        \array_push($partial, $value);
+        array_push($partial, $value);
         $this->set($index, $partial);
         return $this;
     }
@@ -55,9 +61,9 @@ class ExtendedArguments extends Arguments
     public function has(mixed $index): bool
     {
         $storage = & $this->storage;
-        foreach (\explode('.', $index) as $i) {
-            if (false === \is_array($storage) ||
-                false === \array_key_exists($i, $storage)
+        foreach (explode('.', $index) as $i) {
+            if (false === is_array($storage) ||
+                false === array_key_exists($i, $storage)
             ) {
                 return false;
             }
@@ -69,9 +75,9 @@ class ExtendedArguments extends Arguments
     public function delete(string $index): static
     {
         $storage = &$this->storage;
-        foreach (\explode('.', $index) as $i) {
-            if (false === \is_array($storage[$i]) ||
-                false === \array_key_exists($i, $storage)
+        foreach (explode('.', $index) as $i) {
+            if (false === is_array($storage[$i]) ||
+                false === array_key_exists($i, $storage)
             ) {
                 continue;
             }
@@ -102,8 +108,8 @@ class ExtendedArguments extends Arguments
         );
         foreach ($iterator as $index => $value) {
             $indexes[$iterator->getDepth()] = $index;
-            if (false === \is_array($value)) {
-                $_ = \join('.', \array_slice($indexes, 0, $iterator->getDepth() + 1));
+            if (false === is_array($value)) {
+                $_ = join('.', array_slice($indexes, 0, $iterator->getDepth() + 1));
                 $flatten[$_] = $value;
             }
         }

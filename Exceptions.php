@@ -14,6 +14,7 @@ namespace Koded\Exceptions;
 use Koded\Stdlib\{Data, Serializer};
 use RuntimeException;
 use Throwable;
+use function strtr;
 
 class KodedException extends RuntimeException
 {
@@ -36,7 +37,7 @@ class KodedException extends RuntimeException
     public function __construct(int $code, array $arguments = [], Throwable $previous = null)
     {
         $message = $arguments['message'] ?? $this->messages[$code] ?? $this->message;
-        parent::__construct(\strtr($message, $arguments), $code, $previous);
+        parent::__construct(strtr($message, $arguments), $code, $previous);
     }
 
     public static function generic(string $message, Throwable $previous = null): static

@@ -12,6 +12,27 @@
 namespace Koded\Stdlib;
 
 use InvalidArgumentException;
+use function chr;
+use function ctype_digit;
+use function ctype_xdigit;
+use function dechex;
+use function explode;
+use function gethostbyname;
+use function gettimeofday;
+use function hexdec;
+use function in_array;
+use function md5;
+use function mt_rand;
+use function preg_match;
+use function random_bytes;
+use function sha1;
+use function sprintf;
+use function str_replace;
+use function strlen;
+use function strtolower;
+use function substr;
+use function unpack;
+use function vsprintf;
 
 /**
  * Class UUID generates Universally Unique Identifiers following the RFC 4122.
@@ -82,10 +103,10 @@ final class UUID
      */
     public static function v4(): string
     {
-        $bytes = \unpack('n*', \random_bytes(16));
+        $bytes = unpack('n*', random_bytes(16));
         $bytes[4] = $bytes[4] & 0x0fff | 0x4000;
         $bytes[5] = $bytes[5] & 0x3fff | 0x8000;
-        return \vsprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x', $bytes);
+        return vsprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x', $bytes);
     }
 
     /**
@@ -111,11 +132,11 @@ final class UUID
      */
     public static function valid(string $uuid): bool
     {
-        if (false === (bool)\preg_match('/^' . UUID::PATTERN . '$/i', $uuid)) {
+        if (false === (bool)preg_match('/^' . UUID::PATTERN . '$/i', $uuid)) {
             return false;
         }
         if ('4' === $uuid[14]) {
-            return \in_array($uuid[19], ['8', '9', 'a', 'b']);
+            return in_array($uuid[19], ['8', '9', 'a', 'b']);
         }
         return true;
     }
@@ -130,12 +151,12 @@ final class UUID
      */
     public static function matches(string $uuid, int $version = 4): bool
     {
-        assert(\in_array($version, [1, 3, 4, 5]), "Expected UUID version 1, 3, 4 or 5 (got $version)");
+        assert(in_array($version, [1, 3, 4, 5]), "Expected UUID version 1, 3, 4 or 5 (got $version)");
         return UUID::valid($uuid);
     }
 
     /**
-     * UUID v1 is generated from host (hardware address), clock sequence and
+     * UUID v1 is generated from host (hardware) address, clock sequence and
      * current time. This is very slow method.
      *
      * @param string|int|null $address [optional] 48 bit number for the hardware address.
@@ -158,17 +179,17 @@ final class UUID
                 return $node;
             }
             if ($node = `hostname -i 2> /dev/null`) {
-                return $node = \vsprintf('%02x%02x%02x%02x', \explode('.', $node));
+                return $node = vsprintf('%02x%02x%02x%02x', explode('.', $node));
             }
             if ($node = `hostname 2> /dev/null`) {
-                $node = \gethostbyname(\trim($node));
-                return $node = \vsprintf('%02x%02x%02x%02x', \explode('.', $node));
+                $node = gethostbyname(\trim($node));
+                return $node = vsprintf('%02x%02x%02x%02x', explode('.', $node));
             }
             // Cannot identify IP or host, fallback as described in
             // http://tools.ietf.org/html/rfc4122#section-4.5
             // https://en.wikipedia.org/wiki/MAC_address#Unicast_vs._multicast_(I/G_bit)
             // @codeCoverageIgnoreStart
-            return $node = \dechex(\mt_rand(0, 1 << 48) | (1 << 40));
+            return $node = dechex(mt_rand(0, 1 << 48) | (1 << 40));
             // @codeCoverageIgnoreEnd
         };
 
@@ -180,14 +201,14 @@ final class UUID
          */
         $nodeIdentifier = static function(string|int $address = null) use ($fetchAddress): string {
             $address = null !== $address
-                ? \str_replace([':', '-', '.'], '', (string)$address)
+                ? str_replace([':', '-', '.'], '', (string)$address)
                 : $fetchAddress();
 
-            if (\ctype_digit($address)) {
-                return \sprintf('%012x', $address);
+            if (ctype_digit($address)) {
+                return sprintf('%012x', $address);
             }
-            if (\ctype_xdigit($address) && \strlen($address) <= 12) {
-                return \strtolower($address);
+            if (ctype_xdigit($address) && strlen($address) <= 12) {
+                return strtolower($address);
             }
             throw new InvalidArgumentException('UUID invalid node value');
         };
@@ -198,7 +219,7 @@ final class UUID
          * @return int[]
          */
         $fromUnixNano = static function() use (&$lastTimestamp) {
-            $ts = \gettimeofday();
+            $ts = gettimeofday();
             $ts = ($ts['sec'] * 10000000) + ($ts['usec'] * 10) + 0x01b21dd213814000;
             if ($lastTimestamp && $ts <= $lastTimestamp) {
                 $ts = $lastTimestamp + 1;
@@ -217,9 +238,9 @@ final class UUID
         if (!$clockSeq) {
             // Random 14-bit sequence number
             // http://tools.ietf.org/html/rfc4122#section-4.2.1.1
-            $clockSeq = \mt_rand(0, 1 << 14);
+            $clockSeq = mt_rand(0, 1 << 14);
         }
-        return \vsprintf('%08x-%04x-%04x-%02x%02x-%012s', [
+        return vsprintf('%08x-%04x-%04x-%02x%02x-%012s', [
             ...$fromUnixNano(),
             $clockSeq & 0xff,
             ($clockSeq >> 8) & 0x3f,
@@ -242,19 +263,19 @@ final class UUID
         if (false === UUID::matches($namespace, $version)) {
             throw new InvalidArgumentException('Invalid UUID namespace ' . $namespace);
         }
-        $hex = \str_replace('-', '', $namespace);
+        $hex = str_replace('-', '', $namespace);
         $bits = '';
-        for ($i = 0, $len = \strlen($hex); $i < $len; $i += 2) {
-            $bits .= \chr((int)\hexdec($hex[$i] . $hex[$i + 1]));
+        for ($i = 0, $len = strlen($hex); $i < $len; $i += 2) {
+            $bits .= chr((int)hexdec($hex[$i] . $hex[$i + 1]));
         }
         $hash = $bits . $name;
-        $hash = (3 === $version) ? \md5($hash) : \sha1($hash);
-        return \sprintf('%08s-%04s-%04x-%04x-%12s',
-            \substr($hash, 0, 8),
-            \substr($hash, 8, 4),
-            (\hexdec(\substr($hash, 12, 4)) & 0x0fff) | (3 === $version ? 0x3000 : 0x5000),
-            (\hexdec(\substr($hash, 16, 4)) & 0x3fff) | 0x8000,
-            \substr($hash, 20, 12)
+        $hash = (3 === $version) ? md5($hash) : sha1($hash);
+        return sprintf('%08s-%04s-%04x-%04x-%12s',
+            substr($hash, 0, 8),
+            substr($hash, 8, 4),
+            (hexdec(substr($hash, 12, 4)) & 0x0fff) | (3 === $version ? 0x3000 : 0x5000),
+            (hexdec(substr($hash, 16, 4)) & 0x3fff) | 0x8000,
+            substr($hash, 20, 12)
         );
     }
 }

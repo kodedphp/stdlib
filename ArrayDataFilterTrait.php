@@ -11,18 +11,24 @@
 
 namespace Koded\Stdlib;
 
+use function array_key_exists;
+use function explode;
+use function is_array;
+use function str_replace;
+use function str_starts_with;
+
 trait ArrayDataFilterTrait
 {
     public function filter(
         iterable $data,
         string $prefix,
         bool $lowercase = true,
-        bool $trim = true
-    ): array {
+        bool $trim = true): array
+    {
         $filtered = [];
         foreach ($data as $index => $value) {
-            if ($trim && '' !== $prefix && \str_starts_with($index, $prefix)) {
-                $index = \str_replace($prefix, '', $index);
+            if ($trim && '' !== $prefix && str_starts_with($index, $prefix)) {
+                $index = str_replace($prefix, '', $index);
             }
             $filtered[$lowercase ? \strtolower($index) : $index] = $value;
         }
@@ -35,9 +41,9 @@ trait ArrayDataFilterTrait
             return $this->storage[$index];
         }
         $storage = $this->storage;
-        foreach (\explode('.', $index) as $token) {
-            if (false === \is_array($storage) ||
-                false === \array_key_exists($token, $storage)
+        foreach (explode('.', $index) as $token) {
+            if (false === is_array($storage) ||
+                false === array_key_exists($token, $storage)
             ) {
                 return $default;
             }
