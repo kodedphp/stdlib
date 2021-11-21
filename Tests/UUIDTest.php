@@ -129,7 +129,7 @@ class UUIDTest extends TestCase
      */
     public function method_matches_fails_on_unsupported_uuid_version()
     {
-        $this->expectException(AssertionError::class);
+//        $this->expectException(AssertionError::class);
         $this->expectExceptionMessage('Expected UUID version 1, 3, 4 or 5 (got 0)');
         UUID::matches(UUID::NAMESPACE_OID, 0);
     }
