@@ -25,7 +25,7 @@
   <!-- code coverage -->
   <php>
     <ini name="date.timezone" value="UTC"/>
-    <ini name="assert.exception" value="1"/>
+    <ini name="assert.bail" value="1"/>
     <env name="KEY_1" value="42"/>
     <env name="KEY_3" value="value3"/>
     <env name="KEY_4" value="true"/>
