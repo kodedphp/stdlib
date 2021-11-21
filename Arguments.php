@@ -16,7 +16,7 @@ use IteratorAggregate;
 use JsonSerializable;
 
 /**
- * Arguments is a MUTABLE, multi purpose class that encapsulates data.
+ * Arguments is a MUTABLE, multipurpose class that encapsulates data.
  * It is useful for passing it around as a DTO.
  *
  * TIP: Avoid creating a child classes with properties from this one.

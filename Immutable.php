@@ -16,7 +16,7 @@ use IteratorAggregate;
 use JsonSerializable;
 
 /**
- * An IMMUTABLE, multi purpose class that encapsulates a read-only data.
+ * An IMMUTABLE, multipurpose class that encapsulates a read-only data.
  * It is useful for passing it around as a DTO.
  */
 class Immutable implements Data,
