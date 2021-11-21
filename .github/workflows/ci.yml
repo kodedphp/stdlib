@@ -25,7 +25,7 @@ jobs:
         php-version: ${{ matrix.php-versions }}
         tools: composer:v2, pecl
         coverage: pcov
-        extensions: ctype igbinary libxml mbstring msgpack xml zip
+        extensions: ctype dom igbinary libxml mbstring msgpack simplexml xml zip
     - name: Cache Composer packages
       id: composer-cache
       uses: actions/cache@v2
