@@ -20,6 +20,7 @@ filter:
     - 'vendor/*'
 
 tools:
-  external_code_coverage: true
+  external_code_coverage:
+    timeout: 600
   php_analyzer: true
   php_code_sniffer: true
