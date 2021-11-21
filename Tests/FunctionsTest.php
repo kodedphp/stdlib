@@ -93,9 +93,9 @@ class FunctionsTest extends TestCase
         $this->assertFileExists($file, 'Should add file in the directory');
 
         $this->assertTrue(rmdir($dir));
-        $this->assertFileNotExists($file, 'Directories with files are deleted');
+        $this->assertFileDoesNotExist($file, 'Directories with files are deleted');
 
-        $this->assertDirectoryNotExists($dir . '/foo');
+        $this->assertDirectoryDoesNotExist($dir . '/foo');
         $this->assertTrue(rmdir($dir), 'The non-existent directories are not processed at all');
     }
 

@@ -12,7 +12,7 @@ class RandomAlphaNumericFunctionTest extends TestCase
     {
         $random = randomstring();
         $this->assertSame(16, strlen($random));
-        $this->assertRegExp('~[a-z0-9]~i', $random);
+        $this->assertMatchesRegularExpression('~[a-z0-9]~i', $random);
     }
 
     public function test_random_alpha_numeric_with_prefix()
@@ -33,6 +33,6 @@ class RandomAlphaNumericFunctionTest extends TestCase
     {
         $random = randomstring(4, 'ABC-', '-XYZ');
         $this->assertSame(12, strlen($random));
-        $this->assertRegExp('~ABC\-[a-z0-9]{4}\-XYZ~i', $random);
+        $this->assertMatchesRegularExpression('~ABC\-[a-z0-9]{4}\-XYZ~i', $random);
     }
 }
