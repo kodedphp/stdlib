@@ -12,18 +12,21 @@
 namespace Koded\Stdlib\Serializer;
 
 use Koded\Stdlib\Serializer;
-use function Koded\Stdlib\{json_serialize, json_unserialize};
+use function Koded\Stdlib\error_log;
 
 class JsonSerializer implements Serializer
 {
     public const OPTIONS = JSON_PRESERVE_ZERO_FRACTION
     | JSON_UNESCAPED_SLASHES
+    | JSON_UNESCAPED_UNICODE
     | JSON_THROW_ON_ERROR;
 
     /**
-     * @var int JSON encode options. Defaults to (1088):
+     * @var int JSON encode options. Defaults to (4195648):
      *          - JSON_PRESERVE_ZERO_FRACTION
      *          - JSON_UNESCAPED_SLASHES
+     *          - JSON_UNESCAPED_UNICODE
+     *          - JSON_THROW_ON_ERROR
      */
     private int $options = self::OPTIONS;
 
@@ -32,9 +35,9 @@ class JsonSerializer implements Serializer
     /**
      * JsonSerializer constructor.
      *
-     * @param int  $options     [optional] JSON encode options.
-     *                          - to add more JSON options use OR "|" bitmask operator
-     *                          - to exclude multiple default options use XOR "^"
+     * @param int $options [optional] JSON encode options.
+     *                          - to ADD more JSON options use OR "|" bitmask operator
+     *                          - to EXCLUDE multiple default options use XOR "^"
      * @param bool $associative [optional] When TRUE, returned objects will be
      *                          converted into associative arrays
      */
@@ -46,12 +49,27 @@ class JsonSerializer implements Serializer
 
     public function serialize(mixed $value): ?string
     {
-        return json_serialize($value, $this->options);
+        try {
+            return json_encode($value, $this->options);
+        } catch (\JsonException $e) {
+            error_log(__METHOD__, $e->getMessage(), $value);
+            return '';
+        }
+
     }
 
     public function unserialize(string $value): mixed
     {
-        return json_unserialize($value, $this->associative);
+        try {
+            return json_decode($value, $this->associative, 512,
+                JSON_OBJECT_AS_ARRAY
+                | JSON_BIGINT_AS_STRING
+                | JSON_THROW_ON_ERROR);
+
+        } catch (\JsonException $e) {
+            error_log(__METHOD__, $e->getMessage(), $value);
+            return '';
+        }
     }
 
     public function type(): string

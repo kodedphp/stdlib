@@ -4,7 +4,7 @@ Koded Standard Library
 A standard library for shareable classes and functions.
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/koded/stdlib.svg)](https://packagist.org/packages/koded/stdlib)
-[![Build Status](https://travis-ci.org/kodedphp/stdlib.svg?branch=master)](https://travis-ci.org/kodedphp/stdlib)
+[![Build Status](https://travis-ci.com/kodedphp/stdlib.svg?branch=master)](https://travis-ci.com/kodedphp/stdlib)
 [![Code Coverage](https://scrutinizer-ci.com/g/kodedphp/stdlib/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/kodedphp/stdlib/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kodedphp/stdlib/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/kodedphp/stdlib/?branch=master)
 [![Packagist Downloads](https://img.shields.io/packagist/dt/koded/stdlib.svg)](https://packagist.org/packages/koded/stdlib)
@@ -141,22 +141,22 @@ Functions
 ---------
 ```php
 function arguments(...$values): Argument;
-function value(...$values): Data;
-function env(string $name = null, mixed $default = null, array $initialState = null): mixed;
-function htmlencode(string $input, string $encoding = 'UTF-8'): string;
-function randomstring(int $length = 16, string $prefix = '', string $suffix = ''): string;
-function snake_to_camel_case(string $string): string;
 function camel_to_snake_case(string $string): string;
-function to_delimited_string(string $string, int $delimiter): string;
-function to_kebab_string(string $string): string;
+function env(string $name = null, mixed $default = null, array $initialState = null): mixed;
+function error_log(string $function, string $message, $data): void;
+function htmlencode(string $input, string $encoding = 'UTF-8'): string;
+function is_associative(array $array): bool;
 function json_serialize($value, int $options = JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES): string;
 function json_unserialize(string $json, bool $associative = false);
+function now(): DateTimeImmutable;
+function randomstring(int $length = 16, string $prefix = '', string $suffix = ''): string;
+function rmdir(string $dirname): bool;
+function snake_to_camel_case(string $string): string;
+function to_delimited_string(string $string, int $delimiter): string;
+function to_kebab_string(string $string): string;
+function value(...$values): Data;
 function xml_serialize(string $root, iterable $data): string;
 function xml_unserialize(string $xml): array;
-function is_associative(array $array): bool;
-function now(): DateTimeImmutable;
-function rmdir(string $dirname): bool;
-function error_log(string $function, string $message, $data): void;
 ```
 
 Code quality
