@@ -222,9 +222,10 @@ class XmlSerializer implements Serializer
      * Creates an XML node in the document from the provided value
      * according to the PHP type of the value.
      *
-     * @param DOMNode     $parent
-     * @param mixed       $data
-     * @param string      $name
+     * @param DOMDocument $document
+     * @param DOMNode $parent
+     * @param mixed $data
+     * @param string $name
      * @param string|null $key
      */
     private function appendNode(
@@ -253,7 +254,7 @@ class XmlSerializer implements Serializer
             $element->setAttribute('xsi:nil', 'true');
         } elseif ($data instanceof DateTimeInterface) {
             $element->setAttribute('type', 'xsd:dateTime');
-            $element->appendChild($document->createTextNode($data->format(DateTimeImmutable::ISO8601)));
+            $element->appendChild($document->createTextNode($data->format(DateTimeInterface::ISO8601)));
         } elseif (is_object($data)) {
             $element->setAttribute('type', 'xsd:object');
             $element->appendChild($document->createCDATASection(json_serialize($data)));
