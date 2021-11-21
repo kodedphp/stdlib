@@ -236,7 +236,7 @@ function rmdir(string $dirname): bool
  */
 function snake_to_camel_case(string $string): string
 {
-    $string = preg_replace('/[\W\_]++/', ' ', $string);
+    $string = preg_replace('/[\W_]++/', ' ', $string);
     return str_replace(' ', '', ucwords($string));
 }
 
