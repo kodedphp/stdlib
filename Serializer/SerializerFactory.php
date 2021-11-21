@@ -13,6 +13,7 @@ namespace Koded\Stdlib\Serializer;
 
 use Koded\Exceptions\SerializerException;
 use Koded\Stdlib\Serializer;
+use function extension_loaded;
 
 final class SerializerFactory
 {
@@ -41,7 +42,7 @@ final class SerializerFactory
 
             case Serializer::IGBINARY:
                 // @codeCoverageIgnoreStart
-                if (false === \extension_loaded('igbinary')) {
+                if (false === extension_loaded('igbinary')) {
                     throw SerializerException::forMissingModule(Serializer::MSGPACK);
                 }
                 return new IgbinarySerializer;
@@ -49,7 +50,7 @@ final class SerializerFactory
 
             case Serializer::MSGPACK:
                 // @codeCoverageIgnoreStart
-                if (false === \extension_loaded('msgpack')) {
+                if (false === extension_loaded('msgpack')) {
                     throw SerializerException::forMissingModule(Serializer::MSGPACK);
                 }
                 return new MsgpackSerializer;

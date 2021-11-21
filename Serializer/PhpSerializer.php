@@ -12,17 +12,19 @@
 namespace Koded\Stdlib\Serializer;
 
 use Koded\Stdlib\Serializer;
+use function serialize;
+use function unserialize;
 
 class PhpSerializer implements Serializer
 {
     public function serialize(mixed $value): ?string
     {
-        return \serialize($value);
+        return serialize($value);
     }
 
     public function unserialize(string $value): mixed
     {
-        return \unserialize($value);
+        return unserialize($value);
     }
 
     public function type(): string
