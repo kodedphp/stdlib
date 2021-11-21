@@ -3,8 +3,8 @@ Koded Standard Library
 
 A standard library for shareable classes and functions.
 
+[![CI](https://github.com/kodedphp/stdlib/actions/workflows/ci.yml/badge.svg)](https://github.com/kodedphp/stdlib/actions/workflows/ci.yml)
 [![Latest Stable Version](https://img.shields.io/packagist/v/koded/stdlib.svg)](https://packagist.org/packages/koded/stdlib)
-[![Build Status](https://travis-ci.com/kodedphp/stdlib.svg?branch=master)](https://travis-ci.com/kodedphp/stdlib)
 [![Code Coverage](https://scrutinizer-ci.com/g/kodedphp/stdlib/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/kodedphp/stdlib/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kodedphp/stdlib/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/kodedphp/stdlib/?branch=master)
 [![Packagist Downloads](https://img.shields.io/packagist/dt/koded/stdlib.svg)](https://packagist.org/packages/koded/stdlib)
@@ -169,6 +169,7 @@ vendor/bin/phpunit
 
 License
 -------
+
 [![Software license](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](LICENSE)
 
 The code is distributed under the terms of [The 3-Clause BSD license](LICENSE).
