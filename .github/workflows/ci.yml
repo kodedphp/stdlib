@@ -1,0 +1,40 @@
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  timezone: UTC
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        php-versions: ['8.0', '8.1', 'nightly']
+
+    name: PHP ${{ matrix.php-versions }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        tools: composer:v2, pecl
+        coverage: pcov
+        extensions: ctype igbinary libxml mbstring msgpack xml zip
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v2
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.json') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+    - name: Install dependencies
+      run: composer update -o --prefer-dist --no-progress --no-interaction
+    - name: test with phpunit
+      run: vendor/bin/phpunit --verbose --coverage-text
