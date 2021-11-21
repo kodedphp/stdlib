@@ -52,10 +52,7 @@
   "autoload-dev": {
     "psr-4": {
       "Tests\\Koded\\Stdlib\\": "Tests/"
-    },
-    "files": [
-      "functions-dev.php"
-    ]
+    }
   },
   "config": {
     "optimize-autoloader": true
