@@ -221,8 +221,7 @@ function rmdir(string $dirname): bool
     foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dirname, FilesystemIterator::SKIP_DOTS),
         RecursiveIteratorIterator::CHILD_FIRST) as $path) {
         $deleted[] = ($path->isDir() && false === $path->isLink())
-            ? \rmdir($path->getPathname())
-            : unlink($path->getPathname());
+            ? \rmdir($path->getPathname()) : unlink($path->getPathname());
     }
     return (bool)array_product($deleted);
 }
