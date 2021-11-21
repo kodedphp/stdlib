@@ -16,6 +16,7 @@ use function explode;
 use function is_array;
 use function str_replace;
 use function str_starts_with;
+use function strtolower;
 
 trait ArrayDataFilterTrait
 {
@@ -30,7 +31,7 @@ trait ArrayDataFilterTrait
             if ($trim && '' !== $prefix && str_starts_with($index, $prefix)) {
                 $index = str_replace($prefix, '', $index);
             }
-            $filtered[$lowercase ? \strtolower($index) : $index] = $value;
+            $filtered[$lowercase ? strtolower($index) : $index] = $value;
         }
         return $filtered;
     }
