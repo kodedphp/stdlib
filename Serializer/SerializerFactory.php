@@ -14,6 +14,7 @@ namespace Koded\Stdlib\Serializer;
 use Koded\Exceptions\SerializerException;
 use Koded\Stdlib\Serializer;
 use function extension_loaded;
+use function is_a;
 
 final class SerializerFactory
 {
@@ -57,7 +58,7 @@ final class SerializerFactory
             // @codeCoverageIgnoreEnd
         }
 
-        if (\is_a($name, Serializer::class, true)) {
+        if (is_a($name, Serializer::class, true)) {
             return new $name(...$args);
         }
 
