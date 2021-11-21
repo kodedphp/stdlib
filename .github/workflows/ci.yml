@@ -3,31 +3,31 @@ on: [push, pull_request]
 env:
   timezone: UTC
 jobs:
-  build:
-    name: PHP ${{ matrix.php-versions }} on ${{ matrix.os }}
+  test:
+    name: PHP ${{ matrix.php }} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}-latest
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: false
       matrix:
-        php-versions: [ '8.0', '8.1' ]
-        os: [Ubuntu, MacOS]
+        php: [ '8.0', '8.1' ]
+        os: Ubuntu
         experimental: [false]
         include:
           - os: MacOS
+            php: '8.0'
             experimental: true
-            php-version: '8.0'
           - os: MacOS
+            php: '8.1'
             experimental: true
-            php-version: '8.1'
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup PHP ${{ matrix.php-version }}
+      - name: Setup PHP ${{ matrix.php }} (${{ matrix.os }})
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-versions }}
+          php-version: ${{ matrix.php }}
           tools: composer:v2, pecl
           coverage: pcov
           extensions: ctype dom igbinary libxml mbstring msgpack simplexml xml zip
