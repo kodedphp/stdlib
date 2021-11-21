@@ -37,5 +37,5 @@ jobs:
           ${{ runner.os }}-php-
     - name: Install dependencies
       run: composer update -o --prefer-dist --no-progress --no-interaction
-    - name: test with phpunit
+    - name: Test with phpunit
       run: vendor/bin/phpunit --verbose --coverage-text
