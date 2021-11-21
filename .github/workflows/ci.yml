@@ -16,6 +16,10 @@ jobs:
         include:
           - os: MacOS
             experimental: true
+            php-version: '8.0'
+          - os: MacOS
+            experimental: true
+            php-version: '8.1'
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
