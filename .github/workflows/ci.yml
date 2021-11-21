@@ -1,12 +1,11 @@
+name: CI
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-
 env:
   timezone: UTC
-
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -27,14 +26,14 @@ jobs:
         coverage: pcov
         extensions: ctype dom igbinary libxml mbstring msgpack simplexml xml zip
         ini-values: assert.exception=1
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v2
-      with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.json') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
+#    - name: Cache Composer packages
+#      id: composer-cache
+#      uses: actions/cache@v2
+#      with:
+#        path: vendor
+#        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.json') }}
+#        restore-keys: |
+#          ${{ runner.os }}-php-
     - name: Install dependencies
       run: composer update -o --prefer-dist --no-progress --no-interaction
     - name: Test with phpunit
