@@ -7,6 +7,7 @@ notifications:
 
 php:
   - 8.0.1
+  - 8.0.2
   - nightly
 
 cache:
@@ -21,11 +22,13 @@ jobs:
 install:
   - pecl install igbinary
   - pecl install msgpack
-  - wget https://scrutinizer-ci.com/ocular.phar
+  - echo 'xdebug.mode=coverage' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+
+before_script:
   - composer update -o --prefer-source --no-interaction
 
 script:
   - vendor/bin/phpunit --coverage-clover build/clover.xml
 
 after_script:
-  - php ocular.phar code-coverage:upload --format=php-clover build/clover.xml
+  - vendor/bin/ocular code-coverage:upload --format=php-clover build/clover.xml
