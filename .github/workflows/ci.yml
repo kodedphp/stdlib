@@ -1,19 +1,16 @@
 name: CI
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: [push, pull_request]
 env:
   timezone: UTC
 jobs:
-  run:
-    runs-on: ubuntu-latest
+  build:
     strategy:
       matrix:
         php-versions: ['8.0', '8.1']
+        operating-system: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.operating-system }}
 
-    name: PHP ${{ matrix.php-versions }}
+    name: PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -24,16 +21,17 @@ jobs:
         tools: composer:v2, pecl
         coverage: pcov
         extensions: ctype dom igbinary libxml mbstring msgpack simplexml xml zip
-        ini-values: assert.exception=1
-#    - name: Cache Composer packages
-#      id: composer-cache
-#      uses: actions/cache@v2
-#      with:
-#        path: vendor
-#        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.json') }}
-#        restore-keys: |
-#          ${{ runner.os }}-php-
-    - name: Install dependencies
+        ini-values: assert.bail=1
+    - name: Get Composer cache directory
+      id: composer-cache
+      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+    - name: cache Composer dependencies
+      uses: actions/cache@v2
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+        restore-keys: ${{ runner.os }}-composer-
+    - name: Install project dependencies
       run: composer update -o --prefer-dist --no-progress --no-interaction
     - name: Test with phpunit
       run: vendor/bin/phpunit -c phpunit.xml.dist --verbose --coverage-text
