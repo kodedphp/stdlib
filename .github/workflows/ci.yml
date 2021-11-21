@@ -26,6 +26,7 @@ jobs:
         tools: composer:v2, pecl
         coverage: pcov
         extensions: ctype dom igbinary libxml mbstring msgpack simplexml xml zip
+        ini-values: assert.exception=1
     - name: Cache Composer packages
       id: composer-cache
       uses: actions/cache@v2
