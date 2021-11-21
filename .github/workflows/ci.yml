@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         php: [ '8.0', '8.1' ]
-        os: Ubuntu
+        os: [Ubuntu]
         experimental: [false]
         include:
           - os: MacOS
