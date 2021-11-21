@@ -1,36 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/8.5/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
          bootstrap="Tests/autoload.php"
          verbose="true"
-         colors="true">
-    <testsuites>
-        <testsuite name="Koded Standard Library Test Suite">
-            <directory>./Tests</directory>
-        </testsuite>
-    </testsuites>
-
-    <!-- code coverage -->
-    <filter>
-        <whitelist>
-            <directory suffix=".php">./</directory>
-            <exclude>
-                <directory>bench</directory>
-                <directory>build</directory>
-                <directory>vendor</directory>
-                <directory>Tests</directory>
-                <file>functions-dev.php</file>
-            </exclude>
-        </whitelist>
-    </filter>
-
-    <php>
-        <ini name="date.timezone" value="UTC"/>
-        <ini name="assert.exception" value="1"/>
-
-        <env name="KEY_1" value="42"/>
-        <env name="KEY_3" value="value3"/>
-        <env name="KEY_4" value="true"/>
-        <env name="KEY_5" value="null"/>
-    </php>
+         colors="true"
+>
+  <coverage>
+    <include>
+      <directory suffix=".php">./</directory>
+    </include>
+    <exclude>
+      <directory>bench</directory>
+      <directory>build</directory>
+      <directory>vendor</directory>
+      <directory>Tests</directory>
+      <file>functions-dev.php</file>
+    </exclude>
+  </coverage>
+  <testsuites>
+    <testsuite name="Koded Standard Library Test Suite">
+      <directory>./Tests</directory>
+    </testsuite>
+  </testsuites>
+  <!-- code coverage -->
+  <php>
+    <ini name="date.timezone" value="UTC"/>
+    <ini name="assert.exception" value="1"/>
+    <env name="KEY_1" value="42"/>
+    <env name="KEY_3" value="value3"/>
+    <env name="KEY_4" value="true"/>
+    <env name="KEY_5" value="null"/>
+  </php>
 </phpunit>
