@@ -11,6 +11,7 @@
 
 namespace Koded\Stdlib;
 
+use AssertionError;
 use InvalidArgumentException;
 use function chr;
 use function ctype_digit;
@@ -151,7 +152,7 @@ final class UUID
      */
     public static function matches(string $uuid, int $version = 4): bool
     {
-        assert(in_array($version, [1, 3, 4, 5]), "Expected UUID version 1, 3, 4 or 5 (got $version)");
+        assert(in_array($version, [1, 3, 4, 5]), new AssertionError("Expected UUID version 1, 3, 4 or 5 (got $version)"));
         return UUID::valid($uuid);
     }
 
