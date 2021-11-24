@@ -67,11 +67,10 @@ function get_complete_version(array $version): array
         assert('' !== $version[2], 'build-metadata is empty, should be zero or valid identifier');
         return $version;
     }
-//    if ('VERSION' !== VERSION && is_array(VERSION)) {
     if (defined('VERSION') && is_array(VERSION)) {
         return get_version_array(join('-', array_filter(VERSION)));
     }
-    if ($version = @file_get_contents(__DIR__ . '/../../VERSION')) {
+    if ($version = @file_get_contents(getcwd() . '/VERSION')) {
         return get_version_array($version);
     }
     return INVALID_VERSION_ARRAY;

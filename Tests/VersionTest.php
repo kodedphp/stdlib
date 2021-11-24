@@ -6,12 +6,21 @@ use PHPUnit\Framework\TestCase;
 
 class VersionTest extends TestCase
 {
+    public function test_get_complete_version_for_version_file()
+    {
+        $this->assertSame(
+            file_get_contents(__DIR__ . '/../VERSION'),
+            get_complete_version([])[0],
+            'Should read from VERSION file in the project root'
+        );
+    }
+
     /**
      * Converts the version array to string.
      *
      * @dataProvider versions
      */
-    public function testVersionString($index, $version, $result)
+    public function test_version_string($index, $version, $result)
     {
         $this->assertSame($version, get_version($result), '(array -> string) #' . $index);
     }
@@ -19,32 +28,34 @@ class VersionTest extends TestCase
     /**
      * Get the version array from VERSION file.
      */
-    public function testVersionFile()
+    public function test_version_file()
     {
         $version = get_complete_version([]);
         $this->assertCount(3, $version);
     }
 
-    public function testMajorVerison()
+    public function test_major_verison()
     {
         $major = get_major_version([1, 0, 0]);
         $this->assertSame(1, $major);
     }
+
     /**
      * Converts the string to array version.
      *
      * @dataProvider versions
      */
-    public function testVersionArray($index, $version, $result)
+    public function test_version_array($index, $version, $result)
     {
         $this->assertSame($result, get_version_array($version), '(string -> array) #' . $index);
     }
+
     /**
      * Converts the string to array version.
      *
      * @dataProvider moreVersions
      */
-    public function testMoreVersionArray($index, $version, $result)
+    public function test_more_version_array($index, $version, $result)
     {
         $this->assertSame($result, get_version_array($version), '(string -> array) #' . $index);
     }
@@ -52,7 +63,7 @@ class VersionTest extends TestCase
     /**
      * @dataProvider invalidVersions
      */
-    public function testInvalidVersions($index, $version)
+    public function test_invalid_versions($index, $version)
     {
         $this->assertSame(INVALID_VERSION_ARRAY, get_version_array($version), 'Data row #' . $index);
     }
@@ -60,7 +71,7 @@ class VersionTest extends TestCase
     /**
      * Special case: if pre-build is alpha with no meta, git's latest CHANGESET is appended as metadata
      */
-    public function testAlphaPreReleaseWithZeroBuild()
+    public function test_alpha_pre_release_with_zero_build()
     {
         if (!file_exists(__DIR__ . '/../VERSION')) {
             $this->markTestSkipped('The VERSION file is not provided, test is skipped');
