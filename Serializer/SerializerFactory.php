@@ -57,11 +57,9 @@ final class SerializerFactory
                 return new MsgpackSerializer;
             // @codeCoverageIgnoreEnd
         }
-
         if (is_a($name, Serializer::class, true)) {
             return new $name(...$args);
         }
-
         throw SerializerException::forCreateSerializer($name);
     }
 }
