@@ -11,6 +11,8 @@
 
 namespace Koded\Stdlib;
 
+use function array_key_exists;
+
 /**
  * Helper class Mime.
  *
@@ -433,7 +435,9 @@ final class Mime
      */
     public static function type(string $extension, int $index = 0): string
     {
-        return self::$extensionsToTypes[$extension][$index] ?? self::$extensionsToTypes[$extension][0] ?? '';
+        return self::$extensionsToTypes[$extension][$index]
+            ?? self::$extensionsToTypes[$extension][0]
+            ?? '';
     }
 
     /**
@@ -457,7 +461,7 @@ final class Mime
      */
     public static function supports(string $type): bool
     {
-        return \array_key_exists($type, self::$typesToExtensions);
+        return array_key_exists($type, self::$typesToExtensions);
     }
 
     /**
