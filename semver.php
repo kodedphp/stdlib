@@ -61,16 +61,14 @@ function get_version_array(string $version): array
  */
 function get_complete_version(array $version): array
 {
-    if (false === empty($version)) {
-        goto assert;
+    if (empty($version)) {
+        $version = match (true) {
+            defined('VERSION') && is_array(VERSION) => get_version_array(join('-', array_filter(VERSION))),
+            file_exists($version = __DIR__ . '/../../../VERSION'), // project dir relative to /vendor
+            file_exists($version = getcwd() . '/VERSION') => get_version_array(@file_get_contents($version)),
+            default => INVALID_VERSION_ARRAY,
+        };
     }
-    $version = match (true) {
-        defined('VERSION') && is_array(VERSION) => get_version_array(join('-', array_filter(VERSION))),
-        file_exists($version = __DIR__ . '/../../../VERSION'), // project dir relative to vendor
-        file_exists($version = getcwd() . '/VERSION') => get_version_array(@file_get_contents($version)),
-        default => INVALID_VERSION_ARRAY,
-    };
-    assert:
     assert(3 === count($version), 'version array should have exactly 3 parts');
     assert('' !== $version[1], 'pre-release is empty, should be zero or valid identifier');
     assert('' !== $version[2], 'build-metadata is empty, should be zero or valid identifier');
