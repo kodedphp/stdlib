@@ -42,7 +42,7 @@ function get_version(array $version = []): string
  */
 function get_version_array(string $version): array
 {
-    if (!preg_match(SEMVER_REGEX, \trim($version), $match)) {
+    if (!preg_match(SEMVER_REGEX, trim($version), $match)) {
         return INVALID_VERSION_ARRAY;
     }
     array_shift($match);
@@ -62,18 +62,19 @@ function get_version_array(string $version): array
 function get_complete_version(array $version): array
 {
     if (false === empty($version)) {
-        assert(3 === \count($version), 'version array should have exactly 3 parts');
-        assert('' !== $version[1], 'pre-release is empty, should be zero or valid identifier');
-        assert('' !== $version[2], 'build-metadata is empty, should be zero or valid identifier');
-        return $version;
+        goto assert;
     }
-    if (defined('VERSION') && is_array(VERSION)) {
-        return get_version_array(join('-', array_filter(VERSION)));
-    }
-    if ($version = @file_get_contents(getcwd() . '/VERSION')) {
-        return get_version_array($version);
-    }
-    return INVALID_VERSION_ARRAY;
+    $version = match (true) {
+        defined('VERSION') && is_array(VERSION) => get_version_array(join('-', array_filter(VERSION))),
+        file_exists($version = __DIR__ . '/../../../VERSION'), // project dir relative to vendor
+        file_exists($version = getcwd() . '/VERSION') => get_version_array(@file_get_contents($version)),
+        default => INVALID_VERSION_ARRAY,
+    };
+    assert:
+    assert(3 === count($version), 'version array should have exactly 3 parts');
+    assert('' !== $version[1], 'pre-release is empty, should be zero or valid identifier');
+    assert('' !== $version[2], 'build-metadata is empty, should be zero or valid identifier');
+    return $version;
 }
 
 /**
@@ -101,14 +102,15 @@ function get_major_version(array $version): int
  */
 function get_git_changeset(): string
 {
+    $cwd = getcwd() . '/.';
     $format = 'YmdHis';
     $gitlog = proc_open('git log --pretty=format:%ct --quiet -l HEAD', [
         ['pipe', 'r'],
         ['pipe', 'w'],
         ['pipe', 'w'],
-    ], $pipes, __DIR__);
+    ], $pipes, $cwd);
     if (false === is_resource($gitlog)) {
-        return date($format, filemtime(__DIR__ . '/.'));
+        return date($format, filemtime($cwd));
     }
     stream_set_blocking($pipes[2], false);
     $timestamp = stream_get_contents($pipes[1]);
@@ -119,7 +121,7 @@ function get_git_changeset(): string
     fclose($pipes[2]);
     proc_close($gitlog);
     if (empty($timestamp)) {
-        return date($format, filemtime(__DIR__ . '/.'));
+        return date($format, filemtime($cwd));
     }
     // UNIX timestamps are stored in UTC
     return date_create_immutable('@' . $timestamp)->format($format);
