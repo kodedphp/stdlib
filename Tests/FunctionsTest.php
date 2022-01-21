@@ -183,7 +183,7 @@ class FunctionsTest extends TestCase
             [[false => 1], false],  // FALSE is converted to 0
             [[true => 1], true],    // TRUE is converted to 1
 
-            [[2.7 => 'yes'], true], // FLOAT is a different level of weird (float-to-string)
+            [[2.7 => 'yes'], true], // FLOAT is a different level of weird (implicit float-to-string or int conversion)
         ];
     }
 
