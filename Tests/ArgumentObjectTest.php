@@ -212,6 +212,56 @@ class ArgumentObjectTest extends TestCase
         $this->assertSame(['indirect' => ['modification' => ['BC' => 'break']]], $args->toArray());
     }
 
+    /**
+     * @dataProvider pain
+     */
+    public function test_some_implicit_conversion_pain($store)
+    {
+        // Here comes the fun...
+        $this->assertTrue($store->has(3.14), 'Key exists? Lets see...');
+        $this->assertNotSame('oh no', $store->get(3.14), 'Wait what? (test is false positive btw)');
+        $this->assertSame(null, $store->get(3.14), 'I expected something else');
+        $this->assertSame('oh no', $store->get(3), 'The amazing implicit conversion of 3.14 and the override of the existing key 3');
+        $this->assertSame('yes', $store->get('3.140'), 'Run PHP, run!');
+
+        // Here comes more amazingness with PHPUnit...
+        $store = $store->toArray();
+
+        $this->assertArrayHasKey('1', $store);
+        $this->assertArrayHasKey(1, $store, 'Because of course');
+
+        $this->assertArrayHasKey(2, $store);
+        $this->assertArrayHasKey('2', $store, 'Why not?');
+
+        $this->assertArrayHasKey('3', $store);
+        $this->assertArrayHasKey(3, $store, 'We already tested this, just to confirm the sanity');
+    }
+
+    public function pain()
+    {
+        $data = [
+            0 => 0,
+            '1' => 1,
+            2 => 2,
+            '3' => 3,
+
+            3.14 => 'oh no',
+            '3.140' => 'yes',
+        ];
+
+        // using set()
+        $store = new Arguments;
+        foreach ($data as $index => $value) {
+            $store->set($index, $value);
+        }
+
+        return [
+            [new Arguments($data)],
+            [(new Arguments)->import($data)],
+            [$store],
+        ];
+    }
+
     protected function setUp(): void
     {
         $this->SUT = new Arguments([
