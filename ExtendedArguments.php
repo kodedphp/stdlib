@@ -35,7 +35,7 @@ class ExtendedArguments extends Arguments
         return $this->find($index, $default);
     }
 
-    public function set(string $index, mixed $value): static
+    public function set(mixed $index, mixed $value): static
     {
         $storage = &$this->storage;
         foreach (explode('.', $index) as $i) {
