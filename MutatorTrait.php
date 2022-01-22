@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the Koded package.
@@ -21,7 +21,7 @@ trait MutatorTrait
         return $this->set($index, $value);
     }
 
-    public function set(string $index, mixed $value): static
+    public function set(mixed $index, mixed $value): static
     {
         $this->storage[$index] = $value;
         return $this;
