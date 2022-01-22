@@ -11,6 +11,7 @@
 
 namespace Koded\Stdlib\Serializer;
 
+use JsonException;
 use Koded\Stdlib\Serializer;
 use function Koded\Stdlib\error_log;
 
@@ -51,7 +52,7 @@ class JsonSerializer implements Serializer
     {
         try {
             return json_encode($value, $this->options);
-        } catch (\JsonException $e) {
+        } catch (JsonException $e) {
             error_log(__METHOD__, $e->getMessage(), $value);
             return '';
         }
@@ -66,7 +67,7 @@ class JsonSerializer implements Serializer
                 | JSON_BIGINT_AS_STRING
                 | JSON_THROW_ON_ERROR);
 
-        } catch (\JsonException $e) {
+        } catch (JsonException $e) {
             error_log(__METHOD__, $e->getMessage(), $value);
             return '';
         }
