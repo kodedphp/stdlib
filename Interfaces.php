@@ -152,12 +152,12 @@ interface Argument extends Data
      * Value mutator.
      * Sets a value for a property.
      *
-     * @param string $index The name of the property
+     * @param int|string $index The name of the property
      * @param mixed  $value The value
      *
      * @return static
      */
-    public function set(string $index, mixed $value): static;
+    public function set(mixed $index, mixed $value): static;
 
     /**
      * Imports multiple values. The existing are overridden.
