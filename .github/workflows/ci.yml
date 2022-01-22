@@ -1,5 +1,7 @@
 name: CI
-on: [push, pull_request]
+on:
+  - push
+  - pull_request
 env:
   timezone: UTC
 jobs:
@@ -10,13 +12,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [ '8.0', '8.1' ]
+        php:
+          - '8.1'
         os: [Ubuntu]
         experimental: [false]
         include:
-          - os: MacOS
-            php: '8.0'
-            experimental: true
           - os: MacOS
             php: '8.1'
             experimental: true
