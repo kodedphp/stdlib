@@ -5,10 +5,8 @@ A standard library for shareable classes and functions.
 
 [![CI](https://github.com/kodedphp/stdlib/actions/workflows/ci.yml/badge.svg)](https://github.com/kodedphp/stdlib/actions/workflows/ci.yml)
 [![Latest Stable Version](https://img.shields.io/packagist/v/koded/stdlib.svg)](https://packagist.org/packages/koded/stdlib)
-[![Code Coverage](https://scrutinizer-ci.com/g/kodedphp/stdlib/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/kodedphp/stdlib/?branch=master)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kodedphp/stdlib/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/kodedphp/stdlib/?branch=master)
 [![Packagist Downloads](https://img.shields.io/packagist/dt/koded/stdlib.svg)](https://packagist.org/packages/koded/stdlib)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%208.0-8892BF.svg)](https://php.net/)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%208.1-8892BF.svg)](https://php.net/)
 
 
 Classes
@@ -161,6 +159,9 @@ function xml_unserialize(string $xml): array;
 
 Code quality
 ------------
+
+[![Code Coverage](https://scrutinizer-ci.com/g/kodedphp/stdlib/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/kodedphp/stdlib/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kodedphp/stdlib/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/kodedphp/stdlib/?branch=master)
 
 ```shell script
 vendor/bin/phpbench run --report=default
