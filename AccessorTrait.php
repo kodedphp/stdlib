@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the Koded package.
@@ -22,7 +22,7 @@ use function get_class;
  */
 trait AccessorTrait
 {
-    public function & __get($index)
+    public function &__get($index)
     {
         if (false === array_key_exists($index, $this->storage)) {
             $this->storage[$index] = null;
@@ -87,7 +87,7 @@ trait AccessorTrait
         }
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         return $this->storage;
     }
