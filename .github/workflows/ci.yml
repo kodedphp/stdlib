@@ -5,7 +5,7 @@ on:
 env:
   timezone: UTC
 jobs:
-  test:
+  tests:
     name: PHP ${{ matrix.php }} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}-latest
     continue-on-error: ${{ matrix.experimental }}
@@ -28,10 +28,10 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          extensions: ctype dom igbinary libxml mbstring msgpack simplexml xml zip
+          ini-values: zend.assertions=1, assert.bail=1, opcache.enable=0
           tools: composer:v2, pecl
           coverage: pcov
-          extensions: ctype dom igbinary libxml mbstring msgpack simplexml xml zip
-          ini-values: zend.assertions=1, assert.bail=1
 
       - name: Get Composer cache directory
         id: composer-cache
@@ -41,8 +41,12 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: ${{ runner.os }}-composer-
+          key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('**/composer.json') }}
+          restore-keys: |
+            composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('**/composer.json') }}
+            composer-${{ runner.os }}-${{ matrix.php-version }}-
+            composer-${{ runner.os }}-
+            composer-
 
       - name: Install project dependencies
         run: composer update -o --prefer-dist --no-progress --no-interaction
