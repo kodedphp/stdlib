@@ -1,10 +1,10 @@
+* text=auto eol=lf
 *.php diff=php
 
-/.github    export-ignore
-/bench      export-ignore
-/Tests      export-ignore
-/build      export-ignore
-/vendor     export-ignore
-/phpunit.*  export-ignore
-/phpbench.* export-ignore
-/*.yml      export-ignore
+.git*      export-ignore
+bench/     export-ignore
+tests/     export-ignore
+build/     export-ignore
+phpunit.*  export-ignore
+phpbench.* export-ignore
+*.yml      export-ignore

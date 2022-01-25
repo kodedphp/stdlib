@@ -1,8 +1,9 @@
-/bench
-/build
-/vendor
-/.DS_Store
-/.idea
+bench/
+build/
+vendor/
+.idea/
+.DS_Store
+Thumbs.db
 composer.lock
 phpunit.phar
 *.cache
