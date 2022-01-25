@@ -66,7 +66,7 @@ function get_complete_version(array $version): array
             defined('VERSION') && is_array(VERSION) => get_version_array(join('-', array_filter(VERSION))),
             is_file($version = __DIR__ . '/../../../VERSION'), // project dir relative to /vendor
             is_file($version = getcwd() . '/VERSION') => get_version_array(@file_get_contents($version)),
-            default => INVALID_VERSION_ARRAY,
+            default => INVALID_VERSION_ARRAY
         };
     }
     assert(3 === count($version), 'version array should have exactly 3 parts');
