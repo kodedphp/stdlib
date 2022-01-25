@@ -18,9 +18,8 @@ use DOMNode;
 use InvalidArgumentException;
 use Koded\Stdlib\Serializer;
 use Throwable;
-use function array_keys;
+use function array_is_list;
 use function count;
-use function ctype_digit;
 use function current;
 use function error_log;
 use function filter_var;
@@ -31,10 +30,10 @@ use function is_int;
 use function is_iterable;
 use function is_numeric;
 use function is_object;
-use function join;
 use function Koded\Stdlib\{json_serialize, json_unserialize};
 use function key;
 use function preg_match;
+use function str_contains;
 use function str_starts_with;
 use function substr;
 use function trim;
@@ -130,14 +129,26 @@ class XmlSerializer implements Serializer
                 // node value
                 $parent->nodeValue = $data;
             } elseif (false === $isKeyNumeric && is_array($data)) {
-                if (ctype_digit(join('', array_keys($data)))) {
+                /*
+                 * If the data is an associative array (with numeric keys)
+                 * the structure is transformed to "item" nodes:
+                 *      <item key="0">$key0</item>
+                 *      <item key="1">$key1</item>
+                 * by appending it to the parent node (if any)
+                 */
+                if (array_is_list($data)) {
                     foreach ($data as $d) {
                         $this->appendNode($document, $parent, $d, $key);
                     }
                 } else {
                     $this->appendNode($document, $parent, $data, $key);
                 }
-            } elseif ($isKeyNumeric) {
+            } elseif ($isKeyNumeric || false === $this->hasValidName($key)) {
+                /* If the key is not a valid XML tag name,
+                 * transform the key to "item" node:
+                 *      <item key="$key">$value</item>
+                 * by appending it to the parent node (if any)
+                 */
                 $this->appendNode($document, $parent, $data, 'item', $key);
             } else {
                 $this->appendNode($document, $parent, $data, $key);
@@ -306,5 +317,12 @@ class XmlSerializer implements Serializer
             return $value;
         }
         return $value[$this->val];
+    }
+
+    private function hasValidName(int|string $key): bool
+    {
+        return $key &&
+            !str_contains($key, ' ') &&
+            preg_match('~^[\pL_][\pL0-9._:-]*$~ui', $key);
     }
 }
