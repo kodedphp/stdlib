@@ -21,7 +21,7 @@ trait MutatorTrait
         return $this->set($index, $value);
     }
 
-    public function set(mixed $index, mixed $value): static
+    public function set(string $index, mixed $value): static
     {
         $this->storage[$index] = $value;
         return $this;

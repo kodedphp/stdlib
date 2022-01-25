@@ -50,7 +50,7 @@ trait AccessorTrait
         return $this->storage[$index] ?? $default;
     }
 
-    public function has(mixed $index): bool
+    public function has(string $index): bool
     {
         return array_key_exists($index, $this->storage);
     }

@@ -37,8 +37,14 @@ class ImmutableObjectTest extends TestCase
     public function test_should_get_things()
     {
         $this->assertNull($this->SUT->get('fubar'));
-        $this->assertTrue($this->SUT->get(true));
-        $this->assertTrue($this->SUT->has(null));
+
+        $this->assertTrue($this->SUT->get(true), 'All 3 are valid :(');
+        $this->assertTrue($this->SUT->get(1));
+        $this->assertTrue($this->SUT->get('1'));
+
+        $this->assertSame('null', $this->SUT->get(''), 'NULL key is typecasted to ""');
+        $this->assertNull($this->SUT->get('null'), 'No to be confused, this is a normal string');
+
         $this->assertSame('bar', $this->SUT->foo);
         $this->assertSame(0, $this->SUT->get('0'));
         $this->assertSame(0, $this->SUT->{0});

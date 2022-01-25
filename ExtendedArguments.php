@@ -58,7 +58,7 @@ class ExtendedArguments extends Arguments
         return $this;
     }
 
-    public function has(mixed $index): bool
+    public function has(string $index): bool
     {
         $storage = & $this->storage;
         foreach (explode('.', $index) as $i) {

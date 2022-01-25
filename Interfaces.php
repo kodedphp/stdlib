@@ -102,11 +102,11 @@ interface Data
     /**
      * Checks if the key exist.
      *
-     * @param mixed $index The index name
+     * @param string $index The index name
      *
      * @return bool
      */
-    public function has(mixed $index): bool;
+    public function has(string $index): bool;
 
     /**
      * Checks if two properties has equal values.
@@ -152,12 +152,12 @@ interface Argument extends Data
      * Value mutator.
      * Sets a value for a property.
      *
-     * @param int|string $index The name of the property
+     * @param string $index The name of the property
      * @param mixed  $value The value
      *
      * @return static
      */
-    public function set(mixed $index, mixed $value): static;
+    public function set(string $index, mixed $value): static;
 
     /**
      * Imports multiple values. The existing are overridden.

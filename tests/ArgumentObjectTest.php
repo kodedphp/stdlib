@@ -218,7 +218,7 @@ class ArgumentObjectTest extends TestCase
     public function test_some_implicit_conversion_pain($store)
     {
         // Here comes the fun...
-        $this->assertTrue($store->has(3.14), 'Key exists? Lets see...');
+        $this->assertFalse($store->has(3.14), 'Key DOES NOT exist. Lets see...');
         $this->assertNotSame('oh no', $store->get(3.14), 'Wait what? (test is false positive btw)');
         $this->assertSame(null, $store->get(3.14), 'I expected something else');
         $this->assertSame('oh no', $store->get(3), 'The amazing implicit conversion of 3.14 and the override of the existing key 3');
@@ -249,7 +249,6 @@ class ArgumentObjectTest extends TestCase
             '3.140' => 'yes',
         ];
 
-        // using set()
         $store = new Arguments;
         foreach ($data as $index => $value) {
             $store->set($index, $value);
