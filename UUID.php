@@ -32,6 +32,7 @@ use function str_replace;
 use function strlen;
 use function strtolower;
 use function substr;
+use function trim;
 use function unpack;
 use function vsprintf;
 
@@ -57,28 +58,28 @@ final class UUID
      * When this namespace is specified, the name string
      * is a fully-qualified domain name.
      */
-    const NAMESPACE_DNS = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
+    public const NAMESPACE_DNS = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
 
     /**
      * When this namespace is specified, the name string is a URL.
      */
-    const NAMESPACE_URL = '6ba7b811-9dad-11d1-80b4-00c04fd430c8';
+    public const NAMESPACE_URL = '6ba7b811-9dad-11d1-80b4-00c04fd430c8';
 
     /**
      * When this namespace is specified, the name string is an ISO OID.
      */
-    const NAMESPACE_OID = '6ba7b812-9dad-11d1-80b4-00c04fd430c8';
+    public const NAMESPACE_OID = '6ba7b812-9dad-11d1-80b4-00c04fd430c8';
 
     /**
      * When this namespace is specified, the name string is
      * an X.500 DN in DER or a text output format.
      */
-    const NAMESPACE_X500 = '6ba7b814-9dad-11d1-80b4-00c04fd430c8';
+    public const NAMESPACE_X500 = '6ba7b814-9dad-11d1-80b4-00c04fd430c8';
 
     /**
      * Regex pattern for UUIDs
      */
-    const PATTERN = '[a-f0-9]{8}\-[a-f0-9]{4}\-[1|3|4|5][a-f0-9]{3}\-[a-f0-9]{4}\-[a-f0-9]{12}';
+    public const PATTERN = '[a-f0-9]{8}\-[a-f0-9]{4}\-[1|3|4|5][a-f0-9]{3}\-[a-f0-9]{4}\-[a-f0-9]{12}';
 
     /**
      * Generates a UUID based on the MD5 hash of a namespace
@@ -183,7 +184,7 @@ final class UUID
                 return $node = vsprintf('%02x%02x%02x%02x', explode('.', $node));
             }
             if ($node = `hostname 2> /dev/null`) {
-                $node = gethostbyname(\trim($node));
+                $node = gethostbyname(trim($node));
                 return $node = vsprintf('%02x%02x%02x%02x', explode('.', $node));
             }
             // Cannot identify IP or host, fallback as described in
