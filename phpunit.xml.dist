@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
-         bootstrap="Tests/autoload.php"
+         bootstrap="tests/autoload.php"
          verbose="true"
          colors="true"
 >
@@ -13,13 +13,13 @@
       <directory>bench</directory>
       <directory>build</directory>
       <directory>vendor</directory>
-      <directory>Tests</directory>
+      <directory>tests</directory>
       <file>functions-dev.php</file>
     </exclude>
   </coverage>
   <testsuites>
     <testsuite name="Koded Standard Library Test Suite">
-      <directory>./Tests</directory>
+      <directory>./tests</directory>
     </testsuite>
   </testsuites>
   <!-- code coverage -->

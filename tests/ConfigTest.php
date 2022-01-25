@@ -68,7 +68,7 @@ class ConfigTest extends TestCase
     public function test_should_load_ini_file()
     {
         $config = new Config;
-        $config->fromIniFile('Tests/fixtures/config-test.ini');
+        $config->fromIniFile('tests/fixtures/config-test.ini');
         $this->assertSame(include __DIR__ . '/fixtures/expected-ini-data.php', $config->section1);
     }
 
@@ -106,13 +106,13 @@ class ConfigTest extends TestCase
     public function test_should_load_env_file_and_trim_the_namespace()
     {
         $config = new Config(getcwd());
-        $config->fromEnvFile('Tests/fixtures/.env', 'KEY_');
+        $config->fromEnvFile('tests/fixtures/.env', 'KEY_');
         $this->assertSame(include __DIR__ . '/fixtures/expected-env-trim-ns.php', env());
     }
 
     public function test_should_load_from_env_variable()
     {
-        \putenv('CONFIG_FILE=Tests/fixtures/nested-array.php');
+        \putenv('CONFIG_FILE=tests/fixtures/nested-array.php');
         $config = new Config;
         $config->fromEnvVariable('CONFIG_FILE');
 
@@ -138,7 +138,7 @@ class ConfigTest extends TestCase
 
     public function test_should_load_ini_file_from_env_variable()
     {
-        \putenv('CONFIG_FILE=Tests/fixtures/config-test.ini');
+        \putenv('CONFIG_FILE=tests/fixtures/config-test.ini');
         $config = new Config;
         $config->fromEnvVariable('CONFIG_FILE');
 
