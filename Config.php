@@ -160,7 +160,7 @@ class Config extends Arguments implements Configuration
             and as such configuration could not be loaded. Set this variable and
             make it point to a configuration file', [':variable' => $variable]));
         }
-        error_log('[Configuration error]: ' . (error_get_last()['message'] ?? "env var: ${variable}"));
+        error_log('[Configuration error]: ' . (error_get_last()['message'] ?? "env var: $variable"));
         return $this;
     }
 
