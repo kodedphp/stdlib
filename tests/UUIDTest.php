@@ -133,20 +133,13 @@ class UUIDTest extends TestCase
         $this->expectExceptionMessage('Expected UUID version 1, 3, 4 or 5 (got 0)');
         UUID::matches(UUID::NAMESPACE_OID, 0);
     }
-
-    /**
-     * @test
-     */
-    public function verify_uuid_regex()
-    {
-        $this->assertFalse(UUID::valid('00000000-0000-2000-0000-000000000000'));
-    }
-
+    
     /**
      * @test
      */
     public function verify_uuid4()
     {
+        $this->assertFalse(UUID::valid('00000000-0000-a000-0000-000000000000'));
         $this->assertFalse(UUID::valid('00000000-0000-4000-0000-000000000000'));
         $this->assertTrue(UUID::valid('00000000-0000-4000-a000-000000000000'));
     }
@@ -156,6 +149,9 @@ class UUIDTest extends TestCase
      */
     public function issue7()
     {
-        $this->assertSame('1cb8bac3-bb8e-3973-93dc-5119246f0585', UUID::v3(UUID::NAMESPACE_URL, 'fubar'));
+        $this->assertSame(
+            '1cb8bac3-bb8e-3973-93dc-5119246f0585',
+            UUID::v3(UUID::NAMESPACE_URL, 'fubar')
+        );
     }
 }

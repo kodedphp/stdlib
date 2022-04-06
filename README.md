@@ -134,6 +134,8 @@ Class UUID generates Universally Unique Identifiers following the [RFC 4122][rfc
 - `v5(string $namespace, string $name): string`
 - `valid(string $uuid): bool`
 - `matches(string $uuid, int $version = 4): bool`
+- `toBase64(string $uuid): string`
+- `fromBase64(string $base64): string`
 
 Functions
 ---------

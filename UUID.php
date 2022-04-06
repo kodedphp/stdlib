@@ -13,6 +13,8 @@ namespace Koded\Stdlib;
 
 use AssertionError;
 use InvalidArgumentException;
+use function base64_decode;
+use function base64_encode;
 use function chr;
 use function ctype_digit;
 use function ctype_xdigit;
@@ -20,6 +22,7 @@ use function dechex;
 use function explode;
 use function gethostbyname;
 use function gettimeofday;
+use function hex2bin;
 use function hexdec;
 use function in_array;
 use function md5;
@@ -251,7 +254,46 @@ final class UUID
     }
 
     /**
-     * Creates the v3 and/or v5 UUID.
+     * Creates a base64 string out of the UUID.
+     *
+     * @param string $uuid UUID string
+     *
+     * @return string base64 encoded string
+     */
+    public static function toBase64(string $uuid): string
+    {
+        if (false === UUID::valid($uuid)) {
+            throw new InvalidArgumentException('Invalid UUID ' . $uuid);
+        }
+        return str_replace(['/', '+', '='], ['-', '_', ''],
+            base64_encode(hex2bin(str_replace('-', '', $uuid)))
+        );
+    }
+
+    /**
+     * Converts a base64 string to UUID.
+     *
+     * @param string $base64
+     *
+     * @return string UUID string
+     */
+    public static function fromBase64(string $base64): string
+    {
+        $uuid = base64_decode(str_replace(
+            ['-', '_', '='], ['/', '+', ''], $base64) . '=='
+        );
+        if (!preg_match('//u', $uuid)) {
+            $uuid = vsprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x', unpack('n*', $uuid));
+        }
+        if (UUID::valid($uuid)) {
+            return $uuid;
+        }
+        throw new InvalidArgumentException(
+            'Failed to convert base 64 string to UUID');
+    }
+
+    /**
+     * Creates a v3 or v5 UUID.
      *
      * @param string $namespace UUID namespace identifier (see UUID constants)
      * @param string $name      A name
