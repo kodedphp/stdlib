@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
          bootstrap="tests/autoload.php"
          verbose="true"
          colors="true"
 >
+  <testsuites>
+    <testsuite name="Koded Standard Library Test Suite">
+      <directory>./tests</directory>
+    </testsuite>
+  </testsuites>
   <coverage>
     <include>
       <directory suffix=".php">./</directory>
@@ -17,12 +22,6 @@
       <file>functions-dev.php</file>
     </exclude>
   </coverage>
-  <testsuites>
-    <testsuite name="Koded Standard Library Test Suite">
-      <directory>./tests</directory>
-    </testsuite>
-  </testsuites>
-  <!-- code coverage -->
   <php>
     <ini name="date.timezone" value="UTC"/>
     <ini name="assert.bail" value="1"/>
