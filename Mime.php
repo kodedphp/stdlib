@@ -19,7 +19,7 @@ use function array_key_exists;
  */
 final class Mime
 {
-    private static $extensionsToTypes = [
+    private static array $extensionsToTypes = [
         '323'        => ['text/h323'],
         '7z'         => ['application/x-7z-compressed'],
         'abw'        => ['application/x-abiword'],
