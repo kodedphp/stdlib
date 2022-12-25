@@ -5,6 +5,8 @@ namespace Tests\Koded\Stdlib;
 use Koded\Stdlib\{Arguments, Data};
 use PHPUnit\Framework\TestCase;
 
+error_reporting(E_ALL & ~E_DEPRECATED);
+
 class ArgumentObjectTest extends TestCase
 {
     private Arguments $SUT;
