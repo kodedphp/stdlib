@@ -65,22 +65,22 @@ use function ucfirst;
  */
 class Config extends Arguments implements Configuration
 {
-    public string $rootPath = '';
+    public string $root = '';
     private bool $silent = false;
 
     /**
      * Config constructor.
      *
-     * @param string $rootPath Path to which files are read relative from.
+     * @param string $root Path to which files are read relative from.
      *                                  When the config object is created by an application/library
      *                                  this is the application's root path
      * @param Data|null $defaults [optional] An Optional config object with default values
      */
-    public function __construct(string $rootPath = '', Data $defaults = null)
+    public function __construct(string $root = '', Data $defaults = null)
     {
         parent::__construct($defaults ? $defaults->toArray() : []);
-        if (!$this->rootPath = $rootPath) {
-            $this->rootPath = getcwd();
+        if (!$this->root = $root) {
+            $this->root = getcwd();
         }
     }
 
@@ -118,7 +118,7 @@ class Config extends Arguments implements Configuration
         if (is_string($object) && class_exists($object)) {
             $object = new $object;
         }
-        $this->rootPath = $object->rootPath ?: $this->rootPath;
+        $this->root = $object->rootPath ?: $this->root;
         return $this->import(iterator_to_array($object));
     }
 
@@ -196,7 +196,7 @@ class Config extends Arguments implements Configuration
         bool   $lowercase = true,
         bool   $trim = true): static
     {
-        return (new static($this->rootPath))
+        return (new static($this->root))
             ->import($this->filter($this->toArray(), $prefix, $lowercase, $trim));
     }
 
@@ -208,7 +208,7 @@ class Config extends Arguments implements Configuration
     private function filename(string $filename): string
     {
         return ('/' !== $filename[0])
-            ? $this->rootPath . '/' . $filename
+            ? $this->root . '/' . $filename
             : $filename;
     }
 }
