@@ -82,7 +82,7 @@ final class UUID
     /**
      * Regex pattern for UUIDs
      */
-    public const PATTERN = '[a-f0-9]{8}\-[a-f0-9]{4}\-[1|3|4|5][a-f0-9]{3}\-[a-f0-9]{4}\-[a-f0-9]{12}';
+    public const PATTERN = '[a-f0-9]{8}\-[a-f0-9]{4}\-[1345][a-f0-9]{3}\-[a-f0-9]{4}\-[a-f0-9]{12}';
 
     /**
      * Generates a UUID based on the MD5 hash of a namespace
