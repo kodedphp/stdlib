@@ -6,7 +6,9 @@
   "keywords": [
     "config",
     "uuid",
+    "ulid",
     "uuid-generator",
+    "ulid-generator",
     "utility",
     "immutable",
     "dot-array",
