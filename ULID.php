@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the Koded package.
@@ -72,7 +72,7 @@ class ULID implements Countable
     }
 
     /**
-     * Creates and instance of ULID with number
+     * Creates an instance of ULID with number
      * of timestamps defined by the count argument.
      * @param int $count
      * @return static
@@ -83,7 +83,7 @@ class ULID implements Countable
     }
 
     /**
-     * Decode the ULID string into the instance of ULID.
+     * Decode the ULID string into an instance of ULID.
      * @param string $ulid
      * @return static
      */
@@ -104,7 +104,7 @@ class ULID implements Countable
     }
 
     /**
-     * Decode the ULID string in UUID format into the instance of ULID.
+     * Decode the ULID string in UUID format into an instance of ULID.
      * @param string $ulid UUID representation of ULID value
      * @return static
      */
@@ -118,31 +118,37 @@ class ULID implements Countable
     }
 
     /**
-     * Decode the date time string into the instance of ULID.
-     * @param float $timestamp UNIX timestamp with or without the milliseconds part.
+     * Decode the date time string into an instance of ULID.
+     * @param float $timestamp UNIX timestamp with or without the milliseconds part
      * @return static
      */
     public static function fromTimestamp(float $timestamp): self
     {
-        if ($timestamp >= 0 && $timestamp <= PHP_INT_MAX) {
-            [$ts, $ms] = explode('.', $timestamp) + [1 => '000'];
-            return new static("$ts$ms", 1);
+        if ($timestamp <= 0 || $timestamp >= PHP_INT_MAX) {
+            throw new InvalidArgumentException("Invalid timestamp ($timestamp)", 400);
         }
-        throw new InvalidArgumentException("Invalid timestamp ($timestamp)", 400);
+        $timestamp = (string)$timestamp;
+        if (str_contains($timestamp, '.')) {
+            $timestamp = (string)($timestamp * 1000);
+        }
+        if (strlen($timestamp) >= 13) {
+            $timestamp = substr($timestamp, 0, 13);
+        }
+        return new static(intval($timestamp), 1);
     }
 
     /**
-     * Decode the date time string into the instance of ULID.
+     * Decode the date time string into an instance of ULID.
      * @param string $datetime in format: Y-m-d H:i:s with optional 'v' (milliseconds)
      * @return static
      */
     public static function fromDateTime(string $datetime): self
     {
         try {
-            $dt = (false === str_contains($datetime, '.'))
-                ? DateTime::createFromFormat('Y-m-d H:i:s', $datetime, new DateTimeZone('UTC'))
-                : DateTime::createFromFormat('Y-m-d H:i:s.v', $datetime, new DateTimeZone('UTC'));
-            return new static($dt->getTimestamp() . $dt->format('v'), 1);
+            $dt = (str_contains($datetime, '.'))
+                ? DateTime::createFromFormat('Y-m-d H:i:s.v', $datetime, new DateTimeZone('UTC'))
+                : DateTime::createFromFormat('Y-m-d H:i:s', $datetime, new DateTimeZone('UTC'));
+            return new static(intval($dt->getTimestamp() . $dt->format('v')), 1);
         } catch (Throwable) {
             throw new InvalidArgumentException("Invalid datetime ($datetime)", 400);
         }
@@ -154,7 +160,7 @@ class ULID implements Countable
     }
 
     /**
-     * Creates a single, or a list. of UUID representations of ULID values.
+     * Creates a single, or a list, of UUID values.
      * @return array|string
      */
     public function toUUID(): array|string
@@ -175,7 +181,7 @@ class ULID implements Countable
     }
 
     /**
-     * Creates a single, or a list. of ULID representations.
+     * Creates a single, or a list of ULID values.
      * @return array|string
      */
     public function toULID(): array|string
@@ -191,16 +197,17 @@ class ULID implements Countable
     }
 
     /**
-     * Returns a single, or a list, of DateTime instances for this ULID.
+     * Returns a single, or a list, of DateTime instances.
      * @return array|DateTime
      */
     public function toDateTime(): array|DateTime
     {
         $list = [];
         foreach ($this->timestamps as $timestamp) {
+            $timestamp = (string)$timestamp;
             $datetime = new DateTime('@' . substr($timestamp, 0, 10), new DateTimeZone('UTC'));
-            if (13 === strlen($timestamp)) {
-                $ms = substr($timestamp, 10);
+            if (strlen($timestamp) >= 13) {
+                $ms = substr($timestamp, 10, 3);
                 $datetime->modify("+{$ms} milliseconds");
             }
             $list[] = $datetime;
