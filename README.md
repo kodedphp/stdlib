@@ -126,7 +126,7 @@ putenv('MY_APP_SETTINGS=/path/to/config/file.php');
 
 
 ### `UUID`
-Class UUID generates Universally Unique Identifiers following the [RFC 4122][rfc-4122].
+Class UUID generates `Universally Unique Identifiers` following the [RFC 4122][rfc-4122].
 
 - `v1($address = null): string`
 - `v3(string $namespace, $name): string`
@@ -136,6 +136,20 @@ Class UUID generates Universally Unique Identifiers following the [RFC 4122][rfc
 - `matches(string $uuid, int $version = 4): bool`
 - `toBase64(string $uuid): string`
 - `fromBase64(string $base64): string`
+
+### `ULID`
+Class ULID generates `Universally Unique Lexicographically Sortable Identifiers`
+
+- `generate(int $count = 1): self`
+- `fromULID(string $ulid): self`
+- `fromUUID(string $ulid): self`
+- `fromTimestamp(float $timestamp): self`
+- `fromDateTime(string $datetime): self`
+- `toULID(): array|string`
+- `toUUID(): array|string`
+- `toDateTime(): array|DateTime`
+- `count(): int`
+- `valid(string $uuid): bool`
 
 Functions
 ---------
