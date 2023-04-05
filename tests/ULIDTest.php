@@ -86,10 +86,10 @@ class ULIDTest extends TestCase
 
     public function test_toULID_from_ulid_string()
     {
-        $ulid = ULID::fromULID('01GX5BDH020BV0XHGGJ0RE0H2D');
+        $ulid = ULID::fromULID('01GX86P1083Y9R4PYNYW8E4CDJ');
 
         $this->assertStringContainsString(
-            '2023-04-04 05:21:44.450',
+            '2023-04-05 07:56:43.400',
             $ulid->toDateTime()->format('Y-m-d H:i:s.u')
         );
     }
@@ -124,10 +124,10 @@ class ULIDTest extends TestCase
 
     public function test_toUUID_from_ulid_string()
     {
-        $ulid = ULID::fromUUID('01874ad1-12b6-328a-8cf8-97a3d48d8471');
+        $ulid = ULID::fromUUID('0187506b-0408-1be3-520f-ab0b9b510ccf');
 
         $this->assertSame(
-            '2023-04-04 05:50:28.534',
+            '2023-04-05 07:56:43.400',
             $ulid->toDateTime()->format('Y-m-d H:i:s.v')
         );
     }
@@ -142,16 +142,32 @@ class ULIDTest extends TestCase
 
     public function test_from_timestamp()
     {
-        $ulid = ULID::fromTimestamp(1680627803.321);
+        $ulid = ULID::fromTimestamp(1680681403.400);
         $this->assertSame(
-            '2023-04-04 17:03:23.321',
-            $ulid->toDateTime()->format('Y-m-d H:i:s.v')
+            '2023-04-05 07:56:43.400',
+            $ulid->toDateTime()->format('Y-m-d H:i:s.v'),
+            'Timestamp in milliseconds'
         );
 
-        $ulid = ULID::fromTimestamp(1680627803);
+        $ulid = ULID::fromTimestamp('1680681403.400');
         $this->assertSame(
-            '2023-04-04 17:03:23.000',
-            $ulid->toDateTime()->format('Y-m-d H:i:s.v')
+            '2023-04-05 07:56:43.400',
+            $ulid->toDateTime()->format('Y-m-d H:i:s.v'),
+            'Timestamp in milliseconds as string'
+        );
+
+        $ulid = ULID::fromTimestamp(1680681403400);
+        $this->assertSame(
+            '2023-04-05 07:56:43.400',
+            $ulid->toDateTime()->format('Y-m-d H:i:s.v'),
+            'Timestamp in microseconds'
+        );
+
+        $ulid = ULID::fromTimestamp(1680681403);
+        $this->assertSame(
+            '2023-04-05 07:56:43.000',
+            $ulid->toDateTime()->format('Y-m-d H:i:s.v'),
+            'Timestamp in seconds'
         );
     }
 
@@ -163,7 +179,6 @@ class ULIDTest extends TestCase
 
         ULID::fromTimestamp(-123);
     }
-
 
     public function test_from_invalid_datetime()
     {
@@ -195,7 +210,7 @@ class ULIDTest extends TestCase
 
     public function test_transformations_should_return_same_datetime()
     {
-        $actual = '2023-04-07 07:45:26';
+        $actual = '2023-04-05 07:56:43';
         $instance = ULID::fromDateTime($actual);
 
         $uuid = $instance->toUUID();
