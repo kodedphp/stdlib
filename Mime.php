@@ -241,7 +241,7 @@ final class Mime
     /**
      * @var array
      */
-    private static $typesToExtensions = [
+    private static array $typesToExtensions = [
         'application/json'                                         => ['json'],
         'text/xml'                                                 => ['xml', 'xsl'],
         'application/xml'                                          => ['xml'],
