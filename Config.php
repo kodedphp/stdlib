@@ -65,7 +65,6 @@ use function ucfirst;
  */
 class Config extends Arguments implements Configuration
 {
-    public string $root = '';
     private bool $silent = false;
 
     /**
@@ -76,12 +75,12 @@ class Config extends Arguments implements Configuration
      *                                  this is the application's root path
      * @param Data|null $defaults [optional] An Optional config object with default values
      */
-    public function __construct(string $root = '', Data $defaults = null)
+    public function __construct(
+        public string $root = '',
+        Data $defaults = null)
     {
-        parent::__construct($defaults ? $defaults->toArray() : []);
-        if (!$this->root = $root) {
-            $this->root = getcwd();
-        }
+        parent::__construct($defaults?->toArray() ?? []);
+        $this->root ??= getcwd();
     }
 
     /**
@@ -118,7 +117,7 @@ class Config extends Arguments implements Configuration
         if (is_string($object) && class_exists($object)) {
             $object = new $object;
         }
-        $this->root = $object->rootPath ?: $this->root;
+        $this->root ??= $object->root;
         return $this->import(iterator_to_array($object));
     }
 
@@ -143,7 +142,6 @@ class Config extends Arguments implements Configuration
             env('', null, $this->filter($data, $namespace, false));
         } catch (Exception $e) {
             error_log('[Configuration error]: ' . $e->getMessage());
-            env('', null, []);
         } finally {
             return $this;
         }
@@ -196,8 +194,9 @@ class Config extends Arguments implements Configuration
         bool   $lowercase = true,
         bool   $trim = true): static
     {
-        return (new static($this->root))
-            ->import($this->filter($this->toArray(), $prefix, $lowercase, $trim));
+        return (new static($this->root))->import(
+            $this->filter($this->toArray(), $prefix, $lowercase, $trim)
+        );
     }
 
     protected function loadDataFrom(string $filename, callable $loader): Configuration
