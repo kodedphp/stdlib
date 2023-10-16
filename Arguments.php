@@ -33,27 +33,22 @@ class Arguments implements Argument,
         MutatorTrait::__set insteadof AccessorTrait;
     }
 
-    protected array $storage = [];
+    public function __construct(protected array $data = []) {}
 
-    public function __construct(array $values = [])
-    {
-        $this->storage = $values;
-    }
-
-    public function __clone()
-    {
-    }
+    public function __clone() {}
 
     public function namespace(
         string $prefix,
         bool $lowercase = true,
         bool $trim = true): static
     {
-        return new static($this->filter($this->toArray(), $prefix, $lowercase, $trim));
+        return new static(
+            $this->filter($this->toArray(), $prefix, $lowercase, $trim)
+        );
     }
 
     public function toImmutable(): Immutable
     {
-        return new Immutable($this->storage);
+        return new Immutable($this->data);
     }
 }

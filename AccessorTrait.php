@@ -18,16 +18,16 @@ use function count;
 use function get_class;
 
 /**
- * @property array $storage
+ * @property array $data
  */
 trait AccessorTrait
 {
     public function &__get($index)
     {
-        if (false === array_key_exists($index, $this->storage)) {
-            $this->storage[$index] = null;
+        if (false === array_key_exists($index, $this->data)) {
+            $this->data[$index] = null;
         }
-        return $this->storage[$index];
+        return $this->data[$index];
     }
 
     public function __set($index, $value)
@@ -47,12 +47,12 @@ trait AccessorTrait
 
     public function get(string $index, mixed $default = null): mixed
     {
-        return $this->storage[$index] ?? $default;
+        return $this->data[$index] ?? $default;
     }
 
     public function has(string $index): bool
     {
-        return array_key_exists($index, $this->storage);
+        return array_key_exists($index, $this->data);
     }
 
     public function equals(string $propertyA, string $propertyB): bool
@@ -62,33 +62,33 @@ trait AccessorTrait
 
     public function count(): int
     {
-        return count($this->storage);
+        return count($this->data);
     }
 
     public function toArray(): array
     {
-        return $this->storage;
+        return $this->data;
     }
 
     public function toJSON(int $options = 0): string
     {
-        return json_serialize($this->storage, $options);
+        return json_serialize($this->data, $options);
     }
 
     public function toXML(string $root): string
     {
-        return xml_serialize($root, $this->storage);
+        return xml_serialize($root, $this->data);
     }
 
     public function getIterator(): Traversable
     {
-        foreach ($this->storage as $k => $v) {
+        foreach ($this->data as $k => $v) {
             yield $k => $v;
         }
     }
 
     public function jsonSerialize(): mixed
     {
-        return $this->storage;
+        return $this->data;
     }
 }

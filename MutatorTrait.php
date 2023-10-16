@@ -12,7 +12,7 @@
 namespace Koded\Stdlib;
 
 /**
- * @property array $storage
+ * @property array $data
  */
 trait MutatorTrait
 {
@@ -23,13 +23,13 @@ trait MutatorTrait
 
     public function set(string $index, mixed $value): static
     {
-        $this->storage[$index] = $value;
+        $this->data[$index] = $value;
         return $this;
     }
 
     public function bind(string $index, mixed &$variable): static
     {
-        $this->storage[$index] = &$variable;
+        $this->data[$index] =& $variable;
         return $this;
     }
 
@@ -41,27 +41,27 @@ trait MutatorTrait
     public function pull(string $index, mixed $default = null): mixed
     {
         $value = $this->get($index, $default);
-        unset($this->storage[$index]);
+        unset($this->data[$index]);
         return $value;
     }
 
     public function import(array $array): static
     {
         foreach ($array as $index => $value) {
-            $this->storage[$index] = $value;
+            $this->data[$index] = $value;
         }
         return $this;
     }
 
     public function delete(string $index): static
     {
-        unset($this->storage[$index]);
+        unset($this->data[$index]);
         return $this;
     }
 
     public function clear(): static
     {
-        $this->storage = [];
+        $this->data = [];
         return $this;
     }
 }

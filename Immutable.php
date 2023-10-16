@@ -29,15 +29,10 @@ class Immutable implements Data,
 
     use AccessorTrait, ArrayDataFilterTrait;
 
-    protected array $storage = [];
-
-    public function __construct(array $values)
-    {
-        $this->storage = $values;
-    }
+    public function __construct(protected array $data) {}
 
     public function toArguments(): Arguments
     {
-        return new Arguments($this->storage);
+        return new Arguments($this->data);
     }
 }

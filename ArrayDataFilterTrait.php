@@ -38,26 +38,26 @@ trait ArrayDataFilterTrait
 
     public function find(string $index, mixed $default = null): mixed
     {
-        if (isset($this->storage[$index])) {
-            return $this->storage[$index];
+        if (isset($this->data[$index])) {
+            return $this->data[$index];
         }
-        $storage = $this->storage;
+        $data = $this->data;
         foreach (explode('.', $index) as $token) {
-            if (false === is_array($storage) ||
-                false === array_key_exists($token, $storage)
+            if (false === is_array($data) ||
+                false === array_key_exists($token, $data)
             ) {
                 return $default;
             }
-            $storage = &$storage[$token];
+            $data =& $data[$token];
         }
-        return $storage;
+        return $data;
     }
 
     public function extract(array $indexes): array
     {
         $found = [];
         foreach ($indexes as $index) {
-            $found[$index] = $this->storage[$index] ?? null;
+            $found[$index] = $this->data[$index] ?? null;
         }
         return $found;
     }

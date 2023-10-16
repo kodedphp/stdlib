@@ -27,6 +27,8 @@ use function join;
  * - boolean is a wrong type for the key; do not use a boolean key (it's juggled into a string)
  *
  * Use string values for the keys and you'll be golden.
+ *
+ * @property array $data
  */
 class ExtendedArguments extends Arguments
 {
@@ -37,16 +39,16 @@ class ExtendedArguments extends Arguments
 
     public function set(mixed $index, mixed $value): static
     {
-        $storage = &$this->storage;
+        $data =& $this->data;
         foreach (explode('.', $index) as $i) {
-            if (false === is_array($storage[$i]) ||
-                false === array_key_exists($i, $storage)
+            if (false === is_array($data[$i]) ||
+                false === array_key_exists($i, $data)
             ) {
-                $storage[$i] = [];
+                $data[$i] = [];
             }
-            $storage = &$storage[$i];
+            $data =& $data[$i];
         }
-        $storage = $value;
+        $data = $value;
         return $this;
     }
 
@@ -60,31 +62,31 @@ class ExtendedArguments extends Arguments
 
     public function has(string $index): bool
     {
-        $storage = & $this->storage;
+        $data =& $this->data;
         foreach (explode('.', $index) as $i) {
-            if (false === is_array($storage) ||
-                false === array_key_exists($i, $storage)
+            if (false === is_array($data) ||
+                false === array_key_exists($i, $data)
             ) {
                 return false;
             }
-            $storage = &$storage[$i];
+            $data =& $data[$i];
         }
         return true;
     }
 
     public function delete(string $index): static
     {
-        $storage = &$this->storage;
+        $data =& $this->data;
         foreach (explode('.', $index) as $i) {
-            if (false === is_array($storage[$i]) ||
-                false === array_key_exists($i, $storage)
+            if (false === is_array($data[$i]) ||
+                false === array_key_exists($i, $data)
             ) {
                 continue;
             }
-            $storage = &$storage[$i];
+            $data =& $data[$i];
         }
         if (isset($i)) {
-            unset($storage[$i]);
+            unset($data[$i]);
         }
         return $this;
     }
@@ -103,7 +105,7 @@ class ExtendedArguments extends Arguments
         $indexes = [];
         $flatten = [];
         $iterator = new RecursiveIteratorIterator(
-            new RecursiveArrayIterator($this->storage),
+            new RecursiveArrayIterator($this->data),
             RecursiveIteratorIterator::SELF_FIRST
         );
         foreach ($iterator as $index => $value) {
