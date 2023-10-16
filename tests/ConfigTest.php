@@ -11,7 +11,7 @@ class ConfigTest extends TestCase
 {
     public function test_should_load_defaults_from_other_instance()
     {
-        $config = new Config('', new MockOtherConfigInstance);
+        $config = new Config('', new TestOtherConfInstanceClass);
         $this->assertSame([1, 2, 3], $config->list);
     }
 
@@ -52,7 +52,7 @@ class ConfigTest extends TestCase
         $config = new Config;
         $this->assertNull($config->foo);
 
-        $config->fromObject(new MockOtherConfigInstance);
+        $config->fromObject(new TestOtherConfInstanceClass);
         $this->assertSame('bar', $config->foo);
     }
 
@@ -61,7 +61,7 @@ class ConfigTest extends TestCase
         $config = new Config;
         $this->assertNull($config->foo);
 
-        $config->fromObject(MockOtherConfigInstance::class);
+        $config->fromObject(TestOtherConfInstanceClass::class);
         $this->assertSame('bar', $config->foo);
     }
 
@@ -241,17 +241,41 @@ class ConfigTest extends TestCase
         $this->assertSame(include_once __DIR__ . '/fixtures/config-sections.php', $config->toArray());
     }
 
+    public function test_should_set_root_on_empty_constructor_argument()
+    {
+        $config = new Config;
+        $this->assertNotEmpty($config->root);
+    }
+
+    public function test_shoud_set_root_from_empty_object_root()
+    {
+        $initial = new TestRootFromThisClass;
+        $config = new Config(__DIR__);
+        $config->fromObject($initial);
+
+        $this->assertSame($config->root, $initial->root);
+        $this->assertSame('/tmp', $config->root);
+    }
+
     protected function tearDown(): void
     {
         env('', null, []);
     }
 }
 
-class MockOtherConfigInstance extends Config
+class TestOtherConfInstanceClass extends Config
 {
     public function __construct()
     {
         parent::__construct();
         $this->fromPhpFile(__DIR__ . '/fixtures/nested-array.php');
+    }
+}
+
+class TestRootFromThisClass extends Config
+{
+    public function __construct()
+    {
+        parent::__construct('/tmp');
     }
 }

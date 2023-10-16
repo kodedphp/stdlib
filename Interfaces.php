@@ -318,11 +318,12 @@ interface Configuration extends Argument, ArrayDataFilter, NamespaceDataFilter
     /**
      * Loads the configuration options from other Config instance.
      *
-     * @param object|string $object A FQN of the configuration object, or an instance of it
+     * @param Configuration|string $object A FQN of the configuration object,
+     *                                     or an instance of it
      *
      * @return Configuration
      */
-    public function fromObject(object|string $object): Configuration;
+    public function fromObject(Configuration|string $object): Configuration;
 
     /**
      * Yell if something bad has happened, or pass quietly.

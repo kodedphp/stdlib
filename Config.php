@@ -20,6 +20,7 @@ use function error_log;
 use function file_get_contents;
 use function getcwd;
 use function getenv;
+use function is_a;
 use function is_string;
 use function iterator_to_array;
 use function join;
@@ -80,7 +81,7 @@ class Config extends Arguments implements Configuration
         Data $defaults = null)
     {
         parent::__construct($defaults?->toArray() ?? []);
-        $this->root ??= getcwd();
+        $this->root = $root ?: getcwd();
     }
 
     /**
@@ -112,12 +113,12 @@ class Config extends Arguments implements Configuration
         return $this->import($parameters);
     }
 
-    public function fromObject(object|string $object): Configuration
+    public function fromObject(Configuration|string $object): Configuration
     {
-        if (is_string($object) && class_exists($object)) {
+        if (is_string($object) && class_exists($object) && is_a($object, Configuration::class, true)) {
             $object = new $object;
         }
-        $this->root ??= $object->root;
+        $this->root = $object->root;
         return $this->import(iterator_to_array($object));
     }
 
