@@ -69,7 +69,10 @@ class ConfigTest extends TestCase
     {
         $config = new Config;
         $config->fromIniFile('tests/fixtures/config-test.ini');
-        $this->assertSame(include __DIR__ . '/fixtures/expected-ini-data.php', $config->section1);
+        $this->assertSame(
+            include __DIR__ . '/fixtures/expected-ini-data.php',
+            $config->section1
+        );
     }
 
     /*
@@ -81,16 +84,17 @@ class ConfigTest extends TestCase
         $config = new Config;
         $config->fromEnvFile(__DIR__ . '/fixtures/.env');
 
-
         // Scalar type values are preserved
         $this->assertSame(include __DIR__ . '/fixtures/expected-env-data.php', env());
         $this->assertSame(42, env('KEY_1'));
+        $this->assertSame(null, env('KEY_2'), '.env key does not exist');
         $this->assertSame('value3', env('KEY_3'));
         $this->assertSame(true, env('KEY_4'));
         $this->assertSame(null, env('KEY_5'));
 
         // ENV variable values are mutated to strings
         $this->assertSame('42', \getenv('KEY_1'));
+        $this->assertSame(false, \getenv('KEY_2'), '.env key does not exist');
         $this->assertSame('value3', \getenv('KEY_3'));
         $this->assertSame('1', \getenv('KEY_4'));
         $this->assertSame('null', \getenv('KEY_5'));
@@ -126,11 +130,13 @@ class ConfigTest extends TestCase
         $config->fromEnvFile(__DIR__ . '/fixtures/.env');
 
         $this->assertArrayNotHasKey('KEY_1', $_ENV);
+        $this->assertArrayNotHasKey('KEY_2', $_ENV);
         $this->assertArrayNotHasKey('KEY_3', $_ENV);
         $this->assertArrayNotHasKey('KEY_4', $_ENV);
         $this->assertArrayNotHasKey('KEY_5', $_ENV);
 
         $this->assertSame('42', \getenv('KEY_1', true));
+        $this->assertSame(false, \getenv('KEY_2', true));
         $this->assertSame('value3', \getenv('KEY_3', true));
         $this->assertSame('1', \getenv('KEY_4', true));
         $this->assertSame('null', \getenv('KEY_5', true));
@@ -234,11 +240,15 @@ class ConfigTest extends TestCase
         $config->fromIniFile(__DIR__ . '/fixtures/config-sections.ini');
         $this->assertSame(include_once __DIR__ . '/fixtures/config-sections.php', $config->toArray());
     }
+
+    protected function tearDown(): void
+    {
+        env('', null, []);
+    }
 }
 
 class MockOtherConfigInstance extends Config
 {
-
     public function __construct()
     {
         parent::__construct();
