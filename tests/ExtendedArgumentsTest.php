@@ -28,6 +28,42 @@ class ExtendedArgumentsTest extends TestCase
         $this->assertEquals($expected, $arguments->flatten());
     }
 
+    public function test_set_without_dot_key()
+    {
+        $data = new ExtendedArguments();
+
+        $data->set('foo', 'bar');
+        $this->assertSame('bar', $data->get('foo'));
+
+        $data->set('foo.bar', 'gir');
+
+        $this->assertFalse($data->has('bar'),
+            'Sub-keys are not scanned');
+        $this->assertTrue($data->has('foo.bar'));
+        $this->assertSame('gir', $data->get('foo.bar'));
+        $this->assertSame(['bar' => 'gir'], $data->get('foo'),
+            'Finds all sub-keys');
+    }
+
+    public function test_delete_without_dot_key()
+    {
+        $data = new ExtendedArguments(['foo' => 'bar']);
+
+        $other = $data->delete('foo.bar');
+        $this->assertSame($data, $other,
+            'Does not modify if key is not found');
+
+        $data->delete('foo');
+        $this->assertFalse($data->has('foo'));
+
+        $data->set('foo.bar', 'baz');
+        $this->assertTrue($data->has('foo.bar'));
+
+        $data->delete('bar');
+        $this->assertTrue($data->has('foo.bar'),
+            'Sub-item is not deleted');
+    }
+
     /**
      * @dataProvider data
      */
@@ -95,14 +131,19 @@ class ExtendedArgumentsTest extends TestCase
 
     public function test_frakked_up_keys()
     {
-        $data = include __DIR__ . '/fixtures/nested-array.php';
+        $actual = include __DIR__ . '/fixtures/nested-array.php';
+        $expected = include __DIR__ . '/fixtures/nested-array-transformed.php';
+        $arguments = new ExtendedArguments($actual);
 
-        $arguments = new ExtendedArguments($data);
-        $this->assertSame($data, $arguments->toArray(), 'The data is intact');
+        $this->assertSame($expected, $arguments->toArray(),
+            'The data is transformed internally');
 
         // But, the keys are messed up now...
-        $this->assertSame(true, $arguments->get('array.1'), "The key is TRUE and now juggled into string 1");
-        $this->assertSame('null', $arguments->get(''), "The key is NULL but frakked up as empty string");
+        $this->assertSame(true, $arguments->get('array.1'),
+            'The key is TRUE and now juggled into string 1');
+
+        $this->assertSame('null', $arguments->get(''),
+            'The key is NULL but frakked up as empty string');
     }
 
     /** @dataProvider data */
@@ -111,10 +152,17 @@ class ExtendedArgumentsTest extends TestCase
         $arguments = new ExtendedArguments($data);
         $this->assertEquals([
             'key3.1' => 'B',
+            'key2.key21' => 'B',
             'key4.key41.key412' => 'E',
             'key2' => ['key21' => 'B'],
             'non-existent' => null
-        ], $arguments->extract(['key3.1', 'key4.key41.key412', 'key2', 'non-existent']));
+        ], $arguments->extract([
+            'key3.1',
+            'key2.key21',
+            'key4.key41.key412',
+            'key2',
+            'non-existent'
+        ]));
     }
 
     public function data()
