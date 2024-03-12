@@ -13,7 +13,6 @@ namespace Koded\Stdlib;
 
 use function array_key_exists;
 use function explode;
-use function is_array;
 use function str_replace;
 use function str_starts_with;
 use function strtolower;
@@ -43,9 +42,7 @@ trait ArrayDataFilterTrait
         }
         $data = $this->data;
         foreach (explode('.', $index) as $token) {
-            if (false === is_array($data) ||
-                false === array_key_exists($token, $data)
-            ) {
+            if (false === array_key_exists($token, $data)) {
                 return $default;
             }
             $data =& $data[$token];
