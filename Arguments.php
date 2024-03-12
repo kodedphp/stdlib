@@ -22,6 +22,8 @@ use JsonSerializable;
  * TIP: Avoid creating a child classes with properties from this one.
  * It will mess up your Zen.
  */
+
+#[\AllowDynamicProperties]
 class Arguments implements Argument,
                            TransformsToImmutable,
                            NamespaceDataFilter,
