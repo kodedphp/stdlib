@@ -17,6 +17,7 @@ use FilesystemIterator;
 use Koded\Stdlib\Serializer\{JsonSerializer, XmlSerializer};
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use stdClass;
 use function array_diff_assoc;
 use function array_key_exists;
 use function array_product;
@@ -57,9 +58,9 @@ function arguments(...$values): Argument
  * with optional arbitrary number of arguments.
  *
  * @param array ...$values
- * @return Argument
+ * @return ExtendedArguments
  */
-function extended_arguments(...$values): Argument
+function extended(...$values): ExtendedArguments
 {
     return new ExtendedArguments(...$values);
 }
@@ -74,6 +75,31 @@ function extended_arguments(...$values): Argument
 function value(...$values): Data
 {
     return new Immutable(...$values);
+}
+
+/**
+ * Do something with an object or array inside the callable,
+ * and return that value.
+ *
+ * @param mixed $value The value that is tapped into the callback
+ * @param callable|null $callable Callback that can modify the value
+ * @return mixed The tapped value
+ */
+function tap(mixed $value, callable $callable = null): mixed
+{
+    if (false === is_null($callable)) {
+        $callable($value);
+        return $value;
+    }
+    return new class($value) extends stdClass implements Tapped {
+        public function __construct(private mixed $value) {}
+        public function __call($method, $arguments) {
+            // @codeCoverageIgnoreStart
+            $this->value->{$method}(...$arguments);
+            return $this->value;
+            // @codeCoverageIgnoreEnd
+        }
+    };
 }
 
 /**

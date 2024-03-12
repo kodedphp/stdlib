@@ -384,3 +384,5 @@ interface Serializer
      */
     public function type(): string;
 }
+
+interface Tapped {}
