@@ -64,6 +64,8 @@ use function ucfirst;
  *     putenv('MY_APP_SETTINGS=/path/to/config/file.php');
  *
  */
+
+#[\AllowDynamicProperties]
 class Config extends Arguments implements Configuration
 {
     private bool $silent = false;
