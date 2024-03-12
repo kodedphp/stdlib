@@ -2,10 +2,11 @@
 
 namespace Tests\Koded\Stdlib;
 
-use Koded\Stdlib\{Arguments, Immutable};
+use Koded\Stdlib\{Arguments, ExtendedArguments, Immutable};
 use PHPUnit\Framework\TestCase;
 use function Koded\Stdlib\{arguments,
     camel_to_snake_case,
+    extended_arguments,
     htmlencode,
     is_associative,
     now,
@@ -30,6 +31,16 @@ class FunctionsTest extends TestCase
     {
         $value = arguments([1, 2, 3]);
         $this->assertInstanceOf(Arguments::class, $value);
+        $this->assertSame([1, 2, 3], $value->toArray());
+
+        $value->foo = 'bar';
+        $this->assertSame([1, 2, 3, 'foo' => 'bar'], $value->toArray());
+    }
+
+    public function test_extended_arguments_function()
+    {
+        $value = extended_arguments([1, 2, 3]);
+        $this->assertInstanceOf(ExtendedArguments::class, $value);
         $this->assertSame([1, 2, 3], $value->toArray());
 
         $value->foo = 'bar';

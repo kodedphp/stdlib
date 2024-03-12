@@ -45,7 +45,6 @@ use function var_export;
  * with optional arbitrary number of arguments.
  *
  * @param array ...$values
- *
  * @return Argument
  */
 function arguments(...$values): Argument
@@ -54,10 +53,33 @@ function arguments(...$values): Argument
 }
 
 /**
+ * Creates a new ExtendedArguments instance
+ * with optional arbitrary number of arguments.
+ *
+ * @param array ...$values
+ * @return Argument
+ */
+function extended_arguments(...$values): Argument
+{
+    return new ExtendedArguments(...$values);
+}
+
+/**
+ * Creates a new Data instance (Immutable)
+ * with optional arbitrary number of arguments.
+ *
+ * @param array ...$values
+ * @return Data
+ */
+function value(...$values): Data
+{
+    return new Immutable(...$values);
+}
+
+/**
  * Transforms simple CamelCaseName into camel_case_name (lower case underscored).
  *
  * @param string $string CamelCase string to be underscored
- *
  * @return string Transformed string (for weird strings, you get what you deserve)
  */
 function camel_to_snake_case(string $string): string
@@ -113,7 +135,6 @@ function env(
  *
  * @param string $input The input string
  * @param string $encoding The encoding
- *
  * @return string
  */
 function htmlencode(string $input, string $encoding = 'UTF-8'): string
@@ -133,7 +154,6 @@ function htmlencode(string $input, string $encoding = 'UTF-8'): string
  * the sane programming an ugly Array Oriented Programming hackery.
  *
  * @param array $array
- *
  * @return bool
  */
 function is_associative(array $array): bool
@@ -148,7 +168,6 @@ function is_associative(array $array): bool
  * @param int $options [optional] JSON bitmask options for JSON encoding.
  *                       [WARNING]: uses {@JsonSerializer::OPTIONS} as defaults;
  *                       instead of adding, it may remove the option (if set in OPTIONS)
- *
  * @return string JSON encoded string, or EMPTY STRING if encoding failed
  * @see http://php.net/manual/en/function.json-encode.php
  */
@@ -163,7 +182,6 @@ function json_serialize(mixed $value, int $options = 0): string
  * @param string $json A JSON string
  * @param bool $associative When TRUE, returned objects will be
  *                            converted into associative arrays
- *
  * @return mixed The decoded value, or EMPTY STRING on error
  */
 function json_unserialize(string $json, bool $associative = false): mixed
@@ -210,7 +228,6 @@ function randomstring(
  * Removes a directory.
  *
  * @param string $dirname The folder name
- *
  * @return bool TRUE on success, FALSE otherwise
  */
 function rmdir(string $dirname): bool
@@ -230,7 +247,6 @@ function rmdir(string $dirname): bool
  * Transforms the simple snake_case string into CamelCaseName.
  *
  * @param string $string
- *
  * @return string Camel-cased string
  */
 function snake_to_camel_case(string $string): string
@@ -244,7 +260,6 @@ function snake_to_camel_case(string $string): string
  *
  * @param string $string
  * @param int $delimiter chr() of the delimiter character
- *
  * @return string The converted string with the provided delimiter
  */
 function to_delimited_string(string $string, int $delimiter): string
@@ -257,7 +272,6 @@ function to_delimited_string(string $string, int $delimiter): string
  * Converts the string to-kebab-case
  *
  * @param string $string
- *
  * @return string
  */
 function to_kebab_string(string $string): string
@@ -266,24 +280,10 @@ function to_kebab_string(string $string): string
 }
 
 /**
- * Creates a new Data instance (Immutable)
- * with optional arbitrary number of arguments.
- *
- * @param array ...$values
- *
- * @return Data
- */
-function value(...$values): Data
-{
-    return new Immutable(...$values);
-}
-
-/**
  * Serializes the data into XML document.
  *
  * @param string $root The XML document root name
  * @param iterable $data The data to be encoded
- *
  * @return string XML document
  */
 function xml_serialize(string $root, iterable $data): string
@@ -297,7 +297,6 @@ function xml_serialize(string $root, iterable $data): string
  * of complicated XML structures.
  *
  * @param string $xml The XML document to be decoded into array
- *
  * @return array Decoded version of the XML string,
  *               or empty array on malformed XML
  */
