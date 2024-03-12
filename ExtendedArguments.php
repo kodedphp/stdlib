@@ -18,7 +18,9 @@ use function array_push;
 use function array_slice;
 use function explode;
 use function is_array;
+use function is_string;
 use function join;
+use function str_contains;
 
 /**
  * Class ExtendedArguments
@@ -30,8 +32,18 @@ use function join;
  *
  * @property array $data
  */
+
+#[\AllowDynamicProperties]
 class ExtendedArguments extends Arguments
 {
+    public function __construct(protected array $data = [])
+    {
+        $this->data = [];
+        foreach ($data as $index => $value) {
+            $this->set($index, $value);
+        }
+    }
+
     public function get(string $index, mixed $default = null): mixed
     {
         return $this->find($index, $default);
@@ -39,10 +51,13 @@ class ExtendedArguments extends Arguments
 
     public function set(mixed $index, mixed $value): static
     {
+        if (is_string($index) && false === str_contains($index, '.')) {
+            return parent::set($index, $value);
+        }
         $data =& $this->data;
-        foreach (explode('.', $index) as $i) {
-            if (false === is_array($data[$i]) ||
-                false === array_key_exists($i, $data)
+        foreach (explode('.', (string)$index) as $i) {
+            if (false === array_key_exists($i, $data) ||
+                false === is_array($data[$i])
             ) {
                 $data[$i] = [];
             }
@@ -62,6 +77,9 @@ class ExtendedArguments extends Arguments
 
     public function has(string $index): bool
     {
+        if (false === str_contains($index, '.')) {
+            return array_key_exists($index, $this->data);
+        }
         $data =& $this->data;
         foreach (explode('.', $index) as $i) {
             if (false === is_array($data) ||
@@ -76,10 +94,13 @@ class ExtendedArguments extends Arguments
 
     public function delete(string $index): static
     {
+        if (false === str_contains($index, '.')) {
+            return parent::delete($index);
+        }
         $data =& $this->data;
         foreach (explode('.', $index) as $i) {
-            if (false === is_array($data[$i]) ||
-                false === array_key_exists($i, $data)
+            if (false === array_key_exists($i, $data) ||
+                false === is_array($data[$i])
             ) {
                 continue;
             }
