@@ -53,11 +53,11 @@ function get_version_array(string $version): array
 /**
  * @internal
  *
- * Returns the array version of the Koded version.
+ * Returns the array version from the VERSION file.
  * Checks the correctness of the provided version array.
  *
  * @param array $version
- * @return array Koded segmented version as array
+ * @return array Segmented version as array
  */
 function get_complete_version(array $version): array
 {
@@ -66,7 +66,9 @@ function get_complete_version(array $version): array
             defined('VERSION') && is_array(VERSION) => get_version_array(join('-', array_filter(VERSION))),
             is_file($version = __DIR__ . '/../../../VERSION'), // project dir relative to /vendor
             is_file($version = getcwd() . '/VERSION') => get_version_array(@file_get_contents($version)),
+            // @codeCoverageIgnoreStart
             default => INVALID_VERSION_ARRAY
+            // @codeCoverageIgnoreEnd
         };
     }
     assert(3 === count($version), 'version array should have exactly 3 parts');
