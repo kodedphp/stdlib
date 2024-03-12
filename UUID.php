@@ -186,10 +186,14 @@ final class UUID
             if ($node = `hostname -i 2> /dev/null`) {
                 return $node = vsprintf('%02x%02x%02x%02x', explode('.', $node));
             }
+            // @codeCoverageIgnoreStart
             if ($node = `hostname 2> /dev/null`) {
+                // macOS
                 $node = gethostbyname(trim($node));
                 return $node = vsprintf('%02x%02x%02x%02x', explode('.', $node));
             }
+            // @codeCoverageIgnoreEnd
+
             // Cannot identify IP or host, fallback as described in
             // http://tools.ietf.org/html/rfc4122#section-4.5
             // https://en.wikipedia.org/wiki/MAC_address#Unicast_vs._multicast_(I/G_bit)
