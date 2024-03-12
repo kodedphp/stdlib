@@ -155,6 +155,9 @@ Functions
 ---------
 ```php
 function arguments(...$values): Argument;
+function extended(...$values): ExtendedArguments;
+function value(...$values): Data;
+function tap(mixed $value, callable $callable = null): mixed;
 function camel_to_snake_case(string $string): string;
 function env(string $name = null, mixed $default = null, array $initialState = null): mixed;
 function error_log(string $function, string $message, $data): void;
@@ -168,7 +171,6 @@ function rmdir(string $dirname): bool;
 function snake_to_camel_case(string $string): string;
 function to_delimited_string(string $string, int $delimiter): string;
 function to_kebab_string(string $string): string;
-function value(...$values): Data;
 function xml_serialize(string $root, iterable $data): string;
 function xml_unserialize(string $xml): array;
 ```
