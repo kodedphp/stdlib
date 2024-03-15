@@ -87,7 +87,7 @@ class XmlSerializer implements Serializer
         } else {
             $this->appendNode($document, $document, $data, $this->root, null);
         }
-        return $document->saveXML();
+        return trim($document->saveXML());
     }
 
     /**
