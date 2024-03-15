@@ -95,7 +95,7 @@ function tap(mixed $value, callable $callable = null): mixed
         public function __construct(private mixed $value) {}
         public function __call($method, $arguments) {
             // @codeCoverageIgnoreStart
-            $this->value->{$method}(...$arguments);
+            ([$this->value, $method])(...$arguments);
             return $this->value;
             // @codeCoverageIgnoreEnd
         }
