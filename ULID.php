@@ -66,7 +66,7 @@ class ULID implements Countable
             throw new ArgumentCountError('count must be greater then 0', 400);
         }
         $this->randomize(false);
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $count; ++$i) {
             $this->timestamps[$i] = $timestamps;
         }
     }
@@ -97,7 +97,7 @@ class ULID implements Countable
         }
         $timestamp = 0;
         $chars = substr($ulid, 0, 10);
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 10; ++$i) {
             $timestamp = $timestamp * 32 + strpos(static::ENCODING, $chars[$i]);
         }
         return new static ($timestamp, 1);
@@ -232,7 +232,7 @@ class ULID implements Countable
         $sameTimestamp = $lastTime === $milliseconds;
         $lastTime = $milliseconds;
         if ($sameTimestamp) {
-            $this->randomness[2]++;
+            ++$this->randomness[2];
         } else {
             $this->randomize(false);
         }
@@ -271,7 +271,7 @@ class ULID implements Countable
     {
         if ($list) {
             $this->randomness = [];
-            for ($i = 0; $i < 16; $i++) {
+            for ($i = 0; $i < 16; ++$i) {
                 $this->randomness[] = mt_rand(0, 31);
             }
         } else {
