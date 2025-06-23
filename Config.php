@@ -20,10 +20,10 @@ use function error_log;
 use function file_get_contents;
 use function getcwd;
 use function getenv;
+use function implode;
 use function is_a;
 use function is_string;
 use function iterator_to_array;
-use function join;
 use function json_decode;
 use function parse_ini_file;
 use function parse_ini_string;
@@ -181,7 +181,7 @@ class Config extends Arguments implements Configuration
             $value = getenv($variable);
             $data[] = $variable . '=' . (false === $value ? 'null' : $value);
         }
-        $data = parse_ini_string(join(PHP_EOL, $data), true, INI_SCANNER_TYPED) ?: [];
+        $data = parse_ini_string(implode(PHP_EOL, $data), true, INI_SCANNER_TYPED) ?: [];
         $this->import($this->filter($data, $namespace, $lowercase, $trim));
         return $this;
     }

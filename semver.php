@@ -63,7 +63,7 @@ function get_complete_version(array $version): array
 {
     if (empty($version)) {
         $version = match (true) {
-            defined('VERSION') && is_array(VERSION) => get_version_array(join('-', array_filter(VERSION))),
+            defined('VERSION') && is_array(VERSION) => get_version_array(implode('-', array_filter(VERSION))),
             is_file($version = __DIR__ . '/../../../VERSION'), // project dir relative to /vendor
             is_file($version = getcwd() . '/VERSION') => get_version_array(@file_get_contents($version)),
             // @codeCoverageIgnoreStart

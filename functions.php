@@ -26,7 +26,7 @@ use function chr;
 use function date_create_immutable;
 use function getenv;
 use function htmlentities;
-use function join;
+use function implode;
 use function ord;
 use function preg_replace;
 use function preg_split;
@@ -78,16 +78,16 @@ function value(...$values): Data
 }
 
 /**
- * Do something with an object or array inside the callable,
- * and return that value.
+ * Do something with the $value (an object, array)
+ * inside the callable, and return that value.
  *
  * @param mixed $value The value that is tapped into the callback
  * @param callable|null $callable Callback that can modify the value
  * @return mixed The tapped value
  */
-function tap(mixed $value, callable $callable = null): mixed
+function tap(mixed $value, callable|null $callable = null): mixed
 {
-    if (false === is_null($callable)) {
+    if ($callable) {
         $callable($value);
         return $value;
     }
@@ -103,7 +103,7 @@ function tap(mixed $value, callable $callable = null): mixed
 }
 
 /**
- * Transforms simple CamelCaseName into camel_case_name (lower case underscored).
+ * Transforms CamelCaseName string into camel_case_name (lower case, underscored).
  *
  * @param string $string CamelCase string to be underscored
  * @return string Transformed string (for weird strings, you get what you deserve)
@@ -129,8 +129,8 @@ function error_log(string $func, string $message, mixed $data): void
 /**
  * Gets or sets environment variables.
  *
- * @param string|null $name
- * @param string [optional] $name The name of the env variable
+ * @param string|null $name The name of the env variable
+ * @param string|null $default The default value (NULL if not provided)
  * @param array|null $initialState
  * @return mixed The value for the env variable,
  *               or all variables if $name is not provided
@@ -291,7 +291,7 @@ function snake_to_camel_case(string $string): string
 function to_delimited_string(string $string, int $delimiter): string
 {
     $str = preg_split('~[^\p{L}\p{N}\']+~u', trim($string));
-    return join(chr($delimiter), $str);
+    return implode(chr($delimiter), $str);
 }
 
 /**
@@ -320,7 +320,7 @@ function xml_serialize(string $root, iterable $data): string
 /**
  * Unserialize an XML document into PHP array.
  * This function does not deal with magical conversions
- * of complicated XML structures.
+ * of complicated XML documents.
  *
  * @param string $xml The XML document to be decoded into array
  * @return array Decoded version of the XML string,

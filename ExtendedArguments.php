@@ -17,9 +17,9 @@ use function array_key_exists;
 use function array_push;
 use function array_slice;
 use function explode;
+use function implode;
 use function is_array;
 use function is_string;
-use function join;
 use function str_contains;
 
 /**
@@ -132,7 +132,7 @@ class ExtendedArguments extends Arguments
         foreach ($iterator as $index => $value) {
             $indexes[$iterator->getDepth()] = $index;
             if (false === is_array($value)) {
-                $_ = join('.', array_slice($indexes, 0, $iterator->getDepth() + 1));
+                $_ = implode('.', array_slice($indexes, 0, $iterator->getDepth() + 1));
                 $flatten[$_] = $value;
             }
         }
