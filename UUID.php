@@ -169,7 +169,7 @@ final class UUID
      *
      * @return string UUID v1
      */
-    public static function v1(string|int $address = null): string
+    public static function v1(string|int|null $address = null): string
     {
         static $node, $clockSeq, $lastTimestamp;
 
@@ -208,7 +208,7 @@ final class UUID
          * @param string|int|null $address [optional]
          * @return string
          */
-        $nodeIdentifier = static function(string|int $address = null) use ($fetchAddress): string {
+        $nodeIdentifier = static function(string|int|null $address = null) use ($fetchAddress): string {
             $address = null !== $address
                 ? str_replace([':', '-', '.'], '', (string)$address)
                 : $fetchAddress();

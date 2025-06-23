@@ -136,9 +136,9 @@ function error_log(string $func, string $message, mixed $data): void
  *               or all variables if $name is not provided
  */
 function env(
-    string $name = null,
-    mixed  $default = null,
-    array  $initialState = null): mixed
+    string|null $name = null,
+    mixed       $default = null,
+    array|null  $initialState = null): mixed
 {
     static $state = [];
     if (null !== $initialState) {

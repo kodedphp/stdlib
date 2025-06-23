@@ -34,13 +34,13 @@ class KodedException extends RuntimeException
      *                                  defined by $code in the child classes are ignored
      * @param Throwable|null $previous  [optional] The previous throwable used for the exception chaining
      */
-    public function __construct(int $code, array $arguments = [], Throwable $previous = null)
+    public function __construct(int $code, array $arguments = [], ?Throwable $previous = null)
     {
         $message = $arguments['message'] ?? $this->messages[$code] ?? $this->message;
         parent::__construct(strtr($message, $arguments), $code, $previous);
     }
 
-    public static function generic(string $message, Throwable $previous = null): static
+    public static function generic(string $message, ?Throwable $previous = null): static
     {
         return new static(Data::E_PHP_EXCEPTION, [':message' => $message], $previous);
     }

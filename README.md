@@ -128,7 +128,7 @@ putenv('MY_APP_SETTINGS=/path/to/config/file.php');
 ### `UUID`
 Class UUID generates `Universally Unique Identifiers` following the [RFC 4122][rfc-4122].
 
-- `v1($address = null): string`
+- `v1(string|null $address = null): string`
 - `v3(string $namespace, $name): string`
 - `v4(): string`
 - `v5(string $namespace, string $name): string`
@@ -159,7 +159,7 @@ function extended(...$values): ExtendedArguments;
 function value(...$values): Data;
 function tap(mixed $value, callable|null $callable = null): mixed;
 function camel_to_snake_case(string $string): string;
-function env(string $name = null, mixed $default = null, array $initialState = null): mixed;
+function env(string|null $name = null, mixed $default = null, array|null $initialState = null): mixed;
 function error_log(string $function, string $message, $data): void;
 function htmlencode(string $input, string $encoding = 'UTF-8'): string;
 function is_associative(array $array): bool;
