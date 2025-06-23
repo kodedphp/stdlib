@@ -21,7 +21,7 @@ use Throwable;
 use function array_is_list;
 use function count;
 use function current;
-use function error_log;
+use function end;
 use function filter_var;
 use function is_array;
 use function is_bool;
@@ -30,14 +30,18 @@ use function is_int;
 use function is_iterable;
 use function is_numeric;
 use function is_object;
+use function Koded\Stdlib\error_log;
 use function Koded\Stdlib\json_serialize;
 use function Koded\Stdlib\json_unserialize;
 use function key;
 use function preg_match;
 use function str_contains;
+use function str_replace;
 use function str_starts_with;
 use function substr;
 use function trim;
+use function xml_parse_into_struct;
+use function xml_parser_create;
 
 /**
  * Class XmlSerializer is heavily modified Symfony encoder (XmlEncoder).
@@ -71,21 +75,20 @@ class XmlSerializer implements Serializer
     }
 
     /**
-     * @param iterable $data
-     *
+     * @param iterable $value
      * @return string|null XML
      */
-    public function serialize(mixed $data): string|null
+    public function serialize(mixed $value): string|null
     {
         $document = new DOMDocument('1.0', 'UTF-8');
         $document->formatOutput = false;
-        if (is_iterable($data)) {
+        if (is_iterable($value)) {
             $root = $document->createElement($this->root);
             $document->appendChild($root);
             $document->createAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:' . $this->root);
-            $this->buildXml($document, $root, $data);
+            $this->buildXml($document, $root, $value);
         } else {
-            $this->appendNode($document, $document, $data, $this->root, null);
+            $this->appendNode($document, $document, $value, $this->root, null);
         }
         return trim($document->saveXML());
     }
@@ -94,11 +97,13 @@ class XmlSerializer implements Serializer
      * Unserialize a proper XML document into array, scalar value or NULL.
      *
      * @param string $xml XML
-     *
      * @return mixed scalar|array|null
      */
     public function unserialize(string $xml): mixed
     {
+        if (empty($xml = trim($xml))) {
+            return null;
+        }
         try {
             $document = new DOMDocument('1.0', 'UTF-8');
             $document->preserveWhiteSpace = false;
@@ -111,15 +116,14 @@ class XmlSerializer implements Serializer
                 : [];
 
         } catch (Throwable $e) {
-            error_log(PHP_EOL . "[{$e->getLine()}]: " . $e->getMessage());
+            $this->logUnserializeError(__METHOD__, $e->getMessage(), $xml);
             return null;
         }
     }
 
-    private function buildXml(
-        DOMDocument $document,
-        DOMNode $parent,
-        iterable $data): void
+    private function buildXml(DOMDocument $document,
+                              DOMNode     $parent,
+                              iterable    $data): void
     {
         foreach ($data as $key => $val) {
             $isKeyNumeric = is_numeric($key);
@@ -192,7 +196,6 @@ class XmlSerializer implements Serializer
 
     /**
      * @param DOMNode $node
-     *
      * @return array|string|null
      * @throws \Exception
      */
@@ -228,12 +231,11 @@ class XmlSerializer implements Serializer
      * @param string $name
      * @param string|null $key
      */
-    private function appendNode(
-        DOMDocument $document,
-        DOMNode $parent,
-        mixed $data,
-        string $name,
-        ?string $key): void
+    private function appendNode(DOMDocument $document,
+                                DOMNode     $parent,
+                                mixed       $data,
+                                string      $name,
+                                ?string     $key): void
     {
         $element = $document->createElement($name);
         if (null !== $key) {
@@ -254,7 +256,7 @@ class XmlSerializer implements Serializer
             $element->setAttribute('xsi:nil', 'true');
         } elseif ($data instanceof DateTimeInterface) {
             $element->setAttribute('type', 'xsd:dateTime');
-            $element->appendChild($document->createTextNode($data->format(DateTimeInterface::ISO8601)));
+            $element->appendChild($document->createTextNode($data->format(DateTimeInterface::RFC3339)));
         } elseif (is_object($data)) {
             $element->setAttribute('type', 'xsd:object');
             $element->appendChild($document->createCDATASection(json_serialize($data)));
@@ -330,5 +332,19 @@ class XmlSerializer implements Serializer
                 $value[$child->nodeName][] = $this->getValueByType($v);
             }
         }
+    }
+
+    public function logUnserializeError(string $method,
+                                        string $message,
+                                        string $xml): void
+    {
+        $parser = xml_parser_create();
+        xml_parse_into_struct($parser, $xml, $values);
+        $last = end($values);
+        unset($last['type'], $last['level']);
+        error_log($method,
+            str_replace('DOMDocument::loadXML(): ', '', $message),
+            'hint: ' . json_serialize($last ?: ['<XML>' => $xml])
+        );
     }
 }

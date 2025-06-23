@@ -34,6 +34,6 @@
   <handled type="xsd:boolean">1</handled>
   <nothing xsi:nil="true"/>
   <empty></empty>
-  <datetime type="xsd:dateTime">2167-04-30T09:16:15+0000</datetime>
+  <datetime type="xsd:dateTime">2167-04-30T09:16:15+00:00</datetime>
   <object type="xsd:object"><![CDATA[{"key":"val"}]]></object>
 </payload>
