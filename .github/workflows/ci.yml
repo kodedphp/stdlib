@@ -25,7 +25,7 @@ jobs:
             experimental: true
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup PHP ${{ matrix.php }} (${{ matrix.os }})
         uses: shivammathur/setup-php@v2
@@ -41,7 +41,7 @@ jobs:
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
       - name: cache Composer dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('**/composer.json') }}
