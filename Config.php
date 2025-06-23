@@ -80,7 +80,7 @@ class Config extends Arguments implements Configuration
      */
     public function __construct(
         public string $root = '',
-        Data $defaults = null)
+        Data|null $defaults = null)
     {
         parent::__construct($defaults?->toArray() ?? []);
         $this->root = $root ?: getcwd();
